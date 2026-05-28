@@ -154,70 +154,9 @@ function initAccordions() {
 	});
 }
 
-function initCodeAreas() {
-	const editors = document.querySelectorAll('[data-mwp-code-area]');
-
-	if (!editors.length) {
-		return;
-	}
-
-	Promise.all([
-		import('codemirror'),
-		import('@codemirror/lang-css'),
-		import('@codemirror/lang-html')
-	]).then(([codeMirror, cssLanguage, htmlLanguage]) => {
-		const { basicSetup, EditorView } = codeMirror;
-		const { css } = cssLanguage;
-		const { html } = htmlLanguage;
-
-		editors.forEach(editor => {
-			initCodeArea(editor, { basicSetup, EditorView, css, html });
-		});
-	}).catch(() => {
-		editors.forEach(editor => {
-			editor.classList.remove('is-enhanced');
-		});
-	});
-}
-
-function initCodeArea(editor, codeMirror) {
-	const { basicSetup, EditorView, css, html } = codeMirror;
-	const input = editor.querySelector('[data-mwp-code-input]');
-	const mount = editor.querySelector('[data-mwp-code-mount]');
-	const language = editor.dataset.mwpCodeLanguage || 'html';
-
-	if (!input || !mount || editor.dataset.mwpCodeEditorReady === 'true') {
-		return;
-	}
-
-	editor.dataset.mwpCodeEditorReady = 'true';
-	editor.classList.add('is-enhanced');
-
-	const languageExtension = language === 'css' ? css() : html();
-
-	new EditorView({
-		doc: input.value,
-		parent: mount,
-		extensions: [
-			basicSetup,
-			languageExtension,
-			EditorView.lineWrapping,
-			EditorView.updateListener.of(update => {
-				if (!update.docChanged) {
-					return;
-				}
-
-				input.value = update.state.doc.toString();
-				input.dispatchEvent(new Event('input', { bubbles: true }));
-			})
-		]
-	});
-}
-
 export function initAdminUI() {
 	initColorPickers();
 	initModals();
 	initLightbox();
 	initAccordions();
-	initCodeAreas();
 }

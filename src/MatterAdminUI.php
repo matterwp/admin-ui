@@ -639,40 +639,6 @@ class MatterAdminUI {
 	}
 
 	/**
-	 * Render a highlighted code display area.
-	 *
-	 * @param array $args Code area arguments.
-	 * @return void
-	 */
-	public static function codeArea( array $args ): void {
-		$args = wp_parse_args(
-			$args,
-			array(
-				'value'    => '',
-				'language' => 'html',
-				'label'    => '',
-				'name'     => '',
-				'rows'     => 8,
-				'class'    => '',
-			)
-		);
-
-		$language = in_array( $args['language'], array( 'html', 'css' ), true ) ? $args['language'] : 'html';
-		$classes  = trim( 'mwp-code-area language-' . $language . ' ' . $args['class'] );
-		?>
-		<div class="<?php echo esc_attr( $classes ); ?>">
-			<?php if ( '' !== $args['label'] ) : ?>
-				<div class="mwp-code-area__label"><?php echo esc_html( $args['label'] ); ?></div>
-			<?php endif; ?>
-			<div class="mwp-code-area__editor" data-mwp-code-area data-mwp-code-language="<?php echo esc_attr( $language ); ?>">
-				<textarea <?php echo '' !== $args['name'] ? ' name="' . esc_attr( $args['name'] ) . '"' : ''; ?> rows="<?php echo esc_attr( (string) absint( $args['rows'] ) ); ?>" spellcheck="false" data-mwp-code-input><?php echo esc_textarea( $args['value'] ); ?></textarea>
-				<div class="mwp-code-area__mount" data-mwp-code-mount></div>
-			</div>
-		</div>
-		<?php
-	}
-
-	/**
 	 * Render a progress bar.
 	 *
 	 * @param array $args Progress arguments.
@@ -705,42 +671,4 @@ class MatterAdminUI {
 		<?php
 	}
 
-	/**
-	 * Highlight code snippets for codeArea().
-	 *
-	 * @param string $code Raw code.
-	 * @param string $language Language key.
-	 * @return string
-	 */
-	private static function highlightCode( string $code, string $language ): string {
-		if ( 'css' === $language ) {
-			$escaped = esc_html( $code );
-			$escaped = preg_replace( '/(\/\*.*?\*\/)/s', '<span class="token-comment">$1</span>', $escaped );
-			$escaped = preg_replace( '/([{};])/', '<span class="token-punctuation">$1</span>', $escaped );
-			$escaped = preg_replace( '/([a-zA-Z-]+)(\s*:)/', '<span class="token-property">$1</span><span class="token-punctuation">$2</span>', $escaped );
-			$escaped = preg_replace( '/(:\s*)([^;{}]+)/', '$1<span class="token-value">$2</span>', $escaped );
-
-			return $escaped;
-		}
-
-		$parts = preg_split( '/(&lt;.*?&gt;)/', esc_html( $code ), -1, PREG_SPLIT_DELIM_CAPTURE );
-		$html  = '';
-
-		foreach ( $parts as $part ) {
-			if ( 0 === strpos( $part, '&lt;' ) && false !== strpos( $part, '&gt;' ) ) {
-				if ( 0 === strpos( $part, '&lt;!--' ) ) {
-					$html .= '<span class="token-comment">' . $part . '</span>';
-					continue;
-				}
-
-				$part = preg_replace( '/(&lt;\/?)([a-zA-Z0-9:-]+)/', '<span class="token-punctuation">$1</span><span class="token-tag">$2</span>', $part );
-				$part = preg_replace( '/([a-zA-Z0-9:-]+)(=)(&quot;.*?&quot;)/', '<span class="token-attr">$1</span><span class="token-punctuation">$2</span><span class="token-value">$3</span>', $part );
-				$part = str_replace( '&gt;', '<span class="token-punctuation">&gt;</span>', $part );
-			}
-
-			$html .= $part;
-		}
-
-		return $html;
-	}
 }
