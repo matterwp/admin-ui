@@ -1285,10 +1285,10 @@
 		min-height: 180px;
 		margin: 0;
 		padding: 14px;
-		border: 0;
+		border: 0 !important;
 		border-radius: 0;
-		background: transparent;
-		color: transparent;
+		background: transparent !important;
+		color: transparent !important;
 		caret-color: #e2e8f0;
 		font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
 		font-size: 13px;
@@ -1298,7 +1298,8 @@
 		tab-size: 2;
 		white-space: pre;
 		overflow: auto;
-		box-shadow: none;
+		box-shadow: none !important;
+		-webkit-text-fill-color: transparent;
 
 		&:focus {
 			outline: 2px solid var(--mwp-ui-primary, #{$color-primary});
