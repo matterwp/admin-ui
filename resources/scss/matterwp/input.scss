@@ -828,3 +828,9 @@
 		}
 	}
 }
+
+@media (max-width: 782px) {
+	.mwp-component-grid {
+		grid-template-columns: 1fr;
+	}
+}
