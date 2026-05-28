@@ -1,7 +1,3 @@
-import { basicSetup, EditorView } from 'codemirror';
-import { css } from '@codemirror/lang-css';
-import { html } from '@codemirror/lang-html';
-
 function isHexColor(value) {
 	return /^#[0-9a-f]{6}$/i.test(value);
 }
@@ -159,37 +155,62 @@ function initAccordions() {
 }
 
 function initCodeAreas() {
-	document.querySelectorAll('[data-mwp-code-area]').forEach(editor => {
-		const input = editor.querySelector('[data-mwp-code-input]');
-		const mount = editor.querySelector('[data-mwp-code-mount]');
-		const language = editor.dataset.mwpCodeLanguage || 'html';
+	const editors = document.querySelectorAll('[data-mwp-code-area]');
 
-		if (!input || !mount || editor.dataset.mwpCodeEditorReady === 'true') {
-			return;
-		}
+	if (!editors.length) {
+		return;
+	}
 
-		editor.dataset.mwpCodeEditorReady = 'true';
-		editor.classList.add('is-enhanced');
+	Promise.all([
+		import('codemirror'),
+		import('@codemirror/lang-css'),
+		import('@codemirror/lang-html')
+	]).then(([codeMirror, cssLanguage, htmlLanguage]) => {
+		const { basicSetup, EditorView } = codeMirror;
+		const { css } = cssLanguage;
+		const { html } = htmlLanguage;
 
-		const languageExtension = language === 'css' ? css() : html();
-
-		new EditorView({
-			doc: input.value,
-			parent: mount,
-			extensions: [
-				basicSetup,
-				languageExtension,
-				EditorView.lineWrapping,
-				EditorView.updateListener.of(update => {
-					if (!update.docChanged) {
-						return;
-					}
-
-					input.value = update.state.doc.toString();
-					input.dispatchEvent(new Event('input', { bubbles: true }));
-				})
-			]
+		editors.forEach(editor => {
+			initCodeArea(editor, { basicSetup, EditorView, css, html });
 		});
+	}).catch(() => {
+		editors.forEach(editor => {
+			editor.classList.remove('is-enhanced');
+		});
+	});
+}
+
+function initCodeArea(editor, codeMirror) {
+	const { basicSetup, EditorView, css, html } = codeMirror;
+	const input = editor.querySelector('[data-mwp-code-input]');
+	const mount = editor.querySelector('[data-mwp-code-mount]');
+	const language = editor.dataset.mwpCodeLanguage || 'html';
+
+	if (!input || !mount || editor.dataset.mwpCodeEditorReady === 'true') {
+		return;
+	}
+
+	editor.dataset.mwpCodeEditorReady = 'true';
+	editor.classList.add('is-enhanced');
+
+	const languageExtension = language === 'css' ? css() : html();
+
+	new EditorView({
+		doc: input.value,
+		parent: mount,
+		extensions: [
+			basicSetup,
+			languageExtension,
+			EditorView.lineWrapping,
+			EditorView.updateListener.of(update => {
+				if (!update.docChanged) {
+					return;
+				}
+
+				input.value = update.state.doc.toString();
+				input.dispatchEvent(new Event('input', { bubbles: true }));
+			})
+		]
 	});
 }
 
