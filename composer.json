@@ -1,0 +1,15 @@
+{
+	"name": "matterwp/admin-ui",
+	"description": "Reusable MatterWP admin UI helpers and styles for WordPress plugins.",
+	"version": "1.0.0",
+	"type": "library",
+	"license": "GPL-2.0-or-later",
+	"autoload": {
+		"psr-4": {
+			"MatterWP\\AdminUI\\": "src/"
+		}
+	},
+	"require": {
+		"php": ">=7.3.5"
+	}
+}

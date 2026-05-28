@@ -1,0 +1,86 @@
+@use "./variables" as *;
+
+// Header Styles
+#mwp-settings {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	overflow: hidden;
+
+	header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		height: 55px;
+		padding: 0 16px;
+		border-bottom: 1px solid $color-gray-200;
+		background-color: $color-white;
+		flex: 0 0 55px;
+
+		.mwp-brand {
+			display: flex;
+			gap: 0.4rem;
+			align-items: center;
+
+			.mwp-title {
+				color: $color-black;
+				font-size: 16px;
+				font-weight: 600;
+				letter-spacing: -0.01em;
+			}
+
+			svg {
+				height: 24px;
+				width: auto;
+				border-radius: 6px;
+			}
+		}
+
+		.mwp-version {
+			background-color: #f4f4f5;
+			border-radius: 4px;
+			color: #71717a;
+			font-size: 11px;
+			font-weight: 500;
+			padding: 1px 9px;
+			text-decoration: none;
+		}
+
+		.mwp-header-actions {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			margin-left: auto;
+		}
+
+		.mwp-theme-toggle {
+			display: inline-flex;
+			position: relative;
+			align-items: center;
+			justify-content: center;
+			width: 30px;
+			height: 30px;
+			padding: 0;
+			border: 0;
+			background: transparent;
+			color: $color-gray-500;
+			cursor: pointer;
+		}
+
+		.mwp-theme-toggle-icon {
+			display: inline-flex;
+			position: absolute;
+			align-items: center;
+			justify-content: center;
+			opacity: 0;
+			transform: rotate(-90deg) scale(0.7);
+			transition: opacity 0.18s ease, transform 0.22s ease;
+		}
+
+		.mwp-theme-toggle[data-mwp-theme="light"] .mwp-theme-toggle-icon-light,
+		.mwp-theme-toggle[data-mwp-theme="dark"] .mwp-theme-toggle-icon-dark {
+			opacity: 1;
+			transform: rotate(0deg) scale(1);
+		}
+	}
+}

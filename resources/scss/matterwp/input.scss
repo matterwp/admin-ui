@@ -1,0 +1,644 @@
+@use "./variables" as *;
+
+@mixin field-control($padding: 0 12px, $height: 36px) {
+	width: 100%;
+	height: $height;
+	padding: $padding;
+	border: 1px solid $color-gray-200;
+	border-radius: var(--mwp-ui-radius, 8px);
+	color: $color-black;
+	font-size: 13px;
+	font-weight: 500;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.mwp-options {
+	display: grid;
+	grid-template-columns: 220px minmax(0, 1fr);
+	flex: 1 1 auto;
+	min-height: 0;
+	overflow: hidden;
+
+	& > * {
+		box-sizing: border-box;
+	}
+
+	// Options Container
+	.mwp-options-group {
+		background-color: $color-gray-50;
+		min-width: 0;
+		min-height: 0;
+		overflow-y: auto;
+		overflow-x: hidden;
+	}
+
+	// Option Groups
+	.mwp-option-group {
+		width: 100%;
+		max-width: 1000px;
+		margin: 0 auto;
+		display: none;
+		padding: 0;
+    padding-bottom: 60px;
+
+		&.active {
+			display: block;
+		}
+	}
+
+	.mwp-doc-grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 16px;
+		width: 100%;
+	}
+
+	.mwp-doc-card {
+		border: 1px solid rgba(228, 228, 231, 0.8);
+		border-radius: var(--mwp-ui-radius, 8px);
+		padding: 16px;
+		background: #fff;
+
+		h4 {
+			margin: 0 0 6px;
+			font-size: 14px;
+			font-weight: 600;
+			color: #212121;
+		}
+
+		p {
+			margin: 0;
+			font-size: 13px;
+			line-height: 1.6;
+			color: #6b7280;
+		}
+	}
+
+	.mwp-doc-item {
+		padding: 18px 0;
+
+		&:not(:last-child) {
+			border-bottom: 1px solid rgba(228, 228, 231, 0.4);
+		}
+
+		strong {
+			display: block;
+			font-size: 14px;
+			font-weight: 600;
+			color: #212121;
+			margin-bottom: 6px;
+		}
+
+		p {
+			margin: 0;
+			font-size: 13px;
+			line-height: 1.65;
+			color: #6b7280;
+		}
+	}
+
+	.mwp-upsell-callout {
+		margin: 20px 0 0;
+		padding: 16px;
+		border: 1px solid #ecd9d6 !important;
+		border-radius: var(--mwp-ui-radius, 8px);
+		background: #fff1ef;
+
+		strong {
+			display: block;
+			margin-bottom: 6px;
+			font-size: 15px;
+			font-weight: 600;
+			color: #047857;
+		}
+
+		p {
+			margin: 0;
+			font-size: 13px;
+			line-height: 1.6;
+			color: #047857;
+			opacity: 0.7;
+			font-weight: 500;
+		}
+
+		a {
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+			margin-top: 14px;
+			font-size: 13px;
+			font-weight: 600;
+			color: #fff;
+			background: var(--mwp-ui-primary, #{$color-primary});
+			padding: 6px 12px;
+			border-radius: var(--mwp-ui-radius, 8px);
+			text-decoration: none;
+		}
+	}
+
+	.mwp-upgrade-icon {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 14px;
+		height: 14px;
+		flex: 0 0 14px;
+		line-height: 0;
+
+		&:empty::before {
+			display: block;
+			width: 14px;
+			height: 14px;
+			background-color: currentColor;
+			content: "";
+			mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14'/%3E%3Cpath d='m12 5 7 7-7 7'/%3E%3C/svg%3E");
+			mask-repeat: no-repeat;
+			mask-size: 100% 100%;
+			-webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14'/%3E%3Cpath d='m12 5 7 7-7 7'/%3E%3C/svg%3E");
+			-webkit-mask-repeat: no-repeat;
+			-webkit-mask-size: 100% 100%;
+		}
+
+		svg {
+			display: block;
+			width: 14px;
+			height: 14px;
+			flex: 0 0 14px;
+		}
+	}
+
+	// Group Title
+	.mwp-option-group-title {
+		font-size: 16px;
+		font-weight: 600;
+		display: flex;
+		height: 70px;
+		align-items: center;
+		color: #212121;
+		letter-spacing: -0.01em;
+	}
+
+	.mwp-options-holder {
+		.mwp-section-options {
+			border: 1px solid $color-gray-200;
+			border-radius: var(--mwp-ui-radius, 8px);
+			background-color: #fff;
+		}
+	}
+
+	// Individual Option
+	.mwp-option {
+		display: flex;
+		gap: 1.25rem;
+		justify-content: space-between;
+		align-items: center;
+		padding: 20px;
+
+		&.soon {
+			opacity: 0.5;
+		}
+
+		// Option Info
+		.mwp-option-info {
+			max-width: 550px;
+
+			.mwp-option-title {
+				font-weight: 600;
+				font-size: 15px;
+				color: $color-gray-900;
+
+				.cs-badge {
+					background-color: $color-gray-50;
+					color: $color-gray-500;
+					padding: 2px 8px;
+					border-radius: 4px;
+					font-size: 12px;
+					margin-left: 10px;
+				}
+			}
+
+			.mwp-option-description {
+				font-size: 13px;
+				color: $color-gray-500;
+				margin-top: 4px;
+				display: block;
+				font-weight: 400;
+			}
+		}
+
+		.mwp-option-count {
+			margin-top: 10px;
+			font-size: 12px;
+			color: $color-gray-500;
+			font-weight: 500;
+			background-color: $color-gray-100;
+			padding: 2px 8px;
+			border-radius: 4px;
+			display: inline-block;
+		}
+
+		// Full Width Variant
+		&.full-width {
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+
+			.mwp-option-input {
+				max-width: 100%;
+			}
+		}
+
+		// Input Styles
+		.mwp-option-input {
+			display: flex;
+			align-items: center;
+			justify-content: flex-end;
+			gap: 8px;
+			max-width: 200px;
+			width: 100%;
+			position: relative;
+			text-align: right;
+
+			// Form Input Styles
+			input[type="text"],
+			input[type="number"],
+			input[type="url"] {
+				@include field-control;
+			}
+
+			select {
+				@include field-control;
+
+				&.multiple {
+					height: auto;
+					padding: 8px 16px;
+				}
+			}
+
+			textarea {
+				@include field-control(8px 12px, auto);
+			}
+
+			input[type="text"]:focus,
+			input[type="number"]:focus,
+			input[type="url"]:focus,
+			select:focus,
+			textarea:focus {
+				border-color: transparent;
+				outline: 2px solid var(--mwp-ui-primary, #{$color-primary});
+			}
+
+			&.mwp-option-input-wide {
+				display: block;
+				max-width: 100%;
+				text-align: left;
+			}
+
+			.mwp-source-links-field {
+				min-height: 132px;
+				font-family: inherit;
+				resize: vertical;
+			}
+
+			// Toggle Switch Styles
+			.switch,
+			.mwp-switch {
+				position: relative;
+				display: inline-block;
+				width: 44px;
+				height: 25px;
+
+				input {
+					opacity: 0;
+					width: 0;
+					height: 0;
+				}
+
+				.slider,
+				.mwp-switch__slider {
+					position: absolute;
+					top: 0;
+					left: 0;
+					right: 0;
+					bottom: 0;
+					background-color: #ccc;
+					border-radius: 34px;
+					cursor: pointer;
+					transition: background-color 0.4s ease;
+
+					&:before {
+						position: absolute;
+						content: "";
+						height: 17px;
+						width: 17px;
+						left: 4px;
+						bottom: 4px;
+						background-color: $color-white;
+						border-radius: 50%;
+						transition: transform 0.4s ease;
+					}
+				}
+
+				input:checked + .slider,
+				input:checked + .mwp-switch__slider {
+					background-color: var(--mwp-ui-primary, #{$color-primary});
+				}
+
+				input:checked + .slider:before,
+				input:checked + .mwp-switch__slider:before {
+					transform: translateX(18px);
+				}
+			}
+		}
+	}
+}
+
+.mwp-section-block {
+	margin: 20px 0;
+
+	.mwp-section-title {
+		padding: 20px 0;
+		position: relative;
+
+		h3 {
+			font-size: 16px;
+			font-weight: 600;
+			margin: 0 0 5px 0;
+			color: $color-gray-900;
+		}
+
+		p {
+			font-size: 13px;
+			color: $color-gray-500;
+			font-weight: 400;
+			margin: 0;
+		}
+	}
+
+	.mwp-section-options {
+		position: relative;
+		overflow: visible;
+		border-color: transparent !important;
+		background: transparent !important;
+
+		.mwp-premium-badge {
+			display: flex;
+			position: relative;
+			z-index: 1;
+			align-items: center;
+			justify-content: space-between;
+			padding: 11px 20px 28px;
+			border-radius: 8px 8px 0 0;
+			background: var(--mwp-ui-primary, #{$color-primary});
+			color: #fff;
+			font-size: 12px;
+			font-weight: 600;
+			line-height: 1;
+			pointer-events: auto;
+			cursor: default;
+
+			.badge-label {
+				display: flex;
+				align-items: center;
+				gap: 5px;
+			}
+
+			strong {
+				color: inherit;
+				font-size: 12px;
+				font-weight: 600;
+				letter-spacing: -0.005em;
+			}
+
+			a {
+				display: inline-flex;
+				align-items: center;
+				gap: 6px;
+				color: inherit;
+				font-size: 12px;
+				font-weight: 600;
+				text-decoration: none;
+				cursor: pointer;
+			}
+
+			svg {
+				width: 12px;
+				height: 12px;
+				flex: 0 0 12px;
+			}
+
+			.mwp-upgrade-icon svg {
+				width: 16px;
+				height: 16px;
+				flex: 0 0 16px;
+			}
+		}
+
+		& > *:not(.mwp-premium-badge) {
+			position: relative;
+			z-index: 2;
+			border-inline: 1px solid $color-gray-200;
+			background: #fff;
+		}
+
+		& > .mwp-premium-badge + * {
+			margin-top: -16px;
+			border-top: 1px solid $color-gray-200;
+			border-top-left-radius: 8px;
+			border-top-right-radius: 8px;
+		}
+
+		& > *:not(.mwp-premium-badge):first-child {
+			border-top: 1px solid $color-gray-200;
+			border-top-left-radius: 8px;
+			border-top-right-radius: 8px;
+		}
+
+		& > *:not(.mwp-premium-badge, :last-child) {
+			border-bottom: 1px solid $color-gray-200;
+		}
+
+		& > *:last-child {
+			border-bottom: 1px solid $color-gray-200;
+			border-bottom-right-radius: 8px;
+			border-bottom-left-radius: 8px;
+		}
+	}
+
+	&.mwp-section-premium {
+		.mwp-section-options {
+			cursor: not-allowed;
+
+			.mwp-option .mwp-option-info,
+			.mwp-option .mwp-option-count,
+			.mwp-option .mwp-option-input {
+				opacity: 0.5;
+			}
+
+			.mwp-option .mwp-option-input .switch .slider,
+			.mwp-option .mwp-option-input .mwp-switch .mwp-switch__slider {
+				cursor: not-allowed;
+			}
+
+			.mwp-api-options {
+				opacity: 0.4;
+			}
+		}
+	}
+}
+
+.mwp-section-view {
+	border: 1px solid $color-gray-200;
+	border-radius: var(--mwp-ui-radius, 8px);
+	background-color: $color-white;
+	padding: 16px;
+}
+
+.mwp-schedule-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 14px;
+	width: 100%;
+}
+
+.mwp-schedule-card {
+	padding: 16px 18px;
+	border: 1px solid rgba(228, 228, 231, 0.8);
+	border-radius: var(--mwp-ui-radius, 8px);
+	background-color: #fafafa;
+}
+
+.mwp-schedule-label {
+	display: block;
+	margin-bottom: 6px;
+	font-size: 12px;
+	font-weight: 600;
+	color: $color-gray-500;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.mwp-schedule-value {
+	display: block;
+	font-size: 14px;
+	font-weight: 600;
+	color: $color-black;
+	line-height: 1.45;
+}
+
+.mwp-schedule-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	width: 100%;
+}
+
+.mwp-schedule-chip {
+	display: inline-flex;
+	align-items: center;
+	padding: 7px 10px;
+	border-radius: 999px;
+	background-color: $color-gray-50;
+	color: $color-gray-500;
+	font-size: 12px;
+	font-weight: 500;
+}
+
+.mwp-schedule-empty {
+	margin: 0;
+	font-size: 13px;
+	color: $color-gray-500;
+}
+
+.mwp-schedule-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	width: 100%;
+	margin-top: 16px;
+}
+
+.mwp-schedule-action {
+	padding: 9px 16px;
+	border: 1px solid $color-gray-200;
+	border-radius: 7px;
+	background-color: $color-white;
+	color: $color-black;
+	font-size: 13px;
+	font-weight: 500;
+	cursor: pointer;
+	transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, opacity 0.3s ease;
+
+	&:hover {
+		background-color: $color-gray-50;
+	}
+
+	&:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+	}
+
+	&.is-primary {
+		border-color: var(--mwp-ui-primary, #{$color-primary});
+		background-color: var(--mwp-ui-primary, #{$color-primary});
+		color: $color-white;
+
+		&:hover {
+			background-color: var(--mwp-ui-primary-hover, #{$color-primary-hover});
+			border-color: var(--mwp-ui-primary-hover, #{$color-primary-hover});
+		}
+	}
+
+	&.is-secondary {
+		border-color: $color-orange-200;
+		background-color: $color-orange-50;
+		color: $color-orange-800;
+
+		&:hover {
+			background-color: $color-orange-100;
+		}
+	}
+}
+
+.mwp-system-info-block {
+	width: 100%;
+	text-align: left;
+	gap: 10px;
+	display: flex;
+	flex-direction: column;
+
+	.si-item {
+		display: flex;
+		gap: 10px;
+		align-items: center;
+		border: 1px solid rgba(0, 0, 0, 0.07);
+		border-radius: var(--mwp-ui-radius, 8px);
+		justify-content: space-between;
+		background: white;
+
+		.si-title {
+			font-size: 13px;
+			color: #212121;
+
+			font-weight: 500;
+			// border-right: 1px solid rgba(0, 0, 0, 0.07);
+			width: 130px;
+			padding: 12px 15px;
+		}
+
+		.si-value {
+			font-size: 13px;
+			color: #787878;
+			font-weight: 500;
+			padding: 12px 15px;
+			text-align: right;
+		}
+	}
+}
+
+.mwp-options .mwp-option.full-width .mwp-option-input.system-info {
+	display: block;
+	width: 100%;
+	max-width: 100%;
+	text-align: left;
+}

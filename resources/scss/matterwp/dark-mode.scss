@@ -1,0 +1,379 @@
+@use "./variables" as *;
+
+html[data-mwp-theme="dark"] {
+	color-scheme: dark;
+}
+
+html[data-mwp-theme="dark"] #mwp-settings {
+	background-color: $color-gray-800;
+	color: $color-gray-200;
+
+	.mwp-premium-badge {
+		background-color: $color-gray-700;
+	}
+
+	header,
+	.mwp-option-nav {
+		border-color: $color-gray-800;
+		background-color: $color-gray-900;
+	}
+
+	header {
+		.mwp-brand .mwp-title {
+			color: $color-gray-50;
+		}
+
+		.mwp-version {
+			background-color: $color-gray-900;
+			color: $color-gray-400;
+		}
+
+		.mwp-theme-toggle {
+			color: $color-gray-300;
+
+			&:hover {
+				color: $color-white;
+			}
+		}
+	}
+
+	a {
+		color: inherit;
+	}
+
+	code {
+		background-color: rgb(255 255 255 / 0.06);
+		color: $color-gray-200;
+	}
+
+	input,
+	select,
+	textarea {
+		color-scheme: dark;
+	}
+
+	.mwp-options-group {
+		background-color: $color-gray-850;
+	}
+
+	.mwp-option-group-title,
+	.mwp-section-title h3,
+	.mwp-option-title,
+	.mwp-doc-card h4,
+	.mwp-doc-item strong,
+	.mwp-schedule-value,
+	.status-box-title,
+	.cs-title,
+	.source-test-metric strong,
+	.si-title,
+	.mwp-log-summary-item strong,
+	.mwp-log-modal-dialog h3 {
+		color: $color-gray-100;
+	}
+
+	.mwp-section-title p,
+	.mwp-option-description,
+	.mwp-doc-card p,
+	.mwp-doc-item p,
+	.mwp-option-count,
+	.mwp-schedule-label,
+	.mwp-schedule-empty,
+	.source-test-empty,
+	.source-test-eyebrow,
+	.source-test-limit span,
+	.source-test-block-title,
+	.source-test-metric span,
+	.status-box-item,
+	.status-box-item-value,
+	.status-box-item-title,
+	.si-value,
+	.mwp-entry-prefix,
+	.mwp-log-summary-item span,
+	.mwp-log-time,
+	.mwp-log-level,
+	.mwp-log-duration,
+	.mwp-log-empty,
+	.mwp-log-modal-dialog p {
+		color: $color-gray-400;
+	}
+
+	.mwp-nav-item {
+		color: $color-gray-400;
+
+		&:hover,
+		&.active {
+			color: $color-gray-50;
+		}
+	}
+
+	.mwp-nav-link-account {
+		border-color: $color-gray-800;
+		color: $color-gray-400;
+
+		&:hover {
+			border-color: $color-gray-700;
+			color: $color-gray-50;
+		}
+	}
+
+	.mwp-nav-label {
+		color: $color-gray-500;
+	}
+
+	.mwp-option-nav {
+		&::before {
+			background: $color-gray-800;
+		}
+
+		.mwp-nav-misc,
+		.mwp-nav-upgrade {
+			border-color: $color-gray-800;
+		}
+	}
+
+	.mwp-options-holder .mwp-section-options,
+	.mwp-section-view,
+	.mwp-doc-card,
+	.mwp-schedule-card,
+	.mwp-test-sources-output,
+	.source-test-metrics,
+	.source-test-url-list,
+	.engine-log-box,
+	.status-box,
+	.si-item,
+	.mwp-log-summary-item,
+	.mwp-log-row,
+	.mwp-log-modal-dialog {
+		border-color: $color-gray-800;
+		background-color: $color-gray-900;
+	}
+
+	.mwp-section-options {
+		& > *:not(.mwp-premium-badge) {
+			border-color: $color-gray-800;
+			background: $color-gray-900;
+		}
+
+		& > .mwp-premium-badge + *,
+		& > *:not(.mwp-premium-badge):first-child,
+		& > *:not(.mwp-premium-badge, :last-child),
+		& > *:last-child {
+			border-color: $color-gray-800;
+		}
+	}
+
+	.mwp-option-count,
+	.mwp-schedule-chip,
+	.source-test-summary > div {
+		border-color: $color-gray-800;
+		background-color: $color-gray-800;
+		color: $color-gray-300;
+	}
+
+  .source-test-summary strong {
+    color: $color-gray-50;
+  }
+
+	.mwp-option-input {
+		input[type="text"],
+		input[type="number"],
+		input[type="url"],
+		select,
+		textarea {
+			border-color: $color-gray-700;
+			background-color: $color-gray-900;
+			color: $color-gray-100;
+			box-shadow: none;
+
+			&::placeholder {
+				color: $color-gray-600;
+			}
+		}
+
+		.switch,
+		.mwp-switch {
+			.slider,
+			.mwp-switch__slider {
+				background-color: $color-gray-700;
+
+				&::before {
+					background-color: $color-gray-200;
+				}
+			}
+
+			input:checked + .slider,
+			input:checked + .mwp-switch__slider {
+				background-color: var(--mwp-ui-primary, #{$color-primary});
+			}
+		}
+	}
+
+	.mwp-doc-item:not(:last-child),
+	.api-documentation,
+	.source-test-metric:not(:last-child),
+	.source-test-url:not(:last-child) {
+		border-color: $color-gray-800;
+	}
+
+	.source-test-url,
+	.source-test-metric,
+	.system-info tr:nth-child(even) {
+		background-color: $color-gray-900;
+	}
+
+	.source-test-url {
+		color: $color-gray-300;
+
+		&:nth-child(even) {
+			background-color: $color-gray-800;
+		}
+	}
+
+	.source-test-skeleton {
+		background: linear-gradient(90deg, $color-gray-800 25%, $color-gray-700 37%, $color-gray-800 63%);
+		background-size: 400% 100%;
+	}
+
+	.source-test-limit {
+		border-color: rgb(251 146 60 / 0.22) !important;
+		background-color: rgb(154 52 18 / 0.16) !important;
+
+		strong,
+		p {
+			color: $color-orange-300;
+		}
+	}
+
+	.mwp-test-sources-output.has-error {
+		border-color: rgb(248 113 113 / 0.35);
+		background-color: rgb(127 29 29 / 0.2);
+		color: #fecaca;
+	}
+
+	.mwp-stop-crawler,
+	.mwp-schedule-action,
+	.debug-actions button,
+	.log-actions button,
+	.mwp-log-filters button,
+	.mwp-log-modal-actions button {
+		border-color: $color-gray-700;
+		background-color: $color-gray-900;
+		color: $color-gray-200;
+
+		&:hover {
+			background-color: $color-gray-800;
+			color: $color-white;
+			box-shadow: none;
+		}
+	}
+
+	.mwp-log-filters button.active {
+		border-color: rgb(251 146 60 / 0.28);
+		background: rgb(154 52 18 / 0.16);
+		color: $color-orange-300;
+	}
+
+	.mwp-log-search input {
+		border-color: $color-gray-700;
+		background-color: $color-gray-900;
+		color: $color-gray-100;
+	}
+
+	.mwp-schedule-action.is-secondary {
+		border-color: rgb(251 146 60 / 0.28);
+		background-color: rgb(154 52 18 / 0.16);
+		color: $color-orange-300;
+
+		&:hover {
+			background-color: rgb(154 52 18 / 0.28);
+		}
+	}
+
+	.add-more-entry-point {
+		background-color: $color-gray-950;
+		color: $color-orange-300;
+
+		&.disabled {
+			border-color: $color-gray-800;
+			background-color: $color-gray-900;
+			color: $color-gray-600;
+		}
+	}
+
+	.mwp-test-sources,
+	.mwp-regenerate-secret {
+		border-color: rgb(251 146 60 / 0.22);
+		background-color: rgb(154 52 18 / 0.16);
+		color: $color-orange-300;
+
+		&:hover {
+			background-color: var(--mwp-ui-primary-hover, #{$color-primary-hover});
+			color: $color-white;
+		}
+	}
+
+	.mwp-upsell-callout {
+		border-color: rgb(97 47 47 / 40%) !important;
+    background: rgb(95 35 35 / 28%);
+
+		strong,
+		p {
+			color: #FFF;
+		}
+	}
+
+	.crawler-engine-log {
+		.log-entry.success {
+			background-color: rgb(20 83 45 / 0.32);
+			color: #bbf7d0;
+		}
+
+		.log-entry.error {
+			background-color: rgb(127 29 29 / 0.3);
+			color: #fecaca;
+		}
+
+		.log-entry.completed {
+			background-color: $color-gray-800;
+			color: $color-gray-200;
+		}
+	}
+
+	.mwp-main-log {
+		border: 1px solid $color-gray-800;
+		background-color: $color-gray-850;
+		color: $color-gray-200;
+	}
+
+	.mwp-log-message {
+		color: $color-gray-200;
+	}
+
+	.debug-output {
+		border-color: $color-gray-800;
+		background-color: $color-gray-900;
+		color: $color-gray-200;
+	}
+
+	.mwp-notice,
+	.mwp-notice {
+		border-color: rgb(20 83 45 / 0.48);
+		background: rgb(20 83 45 / 1);
+		color: #bbf7d0;
+	}
+
+	.mwp-notice.error,
+	.mwp-notice.error {
+		border-color: rgb(127 29 29 / 0.44);
+		background: rgb(127 29 29 / 1);
+
+		.notice-text {
+			color: #fecaca;
+		}
+	}
+
+	.mwp-notice.success .notice-text,
+	.mwp-notice.success .notice-text {
+		color: #bbf7d0;
+	}
+}

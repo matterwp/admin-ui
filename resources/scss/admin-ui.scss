@@ -1,0 +1,17 @@
+@use "./matterwp/variables" as *;
+@use "./matterwp/header";
+@use "./matterwp/navigation";
+@use "./matterwp/input";
+@use "./matterwp/notifications";
+@use "./matterwp/dark-mode";
+
+#mwp-settings {
+	--mwp-ui-primary: #{$color-primary};
+	--mwp-ui-primary-hover: #{$color-primary-hover};
+	--mwp-ui-radius: 8px;
+	--mwp-ui-border: #{$color-gray-200};
+	--mwp-ui-bg: #{$color-white};
+
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}

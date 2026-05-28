@@ -1,0 +1,40 @@
+// Notice Styles
+.mwp-notice-wrapper,
+.mwp-notice-wrapper,
+.boilerplate-notice-wrapper {
+	position: fixed;
+	top: 45px;
+	right: 20px;
+	z-index: 9999;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.mwp-notice,
+.mwp-notice,
+.boilerplate-notice {
+	min-width: 200px;
+	padding: 8px 16px;
+	background: #ecfdf5;
+	border: 1px solid #d1fae5;
+	border-radius: var(--mwp-ui-radius, 8px);
+}
+
+.mwp-notice.error,
+.mwp-notice.error,
+.boilerplate-notice.error {
+	background: #fef2f2;
+	border-color: #fee2e2;
+
+	.notice-text {
+		color: #7c2d12;
+	}
+}
+
+.mwp-notice.success .notice-text,
+.mwp-notice.success .notice-text,
+.boilerplate-notice.success .notice-text {
+	color: #064e3b;
+	font-weight: 500;
+}
