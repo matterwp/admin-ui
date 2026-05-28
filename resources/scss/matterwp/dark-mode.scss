@@ -61,6 +61,9 @@ html[data-mwp-theme="dark"] #mwp-settings {
 	.mwp-option-title,
 	.mwp-card .mwp-card-header h4,
 	.mwp-form .mwp-form-header h4,
+	.mwp-modal__header h4,
+	.mwp-accordion__trigger,
+	.mwp-progress__header strong,
 	.mwp-doc-card h4,
 	.mwp-doc-item strong,
 	.mwp-schedule-value,
@@ -79,6 +82,12 @@ html[data-mwp-theme="dark"] #mwp-settings {
 	.mwp-card .mwp-card-content,
 	.mwp-form .mwp-form-header p,
 	.mwp-table td,
+	.mwp-field-label,
+	.mwp-modal__header p,
+	.mwp-modal__content,
+	.mwp-lightbox__caption,
+	.mwp-accordion__content,
+	.mwp-progress__header,
 	.mwp-doc-card p,
 	.mwp-doc-item p,
 	.mwp-option-count,
@@ -142,6 +151,10 @@ html[data-mwp-theme="dark"] #mwp-settings {
 	.mwp-card,
 	.mwp-form,
 	.mwp-table-wrap,
+	.mwp-modal__dialog,
+	.mwp-lightbox__dialog,
+	.mwp-lightbox-trigger,
+	.mwp-accordion,
 	.mwp-doc-card,
 	.mwp-schedule-card,
 	.mwp-test-sources-output,
@@ -189,6 +202,9 @@ html[data-mwp-theme="dark"] #mwp-settings {
 		input[type="text"],
 		input[type="number"],
 		input[type="url"],
+		input[type="email"],
+		input[type="password"],
+		input[type="search"],
 		select,
 		textarea {
 			border-color: $color-gray-700;
@@ -358,6 +374,23 @@ html[data-mwp-theme="dark"] #mwp-settings {
 
 	.mwp-table td {
 		border-color: $color-gray-800;
+	}
+
+	.mwp-color-picker__swatch,
+	.mwp-icon-button,
+	.mwp-accordion__item:not(:last-child),
+	.mwp-modal__header {
+		border-color: $color-gray-800;
+	}
+
+	.mwp-color-picker__swatch,
+	.mwp-icon-button {
+		background-color: $color-gray-900;
+		color: $color-gray-300;
+	}
+
+	.mwp-progress__track {
+		background-color: $color-gray-800;
 	}
 
 	.add-more-entry-point {

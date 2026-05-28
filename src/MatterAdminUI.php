@@ -371,20 +371,21 @@ class MatterAdminUI {
 		$args = wp_parse_args(
 			$args,
 			array(
-				'name'     => '',
-				'value'    => '#059669',
-				'label'    => '',
-				'class'    => '',
-				'disabled' => false,
+				'name'        => '',
+				'value'       => '#059669',
+				'label'       => '',
+				'placeholder' => '#000000',
+				'class'       => '',
+				'disabled'    => false,
 			)
 		);
 
 		$classes = trim( 'mwp-color-picker ' . $args['class'] );
 		?>
-		<label class="<?php echo esc_attr( $classes ); ?>">
-			<input <?php echo '' !== $args['name'] ? ' name="' . esc_attr( $args['name'] ) . '"' : ''; ?> type="color" value="<?php echo esc_attr( $args['value'] ); ?>" <?php disabled( $args['disabled'] ); ?>>
-			<span><?php echo esc_html( '' !== $args['label'] ? $args['label'] : $args['value'] ); ?></span>
-		</label>
+		<div class="<?php echo esc_attr( $classes ); ?>" data-mwp-color-picker>
+			<input class="mwp-color-picker__swatch" type="color" value="<?php echo esc_attr( $args['value'] ); ?>" data-mwp-color-swatch <?php disabled( $args['disabled'] ); ?>>
+			<input class="mwp-color-picker__input" <?php echo '' !== $args['name'] ? ' name="' . esc_attr( $args['name'] ) . '"' : ''; ?> type="text" value="<?php echo esc_attr( $args['value'] ); ?>" placeholder="<?php echo esc_attr( $args['placeholder'] ); ?>" data-mwp-color-input <?php disabled( $args['disabled'] ); ?>>
+		</div>
 		<?php
 	}
 
@@ -401,10 +402,11 @@ class MatterAdminUI {
 				'input'  => array(),
 				'button' => array(),
 				'class'  => '',
+				'wide'   => false,
 			)
 		);
 
-		$classes = trim( 'mwp-input-button ' . $args['class'] );
+		$classes = trim( 'mwp-input-button ' . ( $args['wide'] ? 'is-full-width ' : '' ) . $args['class'] );
 		?>
 		<div class="<?php echo esc_attr( $classes ); ?>">
 			<?php
@@ -450,6 +452,188 @@ class MatterAdminUI {
 			<?php endif; ?>
 			<div class="mwp-form-fields">
 				<?php $content(); ?>
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render a mini-labeled field wrapper.
+	 *
+	 * @param string   $label Field label.
+	 * @param callable $control Control callback.
+	 * @return void
+	 */
+	public static function field( string $label, callable $control ): void {
+		?>
+		<label class="mwp-field">
+			<span class="mwp-field-label"><?php echo esc_html( $label ); ?></span>
+			<?php $control(); ?>
+		</label>
+		<?php
+	}
+
+	/**
+	 * Render a modal with a button trigger.
+	 *
+	 * @param array    $args Modal arguments.
+	 * @param callable $content Content callback.
+	 * @return void
+	 */
+	public static function modal( array $args, callable $content ): void {
+		$args = wp_parse_args(
+			$args,
+			array(
+				'id'          => '',
+				'title'       => '',
+				'description' => '',
+				'trigger'     => 'Open Modal',
+				'class'       => '',
+			)
+		);
+
+		$id      = '' !== $args['id'] ? $args['id'] : 'mwp-modal-' . wp_unique_id();
+		$classes = trim( 'mwp-modal ' . $args['class'] );
+		self::button(
+			array(
+				'label'   => $args['trigger'],
+				'variant' => 'primary',
+				'class'   => 'mwp-modal-trigger',
+			)
+		);
+		?>
+		<div class="<?php echo esc_attr( $classes ); ?>" id="<?php echo esc_attr( $id ); ?>" data-mwp-modal hidden>
+			<div class="mwp-modal__overlay" data-mwp-modal-close></div>
+			<div class="mwp-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="<?php echo esc_attr( $id . '-title' ); ?>">
+				<div class="mwp-modal__header">
+					<div>
+						<h4 id="<?php echo esc_attr( $id . '-title' ); ?>"><?php echo esc_html( $args['title'] ); ?></h4>
+						<?php if ( '' !== $args['description'] ) : ?>
+							<p><?php echo esc_html( $args['description'] ); ?></p>
+						<?php endif; ?>
+					</div>
+					<button class="mwp-icon-button" type="button" aria-label="Close" data-mwp-modal-close>&times;</button>
+				</div>
+				<div class="mwp-modal__content">
+					<?php $content(); ?>
+				</div>
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render a lightbox image.
+	 *
+	 * @param array $args Lightbox arguments.
+	 * @return void
+	 */
+	public static function lightbox( array $args ): void {
+		$args = wp_parse_args(
+			$args,
+			array(
+				'src'     => '',
+				'alt'     => '',
+				'caption' => '',
+				'class'   => '',
+			)
+		);
+
+		$classes = trim( 'mwp-lightbox-trigger ' . $args['class'] );
+		?>
+		<button class="<?php echo esc_attr( $classes ); ?>" type="button" data-mwp-lightbox-trigger data-mwp-lightbox-src="<?php echo esc_url( $args['src'] ); ?>" data-mwp-lightbox-alt="<?php echo esc_attr( $args['alt'] ); ?>" data-mwp-lightbox-caption="<?php echo esc_attr( $args['caption'] ); ?>">
+			<img src="<?php echo esc_url( $args['src'] ); ?>" alt="<?php echo esc_attr( $args['alt'] ); ?>">
+		</button>
+		<?php
+	}
+
+	/**
+	 * Render an accordion.
+	 *
+	 * @param array $args Accordion arguments.
+	 * @return void
+	 */
+	public static function accordion( array $args ): void {
+		$args = wp_parse_args(
+			$args,
+			array(
+				'items' => array(),
+				'class' => '',
+			)
+		);
+
+		$classes = trim( 'mwp-accordion ' . $args['class'] );
+		?>
+		<div class="<?php echo esc_attr( $classes ); ?>" data-mwp-accordion>
+			<?php foreach ( $args['items'] as $index => $item ) : ?>
+				<?php $item_id = 'mwp-accordion-' . wp_unique_id() . '-' . absint( $index ); ?>
+				<div class="mwp-accordion__item">
+					<button class="mwp-accordion__trigger" type="button" aria-expanded="<?php echo ! empty( $item['open'] ) ? 'true' : 'false'; ?>" aria-controls="<?php echo esc_attr( $item_id ); ?>" data-mwp-accordion-trigger>
+						<span><?php echo esc_html( $item['title'] ?? '' ); ?></span>
+						<span class="mwp-accordion__icon" aria-hidden="true">+</span>
+					</button>
+					<div class="mwp-accordion__content" id="<?php echo esc_attr( $item_id ); ?>" <?php echo empty( $item['open'] ) ? ' hidden' : ''; ?> data-mwp-accordion-content>
+						<?php echo wp_kses_post( $item['content'] ?? '' ); ?>
+					</div>
+				</div>
+			<?php endforeach; ?>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render a button group.
+	 *
+	 * @param array $args Button group arguments.
+	 * @return void
+	 */
+	public static function buttonGroup( array $args ): void {
+		$args = wp_parse_args(
+			$args,
+			array(
+				'buttons' => array(),
+				'class'   => '',
+			)
+		);
+
+		$classes = trim( 'mwp-button-group ' . $args['class'] );
+		?>
+		<div class="<?php echo esc_attr( $classes ); ?>" role="group">
+			<?php foreach ( $args['buttons'] as $button ) : ?>
+				<?php self::button( $button ); ?>
+			<?php endforeach; ?>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render a progress bar.
+	 *
+	 * @param array $args Progress arguments.
+	 * @return void
+	 */
+	public static function progress( array $args ): void {
+		$args = wp_parse_args(
+			$args,
+			array(
+				'value' => 0,
+				'label' => '',
+				'class' => '',
+			)
+		);
+
+		$value   = max( 0, min( 100, absint( $args['value'] ) ) );
+		$classes = trim( 'mwp-progress ' . $args['class'] );
+		?>
+		<div class="<?php echo esc_attr( $classes ); ?>" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="<?php echo esc_attr( (string) $value ); ?>">
+			<?php if ( '' !== $args['label'] ) : ?>
+				<div class="mwp-progress__header">
+					<span><?php echo esc_html( $args['label'] ); ?></span>
+					<strong><?php echo esc_html( (string) $value ); ?>%</strong>
+				</div>
+			<?php endif; ?>
+			<div class="mwp-progress__track">
+				<div class="mwp-progress__bar" style="width: <?php echo esc_attr( (string) $value ); ?>%;"></div>
 			</div>
 		</div>
 		<?php
