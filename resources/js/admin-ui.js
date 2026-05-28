@@ -45,6 +45,8 @@ function initModals() {
 			return;
 		}
 
+		document.body.appendChild(modal);
+
 		trigger.addEventListener('click', () => {
 			modal.hidden = false;
 			modal.querySelector('[data-mwp-modal-close]')?.focus();

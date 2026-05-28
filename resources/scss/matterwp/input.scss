@@ -1003,7 +1003,7 @@
 .mwp-modal,
 .mwp-lightbox {
 	position: fixed;
-	z-index: 100000;
+	z-index: 1000000;
 	inset: 0;
 	display: flex;
 	align-items: center;
@@ -1172,6 +1172,121 @@
 			border-top-right-radius: calc(var(--mwp-ui-radius, 8px) - 1px);
 			border-bottom-right-radius: calc(var(--mwp-ui-radius, 8px) - 1px);
 		}
+	}
+}
+
+.mwp-radio-group {
+	display: inline-flex;
+	align-items: center;
+}
+
+.mwp-radio-group__item {
+	position: relative;
+	display: inline-flex;
+
+	input {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		opacity: 0;
+		pointer-events: none;
+	}
+
+	span {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 36px;
+		padding: 8px 14px;
+		border: 1px solid $color-gray-200;
+		background-color: $color-white;
+		color: $color-gray-700;
+		font-size: 13px;
+		font-weight: 600;
+		line-height: 1.2;
+		cursor: pointer;
+		transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+	}
+
+	&:not(:first-child) span {
+		margin-left: -1px;
+	}
+
+	&:first-child span {
+		border-top-left-radius: calc(var(--mwp-ui-radius, 8px) - 1px);
+		border-bottom-left-radius: calc(var(--mwp-ui-radius, 8px) - 1px);
+	}
+
+	&:last-child span {
+		border-top-right-radius: calc(var(--mwp-ui-radius, 8px) - 1px);
+		border-bottom-right-radius: calc(var(--mwp-ui-radius, 8px) - 1px);
+	}
+
+	input:checked + span {
+		z-index: 1;
+		border-color: var(--mwp-ui-primary, #{$color-primary});
+		background-color: var(--mwp-ui-primary, #{$color-primary});
+		color: $color-white;
+	}
+
+	input:focus-visible + span {
+		outline: 2px solid var(--mwp-ui-primary, #{$color-primary});
+		outline-offset: 2px;
+	}
+}
+
+.mwp-code-area {
+	width: 100%;
+	overflow: hidden;
+	border: 1px solid $color-gray-200;
+	border-radius: var(--mwp-ui-radius, 8px);
+	background-color: #0f172a;
+
+	.mwp-code-area__label {
+		padding: 9px 12px;
+		border-bottom: 1px solid rgb(255 255 255 / 0.08);
+		color: #cbd5e1;
+		font-size: 11px;
+		font-weight: 700;
+		line-height: 1.2;
+		text-transform: uppercase;
+	}
+
+	pre {
+		margin: 0;
+		padding: 14px;
+		overflow-x: auto;
+		color: #e2e8f0;
+		font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+		font-size: 13px;
+		line-height: 1.6;
+		tab-size: 2;
+	}
+
+	code {
+		background: transparent;
+		color: inherit;
+	}
+
+	.token-comment {
+		color: #94a3b8;
+	}
+
+	.token-punctuation {
+		color: #cbd5e1;
+	}
+
+	.token-tag,
+	.token-property {
+		color: #7dd3fc;
+	}
+
+	.token-attr {
+		color: #facc15;
+	}
+
+	.token-value {
+		color: #86efac;
 	}
 }
 

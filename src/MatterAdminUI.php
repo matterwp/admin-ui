@@ -607,6 +607,67 @@ class MatterAdminUI {
 	}
 
 	/**
+	 * Render a segmented radio group.
+	 *
+	 * @param array $args Radio group arguments.
+	 * @return void
+	 */
+	public static function radioGroup( array $args ): void {
+		$args = wp_parse_args(
+			$args,
+			array(
+				'name'    => '',
+				'value'   => '',
+				'options' => array(),
+				'class'   => '',
+			)
+		);
+
+		$has_name = '' !== $args['name'];
+		$name     = $has_name ? $args['name'] : 'mwp-radio-' . wp_unique_id();
+		$classes  = trim( 'mwp-radio-group ' . $args['class'] );
+		?>
+		<div class="<?php echo esc_attr( $classes ); ?>" role="radiogroup">
+			<?php foreach ( $args['options'] as $value => $label ) : ?>
+				<label class="mwp-radio-group__item">
+					<input name="<?php echo esc_attr( $name ); ?>" type="radio" value="<?php echo esc_attr( (string) $value ); ?>" <?php checked( (string) $args['value'], (string) $value ); ?> <?php echo $has_name ? '' : ' data-mwp-ignore-autosave="true"'; ?>>
+					<span><?php echo esc_html( $label ); ?></span>
+				</label>
+			<?php endforeach; ?>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render a highlighted code display area.
+	 *
+	 * @param array $args Code area arguments.
+	 * @return void
+	 */
+	public static function codeArea( array $args ): void {
+		$args = wp_parse_args(
+			$args,
+			array(
+				'value'    => '',
+				'language' => 'html',
+				'label'    => '',
+				'class'    => '',
+			)
+		);
+
+		$language = in_array( $args['language'], array( 'html', 'css' ), true ) ? $args['language'] : 'html';
+		$classes  = trim( 'mwp-code-area language-' . $language . ' ' . $args['class'] );
+		?>
+		<div class="<?php echo esc_attr( $classes ); ?>">
+			<?php if ( '' !== $args['label'] ) : ?>
+				<div class="mwp-code-area__label"><?php echo esc_html( $args['label'] ); ?></div>
+			<?php endif; ?>
+			<pre><code><?php echo self::highlightCode( (string) $args['value'], $language ); ?></code></pre>
+		</div>
+		<?php
+	}
+
+	/**
 	 * Render a progress bar.
 	 *
 	 * @param array $args Progress arguments.
@@ -637,5 +698,44 @@ class MatterAdminUI {
 			</div>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Highlight code snippets for codeArea().
+	 *
+	 * @param string $code Raw code.
+	 * @param string $language Language key.
+	 * @return string
+	 */
+	private static function highlightCode( string $code, string $language ): string {
+		if ( 'css' === $language ) {
+			$escaped = esc_html( $code );
+			$escaped = preg_replace( '/(\/\*.*?\*\/)/s', '<span class="token-comment">$1</span>', $escaped );
+			$escaped = preg_replace( '/([{};])/', '<span class="token-punctuation">$1</span>', $escaped );
+			$escaped = preg_replace( '/([a-zA-Z-]+)(\s*:)/', '<span class="token-property">$1</span><span class="token-punctuation">$2</span>', $escaped );
+			$escaped = preg_replace( '/(:\s*)([^;{}]+)/', '$1<span class="token-value">$2</span>', $escaped );
+
+			return $escaped;
+		}
+
+		$parts = preg_split( '/(&lt;.*?&gt;)/', esc_html( $code ), -1, PREG_SPLIT_DELIM_CAPTURE );
+		$html  = '';
+
+		foreach ( $parts as $part ) {
+			if ( 0 === strpos( $part, '&lt;' ) && false !== strpos( $part, '&gt;' ) ) {
+				if ( 0 === strpos( $part, '&lt;!--' ) ) {
+					$html .= '<span class="token-comment">' . $part . '</span>';
+					continue;
+				}
+
+				$part = preg_replace( '/(&lt;\/?)([a-zA-Z0-9:-]+)/', '<span class="token-punctuation">$1</span><span class="token-tag">$2</span>', $part );
+				$part = preg_replace( '/([a-zA-Z0-9:-]+)(=)(&quot;.*?&quot;)/', '<span class="token-attr">$1</span><span class="token-punctuation">$2</span><span class="token-value">$3</span>', $part );
+				$part = str_replace( '&gt;', '<span class="token-punctuation">&gt;</span>', $part );
+			}
+
+			$html .= $part;
+		}
+
+		return $html;
 	}
 }

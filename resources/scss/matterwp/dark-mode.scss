@@ -280,6 +280,7 @@ html[data-mwp-theme="dark"] #mwp-settings {
 	.mwp-stop-crawler,
 	.mwp-schedule-action,
 	.mwp-button,
+	.mwp-radio-group__item span,
 	.debug-actions button,
 	.log-actions button,
 	.mwp-log-filters button,
@@ -318,6 +319,12 @@ html[data-mwp-theme="dark"] #mwp-settings {
 	}
 
 	.mwp-button.is-primary {
+		border-color: var(--mwp-ui-primary, #{$color-primary});
+		background-color: var(--mwp-ui-primary, #{$color-primary});
+		color: $color-white;
+	}
+
+	.mwp-radio-group__item input:checked + span {
 		border-color: var(--mwp-ui-primary, #{$color-primary});
 		background-color: var(--mwp-ui-primary, #{$color-primary});
 		color: $color-white;
