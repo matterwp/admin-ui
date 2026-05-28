@@ -651,6 +651,8 @@ class MatterAdminUI {
 				'value'    => '',
 				'language' => 'html',
 				'label'    => '',
+				'name'     => '',
+				'rows'     => 8,
 				'class'    => '',
 			)
 		);
@@ -662,7 +664,10 @@ class MatterAdminUI {
 			<?php if ( '' !== $args['label'] ) : ?>
 				<div class="mwp-code-area__label"><?php echo esc_html( $args['label'] ); ?></div>
 			<?php endif; ?>
-			<pre><code><?php echo self::highlightCode( (string) $args['value'], $language ); ?></code></pre>
+			<div class="mwp-code-area__editor" data-mwp-code-area data-mwp-code-language="<?php echo esc_attr( $language ); ?>">
+				<pre aria-hidden="true"><code data-mwp-code-highlight><?php echo self::highlightCode( (string) $args['value'], $language ); ?></code></pre>
+				<textarea <?php echo '' !== $args['name'] ? ' name="' . esc_attr( $args['name'] ) . '"' : ''; ?> rows="<?php echo esc_attr( (string) absint( $args['rows'] ) ); ?>" spellcheck="false" data-mwp-code-input><?php echo esc_textarea( $args['value'] ); ?></textarea>
+			</div>
 		</div>
 		<?php
 	}

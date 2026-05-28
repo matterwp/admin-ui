@@ -154,9 +154,59 @@ function initAccordions() {
 	});
 }
 
+function escapeHtml(value) {
+	return value
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;');
+}
+
+function highlightCss(code) {
+	return escapeHtml(code)
+		.replace(/(\/\*[\s\S]*?\*\/)/g, '<span class="token-comment">$1</span>')
+		.replace(/([{};])/g, '<span class="token-punctuation">$1</span>')
+		.replace(/([a-zA-Z-]+)(\s*:)/g, '<span class="token-property">$1</span><span class="token-punctuation">$2</span>')
+		.replace(/(:\s*)([^;{}]+)/g, '$1<span class="token-value">$2</span>');
+}
+
+function highlightHtml(code) {
+	return escapeHtml(code)
+		.replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span class="token-comment">$1</span>')
+		.replace(/(&lt;\/?)([a-zA-Z0-9:-]+)/g, '<span class="token-punctuation">$1</span><span class="token-tag">$2</span>')
+		.replace(/([a-zA-Z0-9:-]+)(=)(&quot;.*?&quot;)/g, '<span class="token-attr">$1</span><span class="token-punctuation">$2</span><span class="token-value">$3</span>')
+		.replace(/(&gt;)/g, '<span class="token-punctuation">$1</span>');
+}
+
+function initCodeAreas() {
+	document.querySelectorAll('[data-mwp-code-area]').forEach(editor => {
+		const input = editor.querySelector('[data-mwp-code-input]');
+		const highlight = editor.querySelector('[data-mwp-code-highlight]');
+		const language = editor.dataset.mwpCodeLanguage || 'html';
+
+		if (!input || !highlight) {
+			return;
+		}
+
+		function syncHighlight() {
+			highlight.innerHTML = language === 'css' ? highlightCss(input.value) : highlightHtml(input.value);
+		}
+
+		function syncScroll() {
+			highlight.parentElement.scrollTop = input.scrollTop;
+			highlight.parentElement.scrollLeft = input.scrollLeft;
+		}
+
+		input.addEventListener('input', syncHighlight);
+		input.addEventListener('scroll', syncScroll);
+		syncHighlight();
+	});
+}
+
 export function initAdminUI() {
 	initColorPickers();
 	initModals();
 	initLightbox();
 	initAccordions();
+	initCodeAreas();
 }
