@@ -1253,33 +1253,10 @@
 	}
 
 	.mwp-code-area__editor {
-		position: relative;
 		min-height: 180px;
 	}
 
-	pre {
-		position: absolute;
-		inset: 0;
-		margin: 0;
-		padding: 14px;
-		overflow: auto;
-		color: #e2e8f0;
-		font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-		font-size: 13px;
-		line-height: 1.6;
-		tab-size: 2;
-		white-space: pre;
-		pointer-events: none;
-	}
-
-	code {
-		background: transparent;
-		color: inherit;
-	}
-
 	textarea {
-		position: relative;
-		z-index: 1;
 		display: block;
 		width: 100%;
 		min-height: 180px;
@@ -1287,8 +1264,8 @@
 		padding: 14px;
 		border: 0 !important;
 		border-radius: 0;
-		background: transparent !important;
-		color: transparent !important;
+		background: #0f172a !important;
+		color: #e2e8f0 !important;
 		caret-color: #e2e8f0;
 		font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
 		font-size: 13px;
@@ -1299,7 +1276,6 @@
 		white-space: pre;
 		overflow: auto;
 		box-shadow: none !important;
-		-webkit-text-fill-color: transparent;
 
 		&:focus {
 			outline: 2px solid var(--mwp-ui-primary, #{$color-primary});
@@ -1308,29 +1284,57 @@
 
 		&::selection {
 			background-color: rgb(96 165 250 / 0.35);
-			color: transparent;
 		}
 	}
 
-	.token-comment {
-		color: #94a3b8;
+	&.is-enhanced textarea {
+		display: none;
 	}
 
-	.token-punctuation {
-		color: #cbd5e1;
+	.cm-editor {
+		background-color: #0f172a;
+		color: #e2e8f0;
+		font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+		font-size: 13px;
+		line-height: 1.6;
 	}
 
-	.token-tag,
-	.token-property {
-		color: #7dd3fc;
+	.cm-editor.cm-focused {
+		outline: 2px solid var(--mwp-ui-primary, #{$color-primary});
+		outline-offset: -2px;
 	}
 
-	.token-attr {
-		color: #facc15;
+	.cm-scroller {
+		min-height: 180px;
+		font-family: inherit;
 	}
 
-	.token-value {
-		color: #86efac;
+	.cm-content {
+		padding: 14px;
+	}
+
+	.cm-line {
+		padding-inline: 0;
+	}
+
+	.cm-gutters {
+		border-right: 1px solid rgb(255 255 255 / 0.08);
+		background-color: #111827;
+		color: #64748b;
+	}
+
+	.cm-activeLine,
+	.cm-activeLineGutter {
+		background-color: rgb(255 255 255 / 0.05);
+	}
+
+	.cm-cursor {
+		border-left-color: #e2e8f0;
+	}
+
+	.cm-selectionBackground,
+	.cm-content ::selection {
+		background-color: rgb(96 165 250 / 0.35) !important;
 	}
 }
 
