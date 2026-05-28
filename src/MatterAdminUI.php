@@ -152,7 +152,7 @@ class MatterAdminUI {
 			)
 		);
 
-		$type = in_array( $args['type'], array( 'text', 'number', 'url', 'email', 'password', 'search' ), true ) ? $args['type'] : 'text';
+		$type = in_array( $args['type'], array( 'text', 'number', 'url', 'email', 'password', 'search', 'color' ), true ) ? $args['type'] : 'text';
 		?>
 		<input class="<?php echo esc_attr( $args['class'] ); ?>" <?php echo '' !== $args['name'] ? ' name="' . esc_attr( $args['name'] ) . '"' : ''; ?> type="<?php echo esc_attr( $type ); ?>" value="<?php echo esc_attr( $args['value'] ); ?>" placeholder="<?php echo esc_attr( $args['placeholder'] ); ?>" <?php disabled( $args['disabled'] ); ?>>
 		<?php
@@ -314,6 +314,141 @@ class MatterAdminUI {
 				</div>
 			<?php endif; ?>
 			<div class="mwp-card-content">
+				<?php $content(); ?>
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render a table.
+	 *
+	 * @param array $args Table arguments.
+	 * @return void
+	 */
+	public static function table( array $args ): void {
+		$args = wp_parse_args(
+			$args,
+			array(
+				'columns' => array(),
+				'rows'    => array(),
+				'class'   => '',
+			)
+		);
+
+		$classes = trim( 'mwp-table-wrap ' . $args['class'] );
+		?>
+		<div class="<?php echo esc_attr( $classes ); ?>">
+			<table class="mwp-table">
+				<thead>
+					<tr>
+						<?php foreach ( $args['columns'] as $column_label ) : ?>
+							<th scope="col"><?php echo esc_html( $column_label ); ?></th>
+						<?php endforeach; ?>
+					</tr>
+				</thead>
+				<tbody>
+					<?php foreach ( $args['rows'] as $row ) : ?>
+						<tr>
+							<?php foreach ( array_keys( $args['columns'] ) as $column_key ) : ?>
+								<td><?php echo wp_kses_post( $row[ $column_key ] ?? '' ); ?></td>
+							<?php endforeach; ?>
+						</tr>
+					<?php endforeach; ?>
+				</tbody>
+			</table>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render a color picker control.
+	 *
+	 * @param array $args Color picker arguments.
+	 * @return void
+	 */
+	public static function colorPicker( array $args ): void {
+		$args = wp_parse_args(
+			$args,
+			array(
+				'name'     => '',
+				'value'    => '#059669',
+				'label'    => '',
+				'class'    => '',
+				'disabled' => false,
+			)
+		);
+
+		$classes = trim( 'mwp-color-picker ' . $args['class'] );
+		?>
+		<label class="<?php echo esc_attr( $classes ); ?>">
+			<input <?php echo '' !== $args['name'] ? ' name="' . esc_attr( $args['name'] ) . '"' : ''; ?> type="color" value="<?php echo esc_attr( $args['value'] ); ?>" <?php disabled( $args['disabled'] ); ?>>
+			<span><?php echo esc_html( '' !== $args['label'] ? $args['label'] : $args['value'] ); ?></span>
+		</label>
+		<?php
+	}
+
+	/**
+	 * Render an input with an attached button.
+	 *
+	 * @param array $args Input button arguments.
+	 * @return void
+	 */
+	public static function inputButton( array $args ): void {
+		$args = wp_parse_args(
+			$args,
+			array(
+				'input'  => array(),
+				'button' => array(),
+				'class'  => '',
+			)
+		);
+
+		$classes = trim( 'mwp-input-button ' . $args['class'] );
+		?>
+		<div class="<?php echo esc_attr( $classes ); ?>">
+			<?php
+			self::input( $args['input'] );
+			self::button( $args['button'] );
+			?>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render a compact form layout.
+	 *
+	 * This intentionally renders a grouped field container instead of a nested
+	 * form element, so it can be used inside WordPress settings forms.
+	 *
+	 * @param array    $args Form arguments.
+	 * @param callable $content Content callback.
+	 * @return void
+	 */
+	public static function form( array $args, callable $content ): void {
+		$args = wp_parse_args(
+			$args,
+			array(
+				'title'       => '',
+				'description' => '',
+				'class'       => '',
+			)
+		);
+
+		$classes = trim( 'mwp-form ' . $args['class'] );
+		?>
+		<div class="<?php echo esc_attr( $classes ); ?>" role="group">
+			<?php if ( '' !== $args['title'] || '' !== $args['description'] ) : ?>
+				<div class="mwp-form-header">
+					<?php if ( '' !== $args['title'] ) : ?>
+						<h4><?php echo esc_html( $args['title'] ); ?></h4>
+					<?php endif; ?>
+					<?php if ( '' !== $args['description'] ) : ?>
+						<p><?php echo esc_html( $args['description'] ); ?></p>
+					<?php endif; ?>
+				</div>
+			<?php endif; ?>
+			<div class="mwp-form-fields">
 				<?php $content(); ?>
 			</div>
 		</div>
