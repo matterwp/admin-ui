@@ -5,12 +5,40 @@ html[data-mwp-theme="dark"] {
 }
 
 html[data-mwp-theme="dark"] #mwp-settings {
-	background-color: $color-gray-800;
-	color: $color-gray-200;
+	--mwp-color-bg: #{$color-gray-900};
+	--mwp-color-bg-alt: #{$color-gray-850};
+	--mwp-color-bg-hover: #{$color-gray-800};
+	--mwp-color-bg-surface: #{$color-gray-900};
+	--mwp-color-border: #{$color-gray-800};
+	--mwp-color-border-strong: #{$color-gray-700};
+	--mwp-color-text: #{$color-gray-100};
+	--mwp-color-text-secondary: #{$color-gray-400};
+	--mwp-color-text-muted: #{$color-gray-500};
+	--mwp-color-nav-active: #{$color-gray-800};
 
-	.mwp-premium-badge {
-		background-color: $color-gray-700;
-	}
+	--mwp-color-danger-border: rgba(225, 29, 72, 0.35);
+	--mwp-color-danger-bg: rgba(225, 29, 72, 0.15);
+	--mwp-color-danger-bg-hover: rgba(225, 29, 72, 0.22);
+	--mwp-color-danger-text: #fb7185;
+
+	--mwp-color-warning-border: rgba(251, 146, 60, 0.35);
+	--mwp-color-warning-bg: rgba(154, 52, 18, 0.18);
+	--mwp-color-warning-bg-hover: rgba(154, 52, 18, 0.28);
+	--mwp-color-warning-text: #fdba74;
+
+	--mwp-color-success-border: rgba(74, 222, 128, 0.28);
+	--mwp-color-success-bg: rgba(20, 83, 45, 0.24);
+	--mwp-color-success-text: #bbf7d0;
+
+	--mwp-color-info-border: rgba(96, 165, 250, 0.32);
+	--mwp-color-info-bg: rgba(30, 64, 175, 0.2);
+	--mwp-color-info-text: #bfdbfe;
+
+	--mwp-color-upsell-border: rgba(97, 47, 47, 0.4);
+	--mwp-color-upsell-bg: rgba(95, 35, 35, 0.28);
+	--mwp-color-upsell-text: #ffffff;
+
+	// ── Layout ──────────────────────────────────────────
 
 	header,
 	.mwp-option-nav {
@@ -52,65 +80,7 @@ html[data-mwp-theme="dark"] #mwp-settings {
 		color-scheme: dark;
 	}
 
-	.mwp-options-group {
-		background-color: $color-gray-850;
-	}
-
-	.mwp-option-group-title,
-	.mwp-section-title h3,
-	.mwp-option-title,
-	.mwp-card .mwp-card-header h4,
-	.mwp-form .mwp-form-header h4,
-	.mwp-modal__header h4,
-	.mwp-accordion__trigger,
-	.mwp-progress__header strong,
-	.mwp-doc-card h4,
-	.mwp-doc-item strong,
-	.mwp-schedule-value,
-	.status-box-title,
-	.cs-title,
-	.source-test-metric strong,
-	.si-title,
-	.mwp-log-summary-item strong,
-	.mwp-log-modal-dialog h3 {
-		color: $color-gray-100;
-	}
-
-	.mwp-section-title p,
-	.mwp-option-description,
-	.mwp-card .mwp-card-header p,
-	.mwp-card .mwp-card-content,
-	.mwp-form .mwp-form-header p,
-	.mwp-table td,
-	.mwp-field-label,
-	.mwp-modal__header p,
-	.mwp-modal__content,
-	.mwp-lightbox__caption,
-	.mwp-accordion__content,
-	.mwp-progress__header,
-	.mwp-doc-card p,
-	.mwp-doc-item p,
-	.mwp-option-count,
-	.mwp-schedule-label,
-	.mwp-schedule-empty,
-	.source-test-empty,
-	.source-test-eyebrow,
-	.source-test-limit span,
-	.source-test-block-title,
-	.source-test-metric span,
-	.status-box-item,
-	.status-box-item-value,
-	.status-box-item-title,
-	.si-value,
-	.mwp-entry-prefix,
-	.mwp-log-summary-item span,
-	.mwp-log-time,
-	.mwp-log-level,
-	.mwp-log-duration,
-	.mwp-log-empty,
-	.mwp-log-modal-dialog p {
-		color: $color-gray-400;
-	}
+	// ── Navigation ──────────────────────────────────────
 
 	.mwp-nav-item {
 		color: $color-gray-400;
@@ -146,38 +116,10 @@ html[data-mwp-theme="dark"] #mwp-settings {
 		}
 	}
 
-	.mwp-options-holder .mwp-section-options,
-	.mwp-section-view,
-	.mwp-card,
-	.mwp-form,
-	.mwp-table-wrap,
-	.mwp-modal__dialog,
-	.mwp-lightbox__dialog,
-	.mwp-lightbox-trigger,
-	.mwp-accordion,
-	.mwp-doc-card,
-	.mwp-schedule-card,
-	.mwp-test-sources-output,
-	.source-test-metrics,
-	.source-test-url-list,
-	.engine-log-box,
-	.status-box,
-	.si-item,
-	.mwp-log-summary-item,
-	.mwp-log-row,
-	.mwp-log-modal-dialog {
-		border-color: $color-gray-800;
-		background-color: $color-gray-900;
-	}
+	// ── Premium / Pro badge ─────────────────────────────
 
-	.mwp-modal {
-		.mwp-modal__overlay {
-			background-color: rgba(0, 0, 0, 0.72);
-		}
-
-		.mwp-modal__dialog {
-			box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
-		}
+	.mwp-premium-badge {
+		background-color: $color-gray-700;
 	}
 
 	.mwp-section-options {
@@ -194,321 +136,164 @@ html[data-mwp-theme="dark"] #mwp-settings {
 		}
 	}
 
-	.mwp-option-count,
-	.mwp-schedule-chip,
-	.mwp-badge,
-	.source-test-summary > div {
-		border-color: $color-gray-800;
-		background-color: $color-gray-800;
-		color: $color-gray-300;
-	}
+	// ── Notices ─────────────────────────────────────────
 
-	.mwp-color-picker {
-		border-color: $color-gray-800;
-	}
-
-  .source-test-summary strong {
-    color: $color-gray-50;
-  }
-
-	.mwp-option-input {
-		input[type="text"],
-		input[type="number"],
-		input[type="url"],
-		input[type="email"],
-		input[type="password"],
-		input[type="search"],
-		select,
-		textarea {
-			border-color: $color-gray-700;
-			background-color: $color-gray-900;
-			color: $color-gray-100;
-			box-shadow: none;
-
-			&::placeholder {
-				color: $color-gray-600;
-			}
-		}
-
-		.switch,
-		.mwp-switch {
-			.slider,
-			.mwp-switch__slider {
-				background-color: $color-gray-700;
-
-				&::before {
-					background-color: $color-gray-200;
-				}
-			}
-
-			input:checked + .slider,
-			input:checked + .mwp-switch__slider {
-				background-color: var(--mwp-ui-primary, #{$color-primary});
-			}
-		}
-	}
-
-	.mwp-doc-item:not(:last-child),
-	.api-documentation,
-	.source-test-metric:not(:last-child),
-	.source-test-url:not(:last-child) {
-		border-color: $color-gray-800;
-	}
-
-	.source-test-url,
-	.source-test-metric,
-	.system-info tr:nth-child(even) {
-		background-color: $color-gray-900;
-	}
-
-	.source-test-url {
-		color: $color-gray-300;
-
-		&:nth-child(even) {
-			background-color: $color-gray-800;
-		}
-	}
-
-	.source-test-skeleton {
-		background: linear-gradient(90deg, $color-gray-800 25%, $color-gray-700 37%, $color-gray-800 63%);
-		background-size: 400% 100%;
-	}
-
-	.source-test-limit {
-		border-color: rgb(251 146 60 / 0.22) !important;
-		background-color: rgb(154 52 18 / 0.16) !important;
-
-		strong,
-		p {
-			color: $color-orange-300;
-		}
-	}
-
-	.mwp-test-sources-output.has-error {
-		border-color: rgb(248 113 113 / 0.35);
-		background-color: rgb(127 29 29 / 0.2);
-		color: #fecaca;
-	}
-
-	.mwp-stop-crawler,
-	.mwp-schedule-action,
-	.mwp-button,
-	.mwp-radio-group__item span,
-	.debug-actions button,
-	.log-actions button,
-	.mwp-log-filters button,
-	.mwp-log-modal-actions button {
-		border-color: $color-gray-700;
-		background-color: $color-gray-900;
-		color: $color-gray-200;
-
-		&:hover {
-			background-color: $color-gray-800;
-			color: $color-white;
-			box-shadow: none;
-		}
-	}
-
-	.mwp-log-filters button.active {
-		border-color: rgb(251 146 60 / 0.28);
-		background: rgb(154 52 18 / 0.16);
-		color: $color-orange-300;
-	}
-
-	.mwp-log-search input {
-		border-color: $color-gray-700;
-		background-color: $color-gray-900;
-		color: $color-gray-100;
-	}
-
-	.mwp-schedule-action.is-secondary {
-		border-color: rgb(251 146 60 / 0.28);
-		background-color: rgb(154 52 18 / 0.16);
-		color: $color-orange-300;
-
-		&:hover {
-			background-color: rgb(154 52 18 / 0.28);
-		}
-	}
-
-	.mwp-button.is-primary {
-		border-color: var(--mwp-ui-primary, #{$color-primary});
-		background-color: var(--mwp-ui-primary, #{$color-primary});
-		color: $color-white;
-	}
-
-	.mwp-radio-group__item input:checked + span {
-		border-color: var(--mwp-ui-primary, #{$color-primary});
-		background-color: var(--mwp-ui-primary, #{$color-primary});
-		color: $color-white;
-	}
-
-	.mwp-button.is-ghost {
-		border-color: transparent;
-		background-color: transparent;
-		color: $color-gray-300;
-
-		&:hover {
-			background-color: $color-gray-800;
-			color: $color-gray-50;
-		}
-	}
-
-	.mwp-button.is-danger,
-	.mwp-inline-notice.is-error {
-		border-color: rgb(248 113 113 / 0.35);
-		background-color: rgb(127 29 29 / 0.2);
-		color: #fecaca;
-	}
-
-	.mwp-badge.is-primary {
-		background-color: rgb(5 150 105 / 0.18);
-		color: #86efac;
-	}
-
-	.mwp-badge.is-warning,
-	.mwp-inline-notice.is-warning {
-		border-color: rgb(251 146 60 / 0.24);
-		background-color: rgb(154 52 18 / 0.18);
-		color: $color-orange-300;
-	}
-
-	.mwp-badge.is-success,
-	.mwp-inline-notice.is-success {
-		border-color: rgb(74 222 128 / 0.28);
-		background-color: rgb(20 83 45 / 0.24);
-		color: #bbf7d0;
-	}
-
-	.mwp-inline-notice.is-info {
-		border-color: rgb(96 165 250 / 0.32);
-		background-color: rgb(30 64 175 / 0.2);
-		color: #bfdbfe;
-	}
-
-	.mwp-table th {
-		border-color: $color-gray-800;
-		background-color: $color-gray-800;
-		color: $color-gray-400;
-	}
-
-	.mwp-table td {
-		border-color: $color-gray-800;
-	}
-
-	.mwp-color-picker__swatch,
-	.mwp-icon-button,
-	.mwp-accordion__item:not(:last-child),
-	.mwp-modal__header {
-		border-color: $color-gray-800;
-	}
-
-	.mwp-icon-button {
-		background-color: $color-gray-900;
-		color: $color-gray-300;
-	}
-
-	.mwp-color-picker__swatch {
-		background-color: $color-gray-900;
-		color: $color-gray-300;
-	}
-
-	.mwp-progress__track {
-		background-color: $color-gray-800;
-	}
-
-	.add-more-entry-point {
-		background-color: $color-gray-950;
-		color: $color-orange-300;
-
-		&.disabled {
-			border-color: $color-gray-800;
-			background-color: $color-gray-900;
-			color: $color-gray-600;
-		}
-	}
-
-	.mwp-test-sources,
-	.mwp-regenerate-secret {
-		border-color: rgb(251 146 60 / 0.22);
-		background-color: rgb(154 52 18 / 0.16);
-		color: $color-orange-300;
-
-		&:hover {
-			background-color: var(--mwp-ui-primary-hover, #{$color-primary-hover});
-			color: $color-white;
-		}
-	}
-
-	.mwp-upsell-callout {
-		border-color: rgb(97 47 47 / 40%) !important;
-    background: rgb(95 35 35 / 28%);
-
-		strong,
-		p {
-			color: #FFF;
-		}
-	}
-
-	.crawler-engine-log {
-		.log-entry.success {
-			background-color: rgb(20 83 45 / 0.32);
-			color: #bbf7d0;
-		}
-
-		.log-entry.error {
-			background-color: rgb(127 29 29 / 0.3);
-			color: #fecaca;
-		}
-
-		.log-entry.completed {
-			background-color: $color-gray-800;
-			color: $color-gray-200;
-		}
-	}
-
-	.mwp-main-log {
-		border: 1px solid $color-gray-800;
-		background-color: $color-gray-850;
-		color: $color-gray-200;
-	}
-
-	.mwp-log-message {
-		color: $color-gray-200;
-	}
-
-	.debug-output {
-		border-color: $color-gray-800;
-		background-color: $color-gray-900;
-		color: $color-gray-200;
-	}
-
-	.mwp-notice,
 	.mwp-notice {
 		border-color: rgb(20 83 45 / 0.48);
 		background: rgb(20 83 45 / 1);
 		color: #bbf7d0;
-	}
 
-	.mwp-notice.error,
-	.mwp-notice.error {
-		border-color: rgb(127 29 29 / 0.44);
-		background: rgb(127 29 29 / 1);
+		&.error {
+			border-color: rgb(127 29 29 / 0.44);
+			background: rgb(127 29 29 / 1);
 
-		.notice-text {
-			color: #fecaca;
+			.notice-text {
+				color: #fecaca;
+			}
+		}
+
+		&.success .notice-text {
+			color: #bbf7d0;
 		}
 	}
 
-	.mwp-notice.success .notice-text,
-	.mwp-notice.success .notice-text {
-		color: #bbf7d0;
+	.mwp-inline-notice {
+		&.is-success {
+			border-color: var(--mwp-color-success-border);
+			background-color: var(--mwp-color-success-bg);
+			color: var(--mwp-color-success-text);
+		}
+
+		&.is-error {
+			border-color: var(--mwp-color-danger-border);
+			background-color: var(--mwp-color-danger-bg);
+			color: var(--mwp-color-danger-text);
+		}
+
+		&.is-warning {
+			border-color: var(--mwp-color-warning-border);
+			background-color: var(--mwp-color-warning-bg);
+			color: var(--mwp-color-warning-text);
+		}
+
+		&.is-info {
+			border-color: var(--mwp-color-info-border);
+			background-color: var(--mwp-color-info-bg);
+			color: var(--mwp-color-info-text);
+		}
 	}
 
+	// ── Buttons ─────────────────────────────────────────
+
+	.mwp-button {
+		&.is-primary:hover {
+			background-color: $color-primary-hover;
+		}
+
+		&.is-danger {
+			border-color: var(--mwp-color-danger-border);
+			background-color: var(--mwp-color-danger-bg);
+			color: var(--mwp-color-danger-text);
+
+			&:hover {
+				background-color: var(--mwp-color-danger-bg-hover);
+			}
+		}
+
+		&.is-ghost:hover {
+			background-color: $color-gray-800;
+		}
+	}
+
+	// ── Badges ──────────────────────────────────────────
+
+	.mwp-badge {
+		&.is-primary {
+			background-color: rgba(5, 150, 105, 0.18);
+			color: #6ee7b7;
+		}
+
+		&.is-warning {
+			border-color: var(--mwp-color-warning-border);
+			background-color: var(--mwp-color-warning-bg);
+			color: var(--mwp-color-warning-text);
+		}
+
+		&.is-success {
+			border-color: var(--mwp-color-success-border);
+			background-color: var(--mwp-color-success-bg);
+			color: var(--mwp-color-success-text);
+		}
+	}
+
+	// ── Log viewer ──────────────────────────────────────
+
+	.mwp-log-viewer__toolbar .mwp-log-viewer__filters button {
+		border-color: var(--mwp-color-border);
+		background: transparent;
+		color: var(--mwp-color-text-secondary);
+
+		&.active {
+			border-color: var(--mwp-ui-primary, #{$color-primary});
+			background: rgba(5, 150, 105, 0.14);
+			color: var(--mwp-ui-primary, #{$color-primary});
+		}
+
+		&:hover:not(.active) {
+			background: var(--mwp-color-bg-hover);
+			color: var(--mwp-color-text);
+		}
+	}
+
+	.mwp-log-viewer__summary-item {
+		border-color: var(--mwp-color-border);
+
+		strong {
+			color: var(--mwp-color-text);
+		}
+
+		span {
+			color: var(--mwp-color-text-secondary);
+		}
+	}
+
+	.mwp-log-viewer__main .mwp-log-entry__badge {
+		&.is-success {
+			background: rgba(20, 83, 45, 0.32);
+			color: #bbf7d0;
+		}
+
+		&.is-error {
+			background: rgba(127, 29, 29, 0.3);
+			color: #fecaca;
+		}
+
+		&.is-warning {
+			background: rgba(180, 83, 9, 0.3);
+			color: #fed7aa;
+		}
+
+		&.is-info {
+			background: rgba(29, 78, 216, 0.25);
+			color: #bfdbfe;
+		}
+	}
+
+	// ── Upsell ──────────────────────────────────────────
+
+	.mwp-upsell-callout {
+		border-color: var(--mwp-color-upsell-border) !important;
+		background: var(--mwp-color-upsell-bg);
+
+		strong,
+		p {
+			color: var(--mwp-color-upsell-text);
+		}
+	}
 }
 
-// Modals and lightboxes are moved to <body> by JS, so they
-// need selectors that don't require #mwp-settings ancestry.
+// ── Overlays (moved to <body> by JS) ───────────────────
+// These need selectors that don't require #mwp-settings ancestry.
 html[data-mwp-theme="dark"] {
 	.mwp-modal__dialog {
 		background-color: $color-gray-900;
@@ -521,8 +306,6 @@ html[data-mwp-theme="dark"] {
 	}
 
 	.mwp-modal__header {
-		border-bottom-color: $color-gray-800;
-
 		h4 {
 			color: $color-gray-100;
 		}
@@ -536,9 +319,24 @@ html[data-mwp-theme="dark"] {
 		color: $color-gray-400;
 	}
 
+	.mwp-modal__footer {
+		border-top-color: $color-gray-800;
+		background-color: $color-gray-850;
+	}
+
 	.mwp-modal .mwp-icon-button {
 		background-color: $color-gray-900;
 		color: $color-gray-300;
+	}
+
+	.mwp-modal.is-danger {
+		.mwp-modal__dialog {
+			border-color: var(--mwp-color-danger-border);
+		}
+
+		.mwp-modal__header h4 {
+			color: var(--mwp-color-danger-text);
+		}
 	}
 
 	.mwp-lightbox__dialog {
@@ -552,143 +350,5 @@ html[data-mwp-theme="dark"] {
 
 	.mwp-lightbox__close {
 		color: $color-gray-300;
-	}
-}
-
-html[data-mwp-theme="dark"] #mwp-settings {
-	.mwp-stat {
-		border-color: $color-gray-800;
-
-		.mwp-stat__label {
-			color: $color-gray-400;
-		}
-
-		.mwp-stat__value {
-			color: $color-gray-100;
-		}
-	}
-
-	.mwp-modal.is-danger {
-		.mwp-modal__dialog {
-			border-color: rgba(225, 29, 72, 0.25);
-		}
-	}
-
-	.mwp-pagination {
-		border-top-color: $color-gray-800;
-
-		.mwp-pagination__info {
-			color: $color-gray-500;
-		}
-	}
-
-	.mwp-log-viewer {
-		.mwp-log-viewer__summary-item {
-			border-color: $color-gray-800;
-			background-color: $color-gray-900;
-
-			span {
-				color: $color-gray-400;
-			}
-
-			strong {
-				color: $color-gray-100;
-			}
-		}
-
-		.mwp-log-viewer__toolbar {
-			.mwp-log-viewer__filters button {
-				border-color: $color-gray-700;
-				background-color: $color-gray-900;
-				color: $color-gray-300;
-
-				&:hover {
-					background-color: $color-gray-800;
-				}
-
-				&.active {
-					border-color: rgba(5, 150, 105, 0.32);
-					background: rgba(5, 150, 105, 0.12);
-					color: $color-primary;
-				}
-			}
-
-			.mwp-log-viewer__search input {
-				border-color: $color-gray-700;
-				background-color: $color-gray-900;
-				color: $color-gray-100;
-
-				&::placeholder {
-					color: $color-gray-500;
-				}
-			}
-		}
-
-		.mwp-log-viewer__main {
-			border-color: $color-gray-800;
-			background-color: $color-gray-850;
-
-			.mwp-log-entry {
-				border-color: $color-gray-800;
-				background-color: $color-gray-900;
-
-				.mwp-log-entry__time {
-					color: $color-gray-500;
-				}
-
-				.mwp-log-entry__message {
-					color: $color-gray-300;
-				}
-
-				.mwp-log-entry__badge {
-					&.is-success {
-						background: rgba(20, 83, 45, 0.32);
-						color: #bbf7d0;
-					}
-
-					&.is-error {
-						background: rgba(127, 29, 29, 0.3);
-						color: #fecaca;
-					}
-
-					&.is-warning {
-						background: rgba(180, 83, 9, 0.3);
-						color: #fed7aa;
-					}
-
-					&.is-info {
-						background: rgba(29, 78, 216, 0.25);
-						color: #bfdbfe;
-					}
-				}
-			}
-
-			.mwp-log-viewer__empty {
-				color: $color-gray-500;
-			}
-		}
-	}
-
-	.mwp-media-field {
-		.mwp-media-field__preview {
-			border-color: $color-gray-700;
-			background-color: $color-gray-850;
-
-			&.has-image {
-				border-color: $color-gray-700;
-			}
-		}
-	}
-
-	.mwp-empty-state {
-		border-color: $color-gray-700;
-
-		h2 {
-			color: $color-gray-100;
-		}
-
-		p {
-			color: $color-gray-400;
-		}
 	}
 }

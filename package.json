@@ -1,0 +1,15 @@
+{
+	"name": "matterwp-admin-ui",
+	"version": "1.0.0",
+	"private": true,
+	"scripts": {
+		"build": "vite build"
+	},
+	"license": "GPL-2.0-or-later",
+	"devDependencies": {
+		"autoprefixer": "^10.5.0",
+		"postcss": "^8.5.14",
+		"sass": "^1.99.0",
+		"vite": "^7.3.3"
+	}
+}

@@ -1,0 +1,44 @@
+@use "./../variables" as *;
+
+.mwp-accordion {
+	width: 100%;
+	border: 1px solid var(--mwp-color-border);
+	border-radius: var(--mwp-ui-radius, 8px);
+	background-color: var(--mwp-color-bg);
+}
+
+.mwp-accordion__item:not(:last-child) {
+	border-bottom: 1px solid var(--mwp-color-border);
+}
+
+.mwp-accordion__trigger {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	padding: 13px 14px;
+	border: 0;
+	background: transparent;
+	color: var(--mwp-color-text);
+	font-size: 13px;
+	font-weight: 700;
+	text-align: left;
+	cursor: pointer;
+}
+
+.mwp-accordion__icon {
+	color: var(--mwp-color-text-muted);
+	font-size: 16px;
+	line-height: 1;
+}
+
+.mwp-accordion__trigger[aria-expanded="true"] .mwp-accordion__icon {
+	transform: rotate(45deg);
+}
+
+.mwp-accordion__content {
+	padding: 0 14px 14px;
+	color: var(--mwp-color-text-secondary);
+	font-size: 13px;
+	line-height: 1.6;
+}

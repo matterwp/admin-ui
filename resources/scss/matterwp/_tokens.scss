@@ -1,0 +1,36 @@
+@use "./variables" as *;
+
+#mwp-settings {
+	--mwp-color-bg: #{$color-white};
+	--mwp-color-bg-alt: #{$color-gray-50};
+	--mwp-color-bg-hover: #{$color-gray-100};
+	--mwp-color-bg-surface: #{$color-white};
+	--mwp-color-border: #{$color-gray-200};
+	--mwp-color-border-strong: #{$color-gray-300};
+	--mwp-color-text: #{$color-gray-900};
+	--mwp-color-text-secondary: #{$color-gray-500};
+	--mwp-color-text-muted: #{$color-gray-400};
+	--mwp-color-nav-active: #{$color-gray-200};
+
+	--mwp-color-danger-border: #fecaca;
+	--mwp-color-danger-bg: #fef2f2;
+	--mwp-color-danger-bg-hover: #fee2e2;
+	--mwp-color-danger-text: #991b1b;
+
+	--mwp-color-warning-border: #{$color-orange-200};
+	--mwp-color-warning-bg: #{$color-orange-50};
+	--mwp-color-warning-bg-hover: #{$color-orange-100};
+	--mwp-color-warning-text: #{$color-orange-800};
+
+	--mwp-color-success-border: #bbf7d0;
+	--mwp-color-success-bg: #f0fdf4;
+	--mwp-color-success-text: #166534;
+
+	--mwp-color-info-border: #bfdbfe;
+	--mwp-color-info-bg: #eff6ff;
+	--mwp-color-info-text: #1d4ed8;
+
+	--mwp-color-upsell-border: #ecd9d6;
+	--mwp-color-upsell-bg: #fff1ef;
+	--mwp-color-upsell-text: #047857;
+}

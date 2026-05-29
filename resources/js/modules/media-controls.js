@@ -1,14 +1,15 @@
 function initMediaControls() {
-	document.querySelectorAll('[data-media-target]').forEach(button => {
-		const input = document.querySelector(`[data-media-input="${button.dataset.mediaTarget}"]`);
-		const preview = document.querySelector(`[data-media-preview="${button.dataset.mediaTarget}"]`);
+	document.addEventListener('click', event => {
+		const button = event.target.closest('[data-media-target]');
 
-		if (!input) {
-			return;
-		}
-
-		button.addEventListener('click', event => {
+		if (button) {
 			event.preventDefault();
+			const input = document.querySelector(`[data-media-input="${button.dataset.mediaTarget}"]`);
+			const preview = document.querySelector(`[data-media-preview="${button.dataset.mediaTarget}"]`);
+
+			if (!input) {
+				return;
+			}
 
 			const frame = wp.media({
 				library: { type: 'image' },
@@ -44,14 +45,15 @@ function initMediaControls() {
 			});
 
 			frame.open();
-		});
-	});
+			return;
+		}
 
-	document.querySelectorAll('[data-media-remove]').forEach(button => {
-		button.addEventListener('click', event => {
+		const removeBtn = event.target.closest('[data-media-remove]');
+
+		if (removeBtn) {
 			event.preventDefault();
-			const input = document.querySelector(`[data-media-input="${button.dataset.mediaRemove}"]`);
-			const preview = document.querySelector(`[data-media-preview="${button.dataset.mediaRemove}"]`);
+			const input = document.querySelector(`[data-media-input="${removeBtn.dataset.mediaRemove}"]`);
+			const preview = document.querySelector(`[data-media-preview="${removeBtn.dataset.mediaRemove}"]`);
 
 			if (input) {
 				input.value = '';
@@ -65,7 +67,7 @@ function initMediaControls() {
 			if (input) {
 				input.dispatchEvent(new Event('change', { bubbles: true }));
 			}
-		});
+		}
 	});
 }
 

@@ -56,7 +56,7 @@ class Schema {
 			)
 		);
 
-		$valid_types = array( 'boolean', 'integer', 'float', 'string', 'color', 'url', 'email', 'select', 'multi_select', 'textarea' );
+		$valid_types = array( 'boolean', 'integer', 'float', 'string', 'text', 'color', 'url', 'email', 'select', 'multi_select', 'textarea' );
 		if ( ! in_array( $args['type'], $valid_types, true ) ) {
 			wp_doing_it_wrong( __METHOD__, sprintf( 'Unknown schema type "%s".', esc_html( $args['type'] ) ), '1.0.0' );
 			return;
@@ -151,6 +151,7 @@ class Schema {
 			case 'textarea':
 				return sanitize_textarea_field( $value );
 
+			case 'text':
 			case 'string':
 			default:
 				return sanitize_text_field( $value );

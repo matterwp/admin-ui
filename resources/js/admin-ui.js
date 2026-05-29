@@ -17,44 +17,69 @@ function normalizeHexColor(value) {
 }
 
 function initColorPickers() {
-	document.querySelectorAll('[data-mwp-color-picker]').forEach(picker => {
-		const swatch = picker.querySelector('[data-mwp-color-swatch]');
-		const input = picker.querySelector('[data-mwp-color-input]');
+	document.addEventListener('input', event => {
+		const swatch = event.target.closest('[data-mwp-color-swatch]');
 
-		if (!swatch || !input) {
+		if (swatch) {
+			const picker = swatch.closest('[data-mwp-color-picker]');
+			const input = picker?.querySelector('[data-mwp-color-input]');
+
+			if (input) {
+				input.value = swatch.value.toUpperCase();
+				input.dispatchEvent(new Event('input', { bubbles: true }));
+			}
+
 			return;
 		}
 
-		swatch.addEventListener('input', () => {
-			input.value = swatch.value.toUpperCase();
-			input.dispatchEvent(new Event('input', { bubbles: true }));
-		});
+		const input = event.target.closest('[data-mwp-color-input]');
 
-		input.addEventListener('input', () => {
+		if (input) {
+			const picker = input.closest('[data-mwp-color-picker]');
+			const swatch = picker?.querySelector('[data-mwp-color-swatch]');
 			const color = normalizeHexColor(input.value);
 
-			if (isHexColor(color)) {
+			if (isHexColor(color) && swatch) {
 				swatch.value = color;
 				input.value = color.toUpperCase();
 			}
-		});
+		}
 	});
 }
 
 function initModals() {
-	document.querySelectorAll('.mwp-modal-trigger').forEach(trigger => {
-		const modal = trigger.nextElementSibling;
+	const modalCache = new WeakMap();
+	let previousFocus = null;
 
-		if (!modal || !modal.matches('[data-mwp-modal]')) {
+	function moveModalToBody(modal) {
+		if (modal.parentElement !== document.body) {
+			document.body.appendChild(modal);
+		}
+	}
+
+	document.addEventListener('click', event => {
+		const trigger = event.target.closest('.mwp-modal-trigger');
+
+		if (!trigger) {
 			return;
 		}
 
-		document.body.appendChild(modal);
+		let modal = modalCache.get(trigger);
 
-		trigger.addEventListener('click', () => {
-			modal.hidden = false;
-			modal.querySelector('[data-mwp-modal-close]')?.focus();
-		});
+		if (!modal) {
+			modal = trigger.nextElementSibling;
+
+			if (!modal || !modal.matches('[data-mwp-modal]')) {
+				return;
+			}
+
+			moveModalToBody(modal);
+			modalCache.set(trigger, modal);
+		}
+
+		previousFocus = document.activeElement;
+		modal.hidden = false;
+		modal.querySelector('[data-mwp-modal-close]')?.focus();
 	});
 
 	document.addEventListener('click', event => {
@@ -65,6 +90,10 @@ function initModals() {
 		}
 
 		close.closest('[data-mwp-modal]').hidden = true;
+
+		if (previousFocus) {
+			previousFocus.focus();
+		}
 	});
 
 	document.addEventListener('keydown', event => {
@@ -75,6 +104,41 @@ function initModals() {
 		document.querySelectorAll('[data-mwp-modal]:not([hidden])').forEach(modal => {
 			modal.hidden = true;
 		});
+
+		if (previousFocus) {
+			previousFocus.focus();
+		}
+	});
+
+	document.addEventListener('keydown', event => {
+		if (event.key !== 'Tab') {
+			return;
+		}
+
+		const modal = event.target.closest('[data-mwp-modal]');
+
+		if (!modal) {
+			return;
+		}
+
+		const focusable = modal.querySelectorAll(
+			'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+		);
+
+		if (focusable.length === 0) {
+			return;
+		}
+
+		const first = focusable[0];
+		const last = focusable[focusable.length - 1];
+
+		if (event.shiftKey && document.activeElement === first) {
+			event.preventDefault();
+			last.focus();
+		} else if (!event.shiftKey && document.activeElement === last) {
+			event.preventDefault();
+			first.focus();
+		}
 	});
 }
 
@@ -103,6 +167,8 @@ function ensureLightbox() {
 }
 
 function initLightbox() {
+	let previousFocus = null;
+
 	document.addEventListener('click', event => {
 		const trigger = event.target.closest('[data-mwp-lightbox-trigger]');
 
@@ -118,6 +184,7 @@ function initLightbox() {
 		image.alt = trigger.dataset.mwpLightboxAlt || '';
 		caption.textContent = trigger.dataset.mwpLightboxCaption || '';
 		caption.hidden = !caption.textContent;
+		previousFocus = document.activeElement;
 		lightbox.hidden = false;
 		lightbox.querySelector('[data-mwp-lightbox-close]')?.focus();
 	});
@@ -130,6 +197,10 @@ function initLightbox() {
 		}
 
 		close.closest('[data-mwp-lightbox]').hidden = true;
+
+		if (previousFocus) {
+			previousFocus.focus();
+		}
 	});
 
 	document.addEventListener('keydown', event => {
@@ -140,31 +211,65 @@ function initLightbox() {
 		document.querySelectorAll('[data-mwp-lightbox]:not([hidden])').forEach(lightbox => {
 			lightbox.hidden = true;
 		});
+
+		if (previousFocus) {
+			previousFocus.focus();
+		}
+	});
+
+	document.addEventListener('keydown', event => {
+		if (event.key !== 'Tab') {
+			return;
+		}
+
+		const lightbox = event.target.closest('[data-mwp-lightbox]');
+
+		if (!lightbox) {
+			return;
+		}
+
+		const focusable = lightbox.querySelectorAll(
+			'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+		);
+
+		if (focusable.length === 0) {
+			return;
+		}
+
+		const first = focusable[0];
+		const last = focusable[focusable.length - 1];
+
+		if (event.shiftKey && document.activeElement === first) {
+			event.preventDefault();
+			last.focus();
+		} else if (!event.shiftKey && document.activeElement === last) {
+			event.preventDefault();
+			first.focus();
+		}
 	});
 }
 
 function initAccordions() {
-	document.querySelectorAll('[data-mwp-accordion-trigger]').forEach(trigger => {
-		trigger.addEventListener('click', () => {
-			const content = document.getElementById(trigger.getAttribute('aria-controls'));
-			const isOpen = trigger.getAttribute('aria-expanded') === 'true';
+	document.addEventListener('click', event => {
+		const trigger = event.target.closest('[data-mwp-accordion-trigger]');
 
-			trigger.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+		if (!trigger) {
+			return;
+		}
 
-			if (content) {
-				content.hidden = isOpen;
-			}
-		});
+		const content = document.getElementById(trigger.getAttribute('aria-controls'));
+		const isOpen = trigger.getAttribute('aria-expanded') === 'true';
+
+		trigger.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+
+		if (content) {
+			content.hidden = isOpen;
+		}
 	});
 }
 
 export function initAdminUI() {
-	initColorPickers();
-	initModals();
-	initLightbox();
-	initAccordions();
-	initClipboard();
-	initMediaControls();
-	initLogViewer();
-	initPaginatedTables();
+	[initColorPickers, initModals, initLightbox, initAccordions, initClipboard, initMediaControls, initLogViewer, initPaginatedTables].forEach(fn => {
+		try { fn(); } catch (e) { console.error('AdminUI init error:', fn.name, e); }
+	});
 }

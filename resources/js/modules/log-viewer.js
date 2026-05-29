@@ -1,43 +1,37 @@
 function initLogViewer() {
-	initLogFilters();
-	initLogSearch();
-}
+	const viewers = document.querySelectorAll('[data-log-viewer]');
 
-function initLogFilters() {
-	document.querySelectorAll('[data-log-filter]').forEach(button => {
-		button.addEventListener('click', () => {
-			const filter = button.dataset.logFilter;
-			const container = button.closest('[data-log-viewer]');
-			const entries = container ? container.querySelectorAll('.mwp-log-entry') : document.querySelectorAll('.mwp-log-entry');
+	viewers.forEach(viewer => {
+		const entries = viewer.querySelectorAll('.mwp-log-entry');
+		const filterButtons = viewer.querySelectorAll('[data-log-filter]');
+		const searchInput = viewer.querySelector('[data-log-search]');
 
-			document.querySelectorAll('[data-log-filter]').forEach(btn => btn.classList.remove('active'));
+		let currentFilter = 'all';
+
+		function updateVisibility() {
+			const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+			entries.forEach(entry => {
+				const matchesFilter = currentFilter === 'all' || entry.dataset.logLevel === currentFilter;
+				const matchesSearch = !query || entry.textContent.toLowerCase().includes(query);
+				entry.classList.toggle('is-hidden', !(matchesFilter && matchesSearch));
+			});
+		}
+
+		viewer.addEventListener('click', event => {
+			const button = event.target.closest('[data-log-filter]');
+			if (!button) return;
+			filterButtons.forEach(btn => btn.classList.remove('active'));
 			button.classList.add('active');
-
-			entries.forEach(entry => {
-				if (filter === 'all') {
-					entry.classList.remove('is-hidden');
-				} else {
-					const level = entry.dataset.logLevel || 'info';
-					entry.classList.toggle('is-hidden', level !== filter);
-				}
-			});
+			currentFilter = button.dataset.logFilter;
+			updateVisibility();
 		});
-	});
-}
 
-function initLogSearch() {
-	document.querySelectorAll('[data-log-search]').forEach(input => {
-		input.addEventListener('input', () => {
-			const query = input.value.toLowerCase().trim();
-			const container = input.closest('[data-log-viewer]');
-			const entries = container ? container.querySelectorAll('.mwp-log-entry') : document.querySelectorAll('.mwp-log-entry');
+		if (searchInput) {
+			searchInput.addEventListener('input', updateVisibility);
+		}
 
-			entries.forEach(entry => {
-				const message = entry.querySelector('.mwp-log-entry__message');
-				const text = message ? message.textContent.toLowerCase() : '';
-				entry.classList.toggle('is-hidden', query !== '' && !text.includes(query));
-			});
-		});
+		const activeBtn = viewer.querySelector('[data-log-filter].active');
+		if (activeBtn) currentFilter = activeBtn.dataset.logFilter;
 	});
 }
 

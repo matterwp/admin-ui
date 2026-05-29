@@ -1,0 +1,226 @@
+@use "./../variables" as *;
+
+@mixin field-control($padding: 0 12px, $height: 36px) {
+	width: 100%;
+	height: $height;
+	padding: $padding;
+	border: 1px solid var(--mwp-color-border);
+	border-radius: var(--mwp-ui-radius, 8px);
+	background-color: var(--mwp-color-bg);
+	color: var(--mwp-color-text);
+	font-size: 13px;
+	font-weight: 500;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+	.mwp-option-input {
+		input[type="text"],
+		input[type="number"],
+		input[type="url"],
+		input[type="email"],
+		input[type="password"],
+		input[type="search"],
+		input[type="tel"] {
+			@include field-control;
+		}
+
+		select {
+			@include field-control;
+
+			&.multiple {
+				height: auto;
+				padding: 8px 16px;
+			}
+		}
+
+		textarea {
+			@include field-control(8px 12px, auto);
+		}
+
+		input[type="text"]:focus,
+		input[type="number"]:focus,
+		input[type="url"]:focus,
+		input[type="email"]:focus,
+		input[type="password"]:focus,
+		input[type="search"]:focus,
+		input[type="tel"]:focus,
+		select:focus,
+		textarea:focus {
+			border-color: transparent;
+			outline: 2px solid var(--mwp-ui-primary, #{$color-primary});
+		}
+
+	.switch,
+	.mwp-switch {
+		position: relative;
+		display: inline-block;
+		width: 44px;
+		height: 25px;
+
+		input {
+			opacity: 0;
+			width: 0;
+			height: 0;
+		}
+
+		.slider,
+		.mwp-switch__slider {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background-color: var(--mwp-color-border-strong);
+			border-radius: 34px;
+			cursor: pointer;
+			transition: background-color 0.4s ease;
+
+			&:before {
+				position: absolute;
+				content: "";
+				height: 17px;
+				width: 17px;
+				left: 4px;
+				bottom: 4px;
+				background-color: #fff;
+				border-radius: 50%;
+				transition: transform 0.4s ease;
+			}
+		}
+
+		input:checked + .slider,
+		input:checked + .mwp-switch__slider {
+			background-color: var(--mwp-ui-primary, #{$color-primary});
+		}
+
+		input:checked + .slider:before,
+		input:checked + .mwp-switch__slider:before {
+			transform: translateX(18px);
+		}
+	}
+}
+
+.mwp-color-picker,
+.mwp-input-button {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	width: auto;
+	max-width: 420px;
+
+	&.is-full-width {
+		width: 100%;
+		max-width: 100%;
+	}
+}
+
+.mwp-color-picker {
+	.mwp-color-picker__swatch {
+		width: 38px;
+		height: 36px;
+		flex: 0 0 38px;
+		padding: 3px;
+		border: 1px solid var(--mwp-color-border);
+		border-radius: var(--mwp-ui-radius, 8px);
+		overflow: hidden;
+		box-shadow: none;
+		cursor: pointer;
+	}
+
+	.mwp-color-picker__input {
+		min-width: 0;
+		font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+		text-transform: uppercase;
+	}
+}
+
+.mwp-input-button {
+	input {
+		min-width: 0;
+	}
+
+	.mwp-button {
+		flex: 0 0 auto;
+	}
+}
+
+.mwp-options .mwp-option .mwp-option-input:not(.mwp-option-input-wide):has(.mwp-input-button),
+.mwp-options .mwp-option .mwp-option-input:not(.mwp-option-input-wide):has(.mwp-color-picker),
+.mwp-options .mwp-option .mwp-option-input:not(.mwp-option-input-wide):has(.mwp-progress) {
+	max-width: 420px;
+}
+
+.mwp-progress {
+	width: 100%;
+	max-width: 420px;
+}
+
+.mwp-progress__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 7px;
+	color: var(--mwp-color-text);
+	font-size: 12px;
+	font-weight: 700;
+	line-height: 1.2;
+
+	strong {
+		color: var(--mwp-color-text);
+	}
+}
+
+.mwp-progress__track {
+	height: 8px;
+	overflow: hidden;
+	border-radius: 999px;
+	background-color: var(--mwp-color-bg-hover);
+}
+
+.mwp-progress__bar {
+	height: 100%;
+	border-radius: inherit;
+	background-color: var(--mwp-ui-primary, #{$color-primary});
+}
+
+.mwp-media-field {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+
+	.mwp-media-field__preview {
+		width: 96px;
+		height: 96px;
+		flex: 0 0 96px;
+		border: 2px dashed var(--mwp-color-border);
+		border-radius: var(--mwp-ui-radius, 8px);
+		overflow: hidden;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background-color: var(--mwp-color-bg-alt);
+
+		&.has-image {
+			border-style: solid;
+			border-color: var(--mwp-color-border);
+		}
+
+		img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+	}
+
+	.mwp-media-field__actions {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+}
+
+@media (max-width: 782px) {
+	.mwp-input-button {
+		max-width: 100%;
+	}
+}
