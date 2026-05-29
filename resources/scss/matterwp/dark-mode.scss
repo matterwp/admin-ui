@@ -187,11 +187,14 @@ html[data-mwp-theme="dark"] #mwp-settings {
 	.mwp-option-count,
 	.mwp-schedule-chip,
 	.mwp-badge,
-	.mwp-color-picker,
 	.source-test-summary > div {
 		border-color: $color-gray-800;
 		background-color: $color-gray-800;
 		color: $color-gray-300;
+	}
+
+	.mwp-color-picker {
+		border-color: $color-gray-800;
 	}
 
   .source-test-summary strong {
@@ -390,9 +393,12 @@ html[data-mwp-theme="dark"] #mwp-settings {
 		border-color: $color-gray-800;
 	}
 
-	.mwp-color-picker__swatch,
 	.mwp-icon-button {
 		background-color: $color-gray-900;
+		color: $color-gray-300;
+	}
+
+	.mwp-color-picker__swatch {
 		color: $color-gray-300;
 	}
 
@@ -486,5 +492,28 @@ html[data-mwp-theme="dark"] #mwp-settings {
 	.mwp-notice.success .notice-text,
 	.mwp-notice.success .notice-text {
 		color: #bbf7d0;
+	}
+
+	.mwp-media-field {
+		.mwp-media-field__preview {
+			border-color: $color-gray-700;
+			background-color: $color-gray-850;
+
+			&.has-image {
+				border-color: $color-gray-700;
+			}
+		}
+	}
+
+	.mwp-empty-state {
+		border-color: $color-gray-700;
+
+		h2 {
+			color: $color-gray-100;
+		}
+
+		p {
+			color: $color-gray-400;
+		}
 	}
 }

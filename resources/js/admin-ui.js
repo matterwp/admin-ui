@@ -1,3 +1,6 @@
+import { initClipboard } from './modules/clipboard';
+import { initMediaControls } from './modules/media-controls';
+
 function isHexColor(value) {
 	return /^#[0-9a-f]{6}$/i.test(value);
 }
@@ -159,4 +162,6 @@ export function initAdminUI() {
 	initModals();
 	initLightbox();
 	initAccordions();
+	initClipboard();
+	initMediaControls();
 }

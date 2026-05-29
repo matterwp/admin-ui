@@ -45,6 +45,7 @@ class MatterAdminUI {
 			array(
 				'title'       => '',
 				'description' => '',
+				'badge'       => null,
 				'class'       => '',
 			)
 		);
@@ -63,8 +64,44 @@ class MatterAdminUI {
 				</div>
 			<?php endif; ?>
 			<div class="mwp-section-options">
+				<?php if ( null !== $args['badge'] ) : ?>
+					<?php self::premiumBadge( $args['badge'] ); ?>
+				<?php endif; ?>
 				<?php $content(); ?>
 			</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render a premium upsell badge bar.
+	 *
+	 * @param array $args Badge arguments.
+	 * @return void
+	 */
+	public static function premiumBadge( array $args ): void {
+		$args = wp_parse_args(
+			$args,
+			array(
+				'label'      => __( 'Pro feature', 'boilerplate' ),
+				'url'        => '',
+				'link_label' => __( 'Upgrade', 'boilerplate' ),
+			)
+		);
+		?>
+		<div class="mwp-premium-badge">
+			<span class="badge-label">
+				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+				<?php echo esc_html( $args['label'] ); ?>
+			</span>
+			<?php if ( '' !== $args['url'] ) : ?>
+				<a href="<?php echo esc_url( $args['url'] ); ?>" target="_blank" rel="noopener noreferrer">
+					<?php echo esc_html( $args['link_label'] ); ?>
+					<span class="mwp-upgrade-icon" aria-hidden="true">
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+					</span>
+				</a>
+			<?php endif; ?>
 		</div>
 		<?php
 	}
@@ -634,6 +671,84 @@ class MatterAdminUI {
 					<span><?php echo esc_html( $label ); ?></span>
 				</label>
 			<?php endforeach; ?>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render a media library field (image picker).
+	 *
+	 * @param array $args Media field arguments.
+	 * @return void
+	 */
+	public static function mediaField( array $args ): void {
+		$args = wp_parse_args(
+			$args,
+			array(
+				'name'          => '',
+				'value'         => 0,
+				'preview_size'  => 'thumbnail',
+				'button_text'   => __( 'Choose Image', 'boilerplate' ),
+				'remove_text'   => __( 'Remove', 'boilerplate' ),
+				'class'         => '',
+			)
+		);
+
+		$attachment_id = absint( $args['value'] );
+		$image_url     = $attachment_id ? wp_get_attachment_image_url( $attachment_id, $args['preview_size'] ) : '';
+		$uid           = wp_unique_id( 'mwp-media-' );
+		$classes       = trim( 'mwp-media-field ' . $args['class'] );
+		?>
+		<div class="<?php echo esc_attr( $classes ); ?>">
+			<div class="mwp-media-field__preview" data-media-preview="<?php echo esc_attr( $uid ); ?>">
+				<?php if ( $image_url ) : ?>
+					<img src="<?php echo esc_url( $image_url ); ?>" alt="">
+				<?php endif; ?>
+			</div>
+			<div class="mwp-media-field__actions">
+				<input type="hidden" name="<?php echo esc_attr( $args['name'] ); ?>" value="<?php echo esc_attr( (string) $attachment_id ); ?>" data-media-input="<?php echo esc_attr( $uid ); ?>">
+				<button class="mwp-button is-secondary" type="button" data-media-target="<?php echo esc_attr( $uid ); ?>">
+					<?php echo esc_html( $args['button_text'] ); ?>
+				</button>
+				<button class="mwp-icon-button" type="button" data-media-remove="<?php echo esc_attr( $uid ); ?>" aria-label="<?php echo esc_attr( $args['remove_text'] ); ?>">
+					&times;
+				</button>
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render an empty state placeholder.
+	 *
+	 * @param array $args Empty state arguments.
+	 * @return void
+	 */
+	public static function emptyState( array $args ): void {
+		$args = wp_parse_args(
+			$args,
+			array(
+				'title'       => '',
+				'description' => '',
+				'action'      => '',
+				'class'       => '',
+			)
+		);
+
+		$classes = trim( 'mwp-empty-state ' . $args['class'] );
+		?>
+		<div class="<?php echo esc_attr( $classes ); ?>">
+			<?php if ( '' !== $args['title'] ) : ?>
+				<h2><?php echo esc_html( $args['title'] ); ?></h2>
+			<?php endif; ?>
+			<?php if ( '' !== $args['description'] ) : ?>
+				<p><?php echo wp_kses_post( $args['description'] ); ?></p>
+			<?php endif; ?>
+			<?php if ( '' !== $args['action'] ) : ?>
+				<div class="mwp-empty-state__action">
+					<?php echo wp_kses_post( $args['action'] ); ?>
+				</div>
+			<?php endif; ?>
 		</div>
 		<?php
 	}
