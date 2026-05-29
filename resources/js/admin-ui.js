@@ -1,5 +1,6 @@
 import { initClipboard } from './modules/clipboard';
 import { initMediaControls } from './modules/media-controls';
+import { initLogViewer, initPaginatedTables } from './modules/log-viewer';
 
 function isHexColor(value) {
 	return /^#[0-9a-f]{6}$/i.test(value);
@@ -91,7 +92,7 @@ function ensureLightbox() {
 	lightbox.innerHTML = `
 		<div class="mwp-lightbox__overlay" data-mwp-lightbox-close></div>
 		<div class="mwp-lightbox__dialog" role="dialog" aria-modal="true">
-			<button class="mwp-icon-button mwp-lightbox__close" type="button" aria-label="Close" data-mwp-lightbox-close>&times;</button>
+			<button class="mwp-icon-button mwp-lightbox__close" type="button" aria-label="Close" data-mwp-lightbox-close><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
 			<img class="mwp-lightbox__image" alt="">
 			<div class="mwp-lightbox__caption"></div>
 		</div>
@@ -164,4 +165,6 @@ export function initAdminUI() {
 	initAccordions();
 	initClipboard();
 	initMediaControls();
+	initLogViewer();
+	initPaginatedTables();
 }

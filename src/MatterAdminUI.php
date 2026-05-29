@@ -91,14 +91,14 @@ class MatterAdminUI {
 		?>
 		<div class="mwp-premium-badge">
 			<span class="badge-label">
-				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></svg>
 				<?php echo esc_html( $args['label'] ); ?>
 			</span>
 			<?php if ( '' !== $args['url'] ) : ?>
 				<a href="<?php echo esc_url( $args['url'] ); ?>" target="_blank" rel="noopener noreferrer">
 					<?php echo esc_html( $args['link_label'] ); ?>
 					<span class="mwp-upgrade-icon" aria-hidden="true">
-						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
 					</span>
 				</a>
 			<?php endif; ?>
@@ -549,7 +549,7 @@ class MatterAdminUI {
 							<p><?php echo esc_html( $args['description'] ); ?></p>
 						<?php endif; ?>
 					</div>
-					<button class="mwp-icon-button" type="button" aria-label="Close" data-mwp-modal-close>&times;</button>
+					<button class="mwp-icon-button" type="button" aria-label="Close" data-mwp-modal-close><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
 				</div>
 				<div class="mwp-modal__content">
 					<?php $content(); ?>
@@ -711,9 +711,173 @@ class MatterAdminUI {
 					<?php echo esc_html( $args['button_text'] ); ?>
 				</button>
 				<button class="mwp-icon-button" type="button" data-media-remove="<?php echo esc_attr( $uid ); ?>" aria-label="<?php echo esc_attr( $args['remove_text'] ); ?>">
-					&times;
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
 				</button>
 			</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Output disabled and data-pro-locked attributes for a premium control.
+	 *
+	 * @param bool $locked Whether the control is locked.
+	 * @return void
+	 */
+	public static function controlLockedAttrs( bool $locked ): void {
+		if ( $locked ) {
+			echo ' disabled data-pro-locked="true"';
+		}
+	}
+
+	/**
+	 * Render a compact stat card.
+	 *
+	 * @param array $args Stat card arguments.
+	 * @return void
+	 */
+	public static function statCard( array $args ): void {
+		$args = wp_parse_args(
+			$args,
+			array(
+				'label' => '',
+				'value' => '',
+				'class' => '',
+			)
+		);
+
+		$classes = trim( 'mwp-stat ' . $args['class'] );
+		?>
+		<div class="<?php echo esc_attr( $classes ); ?>">
+			<span class="mwp-stat__label"><?php echo esc_html( $args['label'] ); ?></span>
+			<strong class="mwp-stat__value"><?php echo esc_html( $args['value'] ); ?></strong>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render a confirmation dialog (danger variant of modal).
+	 *
+	 * @param array $args Confirmation dialog arguments.
+	 * @return void
+	 */
+	public static function confirmDialog( array $args ): void {
+		$args = wp_parse_args(
+			$args,
+			array(
+				'id'              => '',
+				'title'           => '',
+				'description'     => '',
+				'trigger'         => __( 'Delete', 'boilerplate' ),
+				'trigger_variant' => 'danger',
+				'confirm_label'   => __( 'Confirm', 'boilerplate' ),
+				'confirm_variant' => 'danger',
+				'cancel_label'    => __( 'Cancel', 'boilerplate' ),
+				'class'           => '',
+			)
+		);
+
+		$id              = '' !== $args['id'] ? $args['id'] : 'mwp-confirm-' . wp_unique_id();
+		$trigger_variant = in_array( $args['trigger_variant'], array( 'primary', 'secondary', 'ghost', 'danger' ), true ) ? $args['trigger_variant'] : 'danger';
+		$confirm_variant = in_array( $args['confirm_variant'], array( 'primary', 'secondary', 'ghost', 'danger' ), true ) ? $args['confirm_variant'] : 'danger';
+		$classes         = trim( 'mwp-modal is-danger ' . $args['class'] );
+
+		self::button(
+			array(
+				'label'   => $args['trigger'],
+				'variant' => $trigger_variant,
+				'class'   => 'mwp-modal-trigger',
+			)
+		);
+		?>
+		<div class="<?php echo esc_attr( $classes ); ?>" id="<?php echo esc_attr( $id ); ?>" data-mwp-modal hidden>
+			<div class="mwp-modal__overlay" data-mwp-modal-close></div>
+			<div class="mwp-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="<?php echo esc_attr( $id . '-title' ); ?>">
+				<div class="mwp-modal__header">
+					<div>
+						<h4 id="<?php echo esc_attr( $id . '-title' ); ?>"><?php echo esc_html( $args['title'] ); ?></h4>
+						<?php if ( '' !== $args['description'] ) : ?>
+							<p><?php echo esc_html( $args['description'] ); ?></p>
+						<?php endif; ?>
+					</div>
+					<button class="mwp-icon-button" type="button" aria-label="Close" data-mwp-modal-close><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+				</div>
+				<div class="mwp-modal__content">
+					<div class="mwp-inline-stack mwp-confirm-actions">
+						<?php
+						self::button(
+							array(
+								'label'   => $args['cancel_label'],
+								'variant' => 'ghost',
+								'class'   => 'mwp-confirm-cancel',
+							)
+						);
+						self::button(
+							array(
+								'label'   => $args['confirm_label'],
+								'variant' => $confirm_variant,
+								'class'   => 'mwp-confirm-ok',
+							)
+						);
+						?>
+					</div>
+				</div>
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render a paginated table.
+	 *
+	 * @param array $args Paginated table arguments.
+	 * @return void
+	 */
+	public static function paginatedTable( array $args ): void {
+		$args = wp_parse_args(
+			$args,
+			array(
+				'columns'      => array(),
+				'rows'         => array(),
+				'per_page'     => 10,
+				'current_page' => 1,
+				'total'        => 0,
+				'class'        => '',
+			)
+		);
+
+		$total_pages  = max( 1, (int) ceil( $args['total'] / max( 1, $args['per_page'] ) ) );
+		$current_page = max( 1, min( $total_pages, absint( $args['current_page'] ) ) );
+		$prev_page    = max( 1, $current_page - 1 );
+		$next_page    = min( $total_pages, $current_page + 1 );
+		$classes      = trim( 'mwp-table-wrap ' . $args['class'] );
+		?>
+		<div class="<?php echo esc_attr( $classes ); ?>" data-mwp-paginated-table data-total="<?php echo esc_attr( (string) $args['total'] ); ?>" data-per-page="<?php echo esc_attr( (string) $args['per_page'] ); ?>" data-current-page="<?php echo esc_attr( (string) $current_page ); ?>">
+			<table class="mwp-table">
+				<thead>
+					<tr>
+						<?php foreach ( $args['columns'] as $column_label ) : ?>
+							<th scope="col"><?php echo esc_html( $column_label ); ?></th>
+						<?php endforeach; ?>
+					</tr>
+				</thead>
+				<tbody>
+					<?php foreach ( $args['rows'] as $row ) : ?>
+						<tr>
+							<?php foreach ( array_keys( $args['columns'] ) as $column_key ) : ?>
+								<td><?php echo wp_kses_post( $row[ $column_key ] ?? '' ); ?></td>
+							<?php endforeach; ?>
+						</tr>
+					<?php endforeach; ?>
+				</tbody>
+			</table>
+			<?php if ( $total_pages > 1 ) : ?>
+				<div class="mwp-pagination">
+					<button class="mwp-button is-ghost" type="button" data-mwp-page="prev" <?php disabled( $current_page <= 1 ); ?>><?php esc_html_e( 'Previous', 'boilerplate' ); ?></button>
+					<span class="mwp-pagination__info"><?php echo esc_html( sprintf( __( 'Page %d of %d', 'boilerplate' ), $current_page, $total_pages ) ); ?></span>
+					<button class="mwp-button is-ghost" type="button" data-mwp-page="next" <?php disabled( $current_page >= $total_pages ); ?>><?php esc_html_e( 'Next', 'boilerplate' ); ?></button>
+				</div>
+			<?php endif; ?>
 		</div>
 		<?php
 	}

@@ -170,6 +170,16 @@ html[data-mwp-theme="dark"] #mwp-settings {
 		background-color: $color-gray-900;
 	}
 
+	.mwp-modal {
+		.mwp-modal__overlay {
+			background-color: rgba(0, 0, 0, 0.72);
+		}
+
+		.mwp-modal__dialog {
+			box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+		}
+	}
+
 	.mwp-section-options {
 		& > *:not(.mwp-premium-badge) {
 			border-color: $color-gray-800;
@@ -399,6 +409,7 @@ html[data-mwp-theme="dark"] #mwp-settings {
 	}
 
 	.mwp-color-picker__swatch {
+		background-color: $color-gray-900;
 		color: $color-gray-300;
 	}
 
@@ -492,6 +503,170 @@ html[data-mwp-theme="dark"] #mwp-settings {
 	.mwp-notice.success .notice-text,
 	.mwp-notice.success .notice-text {
 		color: #bbf7d0;
+	}
+
+}
+
+// Modals and lightboxes are moved to <body> by JS, so they
+// need selectors that don't require #mwp-settings ancestry.
+html[data-mwp-theme="dark"] {
+	.mwp-modal__dialog {
+		background-color: $color-gray-900;
+		border-color: $color-gray-800;
+		box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+	}
+
+	.mwp-modal__overlay {
+		background-color: rgba(0, 0, 0, 0.72);
+	}
+
+	.mwp-modal__header {
+		border-bottom-color: $color-gray-800;
+
+		h4 {
+			color: $color-gray-100;
+		}
+
+		p {
+			color: $color-gray-400;
+		}
+	}
+
+	.mwp-modal__content {
+		color: $color-gray-400;
+	}
+
+	.mwp-modal .mwp-icon-button {
+		background-color: $color-gray-900;
+		color: $color-gray-300;
+	}
+
+	.mwp-lightbox__dialog {
+		background-color: $color-gray-900;
+		border-color: $color-gray-800;
+	}
+
+	.mwp-lightbox__caption {
+		color: $color-gray-400;
+	}
+
+	.mwp-lightbox__close {
+		color: $color-gray-300;
+	}
+}
+
+html[data-mwp-theme="dark"] #mwp-settings {
+	.mwp-stat {
+		border-color: $color-gray-800;
+
+		.mwp-stat__label {
+			color: $color-gray-400;
+		}
+
+		.mwp-stat__value {
+			color: $color-gray-100;
+		}
+	}
+
+	.mwp-modal.is-danger {
+		.mwp-modal__dialog {
+			border-color: rgba(225, 29, 72, 0.25);
+		}
+	}
+
+	.mwp-pagination {
+		border-top-color: $color-gray-800;
+
+		.mwp-pagination__info {
+			color: $color-gray-500;
+		}
+	}
+
+	.mwp-log-viewer {
+		.mwp-log-viewer__summary-item {
+			border-color: $color-gray-800;
+			background-color: $color-gray-900;
+
+			span {
+				color: $color-gray-400;
+			}
+
+			strong {
+				color: $color-gray-100;
+			}
+		}
+
+		.mwp-log-viewer__toolbar {
+			.mwp-log-viewer__filters button {
+				border-color: $color-gray-700;
+				background-color: $color-gray-900;
+				color: $color-gray-300;
+
+				&:hover {
+					background-color: $color-gray-800;
+				}
+
+				&.active {
+					border-color: rgba(5, 150, 105, 0.32);
+					background: rgba(5, 150, 105, 0.12);
+					color: $color-primary;
+				}
+			}
+
+			.mwp-log-viewer__search input {
+				border-color: $color-gray-700;
+				background-color: $color-gray-900;
+				color: $color-gray-100;
+
+				&::placeholder {
+					color: $color-gray-500;
+				}
+			}
+		}
+
+		.mwp-log-viewer__main {
+			border-color: $color-gray-800;
+			background-color: $color-gray-850;
+
+			.mwp-log-entry {
+				border-color: $color-gray-800;
+				background-color: $color-gray-900;
+
+				.mwp-log-entry__time {
+					color: $color-gray-500;
+				}
+
+				.mwp-log-entry__message {
+					color: $color-gray-300;
+				}
+
+				.mwp-log-entry__badge {
+					&.is-success {
+						background: rgba(20, 83, 45, 0.32);
+						color: #bbf7d0;
+					}
+
+					&.is-error {
+						background: rgba(127, 29, 29, 0.3);
+						color: #fecaca;
+					}
+
+					&.is-warning {
+						background: rgba(180, 83, 9, 0.3);
+						color: #fed7aa;
+					}
+
+					&.is-info {
+						background: rgba(29, 78, 216, 0.25);
+						color: #bfdbfe;
+					}
+				}
+			}
+
+			.mwp-log-viewer__empty {
+				color: $color-gray-500;
+			}
+		}
 	}
 
 	.mwp-media-field {
