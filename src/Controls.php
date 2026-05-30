@@ -102,8 +102,20 @@ class Controls {
 		$type    = in_array( $args['type'], array( 'button', 'submit', 'reset' ), true ) ? $args['type'] : 'button';
 		$variant = in_array( $args['variant'], array( 'primary', 'secondary', 'ghost', 'danger' ), true ) ? $args['variant'] : 'secondary';
 		$classes = trim( 'mwp-button is-' . $variant . ' ' . $args['class'] );
+
+		$data_attrs = '';
+		if ( ! empty( $args['data_attributes'] ) && is_array( $args['data_attributes'] ) ) {
+			foreach ( $args['data_attributes'] as $key => $value ) {
+				$data_attrs .= ' data-' . esc_attr( $key ) . '="' . esc_attr( $value ) . '"';
+			}
+		}
+
+		$key_attr = '';
+		if ( ! empty( $args['key'] ) ) {
+			$key_attr = ' key="' . esc_attr( $args['key'] ) . '"';
+		}
 		?>
-		<button class="<?php echo esc_attr( $classes ); ?>" type="<?php echo esc_attr( $type ); ?>" <?php disabled( $args['disabled'] ); ?>>
+		<button class="<?php echo esc_attr( $classes ); ?>" type="<?php echo esc_attr( $type ); ?>" <?php disabled( $args['disabled'] ); ?><?php echo $data_attrs; ?><?php echo $key_attr; ?>>
 			<?php echo esc_html( $args['label'] ); ?>
 		</button>
 		<?php

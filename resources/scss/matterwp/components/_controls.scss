@@ -3,6 +3,7 @@
 @mixin field-control($padding: 0 12px, $height: 36px) {
 	width: 100%;
 	height: $height;
+	min-height: $height;
 	padding: $padding;
 	border: 1px solid var(--mwp-color-border);
 	border-radius: var(--mwp-ui-radius, 8px);
@@ -27,6 +28,11 @@
 		select {
 			@include field-control;
 
+			&:hover {
+				color: var(--mwp-color-text);
+				background-color: var(--mwp-color-bg);
+			}
+
 			&.multiple {
 				height: auto;
 				padding: 8px 16px;
@@ -48,6 +54,13 @@
 		textarea:focus {
 			border-color: transparent;
 			outline: 2px solid var(--mwp-ui-primary, #{$color-primary});
+		}
+
+		input:disabled,
+		select:disabled,
+		textarea:disabled {
+			cursor: not-allowed;
+			opacity: 0.6;
 		}
 
 	.switch,
@@ -185,7 +198,7 @@
 
 .mwp-media-field {
 	display: flex;
-	align-items: flex-start;
+	align-items: center;
 	gap: 12px;
 
 	.mwp-media-field__preview {

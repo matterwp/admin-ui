@@ -103,23 +103,23 @@ class Overlays {
 					<button class="mwp-icon-button mwp-modal__close" type="button" aria-label="Close" data-mwp-modal-close><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
 				</div>
 				<div class="mwp-modal__content">
-					<p><?php echo esc_html( $args['description'] ); ?></p>
 				</div>
 				<div class="mwp-modal__footer">
 					<div class="mwp-confirm-footer">
 						<?php
 						MatterAdminUI::button(
 							array(
-								'label'   => $args['cancel_label'],
-								'variant' => 'ghost',
-								'class'   => 'mwp-confirm-cancel',
+								'label'           => $args['cancel_label'],
+								'variant'         => 'ghost',
+								'class'           => 'mwp-confirm-cancel',
+								'data_attributes' => array( 'mwp-modal-close' => '' ),
 							)
 						);
 						MatterAdminUI::button(
 							array(
 								'label'   => $args['confirm_label'],
-								'variant' => $confirm_variant,
-								'class'   => 'mwp-confirm-ok',
+								'variant' => 'danger',
+								'type'    => 'submit',
 							)
 						);
 						?>
