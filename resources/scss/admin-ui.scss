@@ -5,7 +5,9 @@
 @use "./matterwp/components/index";
 @use "./matterwp/notifications";
 
-#mwp-settings {
+#mwp-settings,
+.mwp-modal,
+.mwp-lightbox {
 	--mwp-ui-primary: #{$color-primary};
 	--mwp-ui-primary-hover: #{$color-primary-hover};
 	--mwp-ui-radius: 8px;

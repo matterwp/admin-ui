@@ -110,7 +110,7 @@ class InputGroups {
 				'value'         => 0,
 				'preview_size'  => 'thumbnail',
 				'button_text'   => __( 'Choose Image', 'boilerplate' ),
-				'remove_text'   => __( 'Remove', 'boilerplate' ),
+				'remove_text'   => __( 'Remove Image', 'boilerplate' ),
 				'class'         => '',
 			)
 		);
@@ -118,21 +118,21 @@ class InputGroups {
 		$attachment_id = absint( $args['value'] );
 		$image_url     = $attachment_id ? wp_get_attachment_image_url( $attachment_id, $args['preview_size'] ) : '';
 		$uid           = wp_unique_id( 'mwp-media-' );
-		$classes       = trim( 'mwp-media-field ' . $args['class'] );
+		$classes       = trim( 'mwp-media-field ' . ( $image_url ? 'has-image ' : 'is-empty ' ) . $args['class'] );
 		?>
-		<div class="<?php echo esc_attr( $classes ); ?>">
-			<div class="mwp-media-field__preview" data-media-preview="<?php echo esc_attr( $uid ); ?>">
+		<div class="<?php echo esc_attr( $classes ); ?>" data-media-field="<?php echo esc_attr( $uid ); ?>">
+			<div class="<?php echo esc_attr( 'mwp-media-field__preview' . ( $image_url ? ' has-image' : '' ) ); ?>" data-media-preview="<?php echo esc_attr( $uid ); ?>">
 				<?php if ( $image_url ) : ?>
 					<img src="<?php echo esc_url( $image_url ); ?>" alt="">
 				<?php endif; ?>
 			</div>
 			<div class="mwp-media-field__actions">
 				<input type="hidden" name="<?php echo esc_attr( $args['name'] ); ?>" value="<?php echo esc_attr( (string) $attachment_id ); ?>" data-media-input="<?php echo esc_attr( $uid ); ?>">
-				<button class="mwp-button is-secondary" type="button" data-media-target="<?php echo esc_attr( $uid ); ?>">
+				<button class="mwp-button is-secondary mwp-media-field__choose" type="button" data-media-target="<?php echo esc_attr( $uid ); ?>"<?php echo $image_url ? ' hidden' : ''; ?>>
 					<?php echo esc_html( $args['button_text'] ); ?>
 				</button>
-				<button class="mwp-icon-button" type="button" data-media-remove="<?php echo esc_attr( $uid ); ?>" aria-label="<?php echo esc_attr( $args['remove_text'] ); ?>">
-					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+				<button class="mwp-button is-danger mwp-media-field__remove" type="button" data-media-remove="<?php echo esc_attr( $uid ); ?>"<?php echo $image_url ? '' : ' hidden'; ?>>
+					<?php echo esc_html( $args['remove_text'] ); ?>
 				</button>
 			</div>
 		</div>

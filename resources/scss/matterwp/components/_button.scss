@@ -4,8 +4,8 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	min-height: 36px;
-	padding: 8px 14px;
+	min-height: 40px;
+	padding: 9px 16px;
 	border: 1px solid var(--mwp-color-border);
 	border-radius: calc(var(--mwp-ui-radius, 8px) - 1px);
 	background-color: var(--mwp-color-bg);
@@ -63,8 +63,8 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: 30px;
-	height: 30px;
+	width: 40px;
+	height: 40px;
 	padding: 0;
 	border: 1px solid var(--mwp-color-border);
 	border-radius: calc(var(--mwp-ui-radius, 8px) - 2px);
@@ -119,8 +119,7 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		min-height: 36px;
-		padding: 8px 14px;
+		padding: 10px 14px;
 		border: 1px solid var(--mwp-color-border);
 		background-color: var(--mwp-color-bg);
 		color: var(--mwp-color-text);
@@ -152,7 +151,7 @@
 		color: $color-white;
 	}
 
-input:focus-visible + span {
+	input:focus-visible + span {
 		outline: 2px solid var(--mwp-ui-primary, #{$color-primary});
 		outline-offset: 2px;
 	}

@@ -6,20 +6,32 @@
 	z-index: 1000000;
 	inset: 0;
 	display: flex;
-	align-items: center;
 	justify-content: center;
-	padding: 24px;
+	padding: max(24px, 6vh) 24px 24px;
 
 	&[hidden] {
 		display: none;
 	}
 }
 
+.mwp-modal {
+	align-items: flex-start;
+}
+
+.mwp-lightbox {
+	align-items: center;
+}
+
+body.mwp-modal-open {
+	overflow: hidden;
+}
+
 .mwp-modal__overlay,
 .mwp-lightbox__overlay {
 	position: absolute;
 	inset: 0;
-	background-color: rgb(0 0 0 / 0.48);
+	background-color: rgb(15 23 42 / 0.42);
+	backdrop-filter: blur(2px);
 }
 
 .mwp-modal__dialog {
@@ -27,24 +39,34 @@
 	z-index: 1;
 	display: flex;
 	flex-direction: column;
-	max-height: calc(100vh - 64px);
-	width: min(560px, 100%);
-	border: 1px solid var(--mwp-color-border);
+	max-height: min(720px, calc(100vh - 48px));
+	width: min(600px, 100%);
+	border: 1px solid var(--mwp-color-border-strong);
 	border-radius: var(--mwp-ui-radius, 8px);
 	background-color: var(--mwp-color-bg);
-	box-shadow: 0 24px 64px rgb(0 0 0 / 0.22);
+	box-shadow: 0 24px 80px rgb(15 23 42 / 0.28), 0 2px 10px rgb(15 23 42 / 0.1), 0 1px 0 rgb(255 255 255 / 0.9) inset;
 	overflow: hidden;
+
+	&:focus {
+		outline: none;
+	}
 }
 
 .mwp-modal__header {
 	display: flex;
 	align-items: flex-start;
 	justify-content: space-between;
-	gap: 20px;
-	padding: 20px 20px 16px;
+	gap: 16px;
+	padding: 20px 20px 18px;
+	border-bottom: 1px solid var(--mwp-color-border);
+	background-color: var(--mwp-color-bg-surface);
+}
+
+.mwp-modal__heading {
+	min-width: 0;
 
 	h4 {
-		margin: 0 0 4px;
+		margin: 0;
 		color: var(--mwp-color-text);
 		font-size: 16px;
 		font-weight: 700;
@@ -52,7 +74,7 @@
 	}
 
 	p {
-		margin: 0;
+		margin: 6px 0 0;
 		color: var(--mwp-color-text-secondary);
 		font-size: 13px;
 		line-height: 1.5;
@@ -60,11 +82,19 @@
 }
 
 .mwp-modal__content {
-	padding: 0 20px 20px;
+	padding: 20px;
 	color: var(--mwp-color-text);
 	font-size: 13px;
 	line-height: 1.6;
 	overflow-y: auto;
+
+	> :first-child {
+		margin-top: 0;
+	}
+
+	> :last-child {
+		margin-bottom: 0;
+	}
 }
 
 .mwp-modal__footer {
@@ -80,6 +110,16 @@
 .mwp-modal__close {
 	flex: 0 0 auto;
 	margin: -4px -4px 0 0;
+
+	&:hover {
+		background-color: var(--mwp-color-bg-hover);
+		color: var(--mwp-color-text);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--mwp-ui-primary, #{$color-primary});
+		outline-offset: 2px;
+	}
 }
 
 .mwp-lightbox__dialog {
@@ -106,8 +146,9 @@
 	img {
 		display: block;
 		width: 100%;
-		aspect-ratio: 16 / 9;
-		object-fit: cover;
+		aspect-ratio: 4 / 3;
+		background-color: var(--mwp-color-bg-alt);
+		object-fit: contain;
 	}
 }
 
@@ -121,6 +162,7 @@
 .mwp-lightbox__image {
 	display: block;
 	width: 100%;
+	aspect-ratio: 16 / 10;
 	max-height: 72vh;
 	border-radius: calc(var(--mwp-ui-radius, 8px) - 2px);
 	object-fit: contain;
@@ -136,6 +178,11 @@
 .is-danger.mwp-modal {
 	.mwp-modal__dialog {
 		border-color: var(--mwp-color-danger-border, rgba(225, 29, 72, 0.3));
+	}
+
+	.mwp-modal__header {
+		border-bottom-color: var(--mwp-color-danger-border, rgba(225, 29, 72, 0.3));
+		background-color: var(--mwp-color-danger-bg, #fef2f2);
 	}
 
 	.mwp-modal__header h4 {
@@ -154,16 +201,19 @@
 // Dark mode
 html[data-mwp-theme="dark"] {
 	.mwp-modal__dialog {
-		background-color: $color-gray-900;
+		background-color: var(--mwp-color-bg);
 		border-color: $color-gray-800;
-		box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+		box-shadow: 0 24px 80px rgba(0, 0, 0, 0.58), 0 1px 0 rgb(255 255 255 / 0.04) inset;
 	}
 
 	.mwp-modal__overlay {
-		background-color: rgba(0, 0, 0, 0.72);
+		background-color: rgba(0, 0, 0, 0.68);
 	}
 
 	.mwp-modal__header {
+		border-bottom-color: $color-gray-800;
+		background-color: $color-gray-900;
+
 		h4 {
 			color: $color-gray-100;
 		}
@@ -183,13 +233,24 @@ html[data-mwp-theme="dark"] {
 	}
 
 	.mwp-modal .mwp-icon-button {
+		border-color: $color-gray-800;
 		background-color: $color-gray-900;
 		color: $color-gray-300;
+
+		&:hover {
+			background-color: $color-gray-800;
+			color: $color-gray-50;
+		}
 	}
 
 	.mwp-modal.is-danger {
 		.mwp-modal__dialog {
 			border-color: var(--mwp-color-danger-border, rgba(225, 29, 72, 0.35));
+		}
+
+		.mwp-modal__header {
+			border-bottom-color: var(--mwp-color-danger-border, rgba(225, 29, 72, 0.35));
+			background-color: var(--mwp-color-danger-bg, rgba(225, 29, 72, 0.15));
 		}
 
 		.mwp-modal__header h4 {
@@ -212,5 +273,32 @@ html[data-mwp-theme="dark"] {
 
 	.mwp-lightbox__close {
 		color: $color-gray-300;
+	}
+}
+
+@media (max-width: 600px) {
+	.mwp-modal,
+	.mwp-lightbox {
+		padding: 12px;
+	}
+
+	.mwp-modal__dialog {
+		max-height: calc(100vh - 24px);
+	}
+
+	.mwp-modal__header,
+	.mwp-modal__content,
+	.mwp-modal__footer {
+		padding-inline: 16px;
+	}
+
+	.mwp-modal__footer,
+	.mwp-confirm-footer {
+		align-items: stretch;
+		flex-direction: column-reverse;
+
+		.mwp-button {
+			width: 100%;
+		}
 	}
 }

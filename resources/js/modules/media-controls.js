@@ -1,4 +1,23 @@
 function initMediaControls() {
+	function setMediaFieldState(uid, hasImage) {
+		const field = document.querySelector(`[data-media-field="${uid}"]`);
+		const choose = field?.querySelector('[data-media-target]');
+		const remove = field?.querySelector('[data-media-remove]');
+
+		if (field) {
+			field.classList.toggle('has-image', hasImage);
+			field.classList.toggle('is-empty', !hasImage);
+		}
+
+		if (choose) {
+			choose.hidden = hasImage;
+		}
+
+		if (remove) {
+			remove.hidden = !hasImage;
+		}
+	}
+
 	document.addEventListener('click', event => {
 		const button = event.target.closest('[data-media-target]');
 
@@ -41,6 +60,7 @@ function initMediaControls() {
 					preview.classList.add('has-image');
 				}
 
+				setMediaFieldState(button.dataset.mediaTarget, true);
 				input.dispatchEvent(new Event('change', { bubbles: true }));
 			});
 
@@ -63,6 +83,8 @@ function initMediaControls() {
 				preview.innerHTML = '';
 				preview.classList.remove('has-image');
 			}
+
+			setMediaFieldState(removeBtn.dataset.mediaRemove, false);
 
 			if (input) {
 				input.dispatchEvent(new Event('change', { bubbles: true }));

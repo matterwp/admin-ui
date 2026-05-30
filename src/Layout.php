@@ -66,11 +66,12 @@ class Layout {
 				'count'       => null,
 				'class'       => '',
 				'wide'        => false,
+				'align_start' => false,
 				'input_class' => '',
 			)
 		);
 
-		$classes       = trim( 'mwp-option ' . ( $args['wide'] ? 'full-width ' : '' ) . $args['class'] );
+		$classes       = trim( 'mwp-option ' . ( $args['wide'] ? 'full-width ' : '' ) . ( $args['align_start'] ? 'is-align-start ' : '' ) . $args['class'] );
 		$input_classes = trim( 'mwp-option-input ' . $args['input_class'] );
 		?>
 		<div class="<?php echo esc_attr( $classes ); ?>">
