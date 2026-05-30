@@ -11,8 +11,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Compound input rendering helpers.
+ */
 class InputGroups {
 
+	/**
+	 * Render a color picker synced with a text input.
+	 *
+	 * @param array $args Color picker arguments.
+	 * @return void
+	 */
 	public static function colorPicker( array $args ): void {
 		$args = wp_parse_args(
 			$args,
@@ -35,6 +44,12 @@ class InputGroups {
 		<?php
 	}
 
+	/**
+	 * Render an input and button pair.
+	 *
+	 * @param array $args Input button arguments.
+	 * @return void
+	 */
 	public static function inputButton( array $args ): void {
 		$args = wp_parse_args(
 			$args,
@@ -57,6 +72,12 @@ class InputGroups {
 		<?php
 	}
 
+	/**
+	 * Render a radio group.
+	 *
+	 * @param array $args Radio group arguments.
+	 * @return void
+	 */
 	public static function radioGroup( array $args ): void {
 		$args = wp_parse_args(
 			$args,
@@ -83,6 +104,12 @@ class InputGroups {
 		<?php
 	}
 
+	/**
+	 * Render a group of buttons.
+	 *
+	 * @param array $args Button group arguments.
+	 * @return void
+	 */
 	public static function buttonGroup( array $args ): void {
 		$args = wp_parse_args(
 			$args,
@@ -102,6 +129,12 @@ class InputGroups {
 		<?php
 	}
 
+	/**
+	 * Render a WordPress media picker field.
+	 *
+	 * @param array $args Media field arguments.
+	 * @return void
+	 */
 	public static function mediaField( array $args ): void {
 		$args = wp_parse_args(
 			$args,
@@ -139,7 +172,8 @@ class InputGroups {
 		$image_url     = $attachment_id ? wp_get_attachment_image_url( $attachment_id, $args['preview_size'] ) : '';
 		$uid           = wp_unique_id( 'mwp-media-' );
 		$mode          = in_array( $args['mode'], array( 'compact', 'logo', 'wide', 'button_only' ), true ) ? $args['mode'] : 'compact';
-		$classes       = trim( 'mwp-media-field is-' . $mode . ' ' . ( $image_url ? 'has-image ' : 'is-empty ' ) . $args['class'] );
+		$mode_class    = str_replace( '_', '-', $mode );
+		$classes       = trim( 'mwp-media-field is-' . $mode_class . ' ' . ( $image_url ? 'has-image ' : 'is-empty ' ) . $args['class'] );
 		$styles        = array();
 		$slots         = is_array( $args['slots'] ) ? $args['slots'] : array();
 		$before        = $args['before'] ?? ( $slots['before'] ?? null );
@@ -197,6 +231,15 @@ class InputGroups {
 		<?php
 	}
 
+	/**
+	 * Render a media field slot.
+	 *
+	 * @param callable|string|null $slot Slot callback or safe markup.
+	 * @param array                $args Media field arguments.
+	 * @param string               $uid Media field unique identifier.
+	 * @param string               $image_url Current image URL.
+	 * @return void
+	 */
 	private static function renderSlot( $slot, array $args, string $uid, string $image_url ): void {
 		if ( is_callable( $slot ) ) {
 			$slot( $args, $uid, $image_url );
@@ -208,6 +251,13 @@ class InputGroups {
 		}
 	}
 
+	/**
+	 * Build the default media preview markup.
+	 *
+	 * @param string $uid Media field unique identifier.
+	 * @param string $image_url Current image URL.
+	 * @return string Preview markup.
+	 */
 	private static function getDefaultMediaPreview( string $uid, string $image_url ): string {
 		ob_start();
 		?>
@@ -220,6 +270,15 @@ class InputGroups {
 		return (string) ob_get_clean();
 	}
 
+	/**
+	 * Build the default media action markup.
+	 *
+	 * @param array  $args Media field arguments.
+	 * @param string $uid Media field unique identifier.
+	 * @param int    $attachment_id Current attachment ID.
+	 * @param bool   $has_image Whether the field currently has an image.
+	 * @return string Action markup.
+	 */
 	private static function getDefaultMediaActions( array $args, string $uid, int $attachment_id, bool $has_image ): string {
 		ob_start();
 		?>

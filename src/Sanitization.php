@@ -16,6 +16,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Used by the Schema system and callable directly in SettingsPage controllers.
  */
+/**
+ * Sanitization helpers for admin settings schemas.
+ */
 class Sanitization {
 
 	/**

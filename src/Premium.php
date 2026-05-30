@@ -11,8 +11,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Premium and locked-control rendering helpers.
+ */
 class Premium {
 
+	/**
+	 * Render a premium feature badge.
+	 *
+	 * @param array $args Premium badge arguments.
+	 * @return void
+	 */
 	public static function premiumBadge( array $args ): void {
 		$args = wp_parse_args(
 			$args,
@@ -40,6 +49,12 @@ class Premium {
 		<?php
 	}
 
+	/**
+	 * Render disabled attributes for locked controls.
+	 *
+	 * @param bool $locked Whether the control is locked.
+	 * @return void
+	 */
 	public static function controlLockedAttrs( bool $locked ): void {
 		if ( $locked ) {
 			echo ' disabled data-pro-locked="true"';

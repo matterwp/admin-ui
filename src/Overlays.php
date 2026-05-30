@@ -11,8 +11,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Overlay components such as modals and confirmation dialogs.
+ */
 class Overlays {
 
+	/**
+	 * Render a modal and its trigger.
+	 *
+	 * @param array    $args Modal arguments.
+	 * @param callable $content Modal content callback.
+	 * @return void
+	 */
 	public static function modal( array $args, callable $content ): void {
 		$args = wp_parse_args(
 			$args,
@@ -68,6 +78,12 @@ class Overlays {
 		<?php
 	}
 
+	/**
+	 * Render a confirmation dialog.
+	 *
+	 * @param array $args Confirmation dialog arguments.
+	 * @return void
+	 */
 	public static function confirmDialog( array $args ): void {
 		$args = wp_parse_args(
 			$args,
@@ -116,6 +132,14 @@ class Overlays {
 		<?php
 	}
 
+	/**
+	 * Render a modal trigger button.
+	 *
+	 * @param string $modal_id Target modal ID.
+	 * @param string $label Trigger label.
+	 * @param string $variant Button variant.
+	 * @return void
+	 */
 	private static function modalTrigger( string $modal_id, string $label, string $variant ): void {
 		$variant = in_array( $variant, array( 'primary', 'secondary', 'ghost', 'danger' ), true ) ? $variant : 'primary';
 		?>
@@ -125,6 +149,12 @@ class Overlays {
 		<?php
 	}
 
+	/**
+	 * Render a modal footer action.
+	 *
+	 * @param array $args Footer action arguments.
+	 * @return void
+	 */
 	private static function footerAction( array $args ): void {
 		$args = wp_parse_args(
 			$args,

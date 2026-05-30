@@ -11,8 +11,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Form control rendering helpers.
+ */
 class Controls {
 
+	/**
+	 * Render a toggle switch control.
+	 *
+	 * @param array $args Switch arguments.
+	 * @return void
+	 */
 	public static function switch( array $args ): void {
 		$args = wp_parse_args(
 			$args,
@@ -31,6 +40,12 @@ class Controls {
 		<?php
 	}
 
+	/**
+	 * Render an input control.
+	 *
+	 * @param array $args Input arguments.
+	 * @return void
+	 */
 	public static function input( array $args ): void {
 		$args = wp_parse_args(
 			$args,
@@ -50,6 +65,12 @@ class Controls {
 		<?php
 	}
 
+	/**
+	 * Render a textarea control.
+	 *
+	 * @param array $args Textarea arguments.
+	 * @return void
+	 */
 	public static function textarea( array $args ): void {
 		$args = wp_parse_args(
 			$args,
@@ -67,6 +88,12 @@ class Controls {
 		<?php
 	}
 
+	/**
+	 * Render a select control.
+	 *
+	 * @param array $args Select arguments.
+	 * @return void
+	 */
 	public static function select( array $args ): void {
 		$args = wp_parse_args(
 			$args,
@@ -87,6 +114,12 @@ class Controls {
 		<?php
 	}
 
+	/**
+	 * Render a button control.
+	 *
+	 * @param array $args Button arguments.
+	 * @return void
+	 */
 	public static function button( array $args ): void {
 		$args = wp_parse_args(
 			$args,
@@ -121,6 +154,12 @@ class Controls {
 		<?php
 	}
 
+	/**
+	 * Render a badge.
+	 *
+	 * @param array $args Badge arguments.
+	 * @return void
+	 */
 	public static function badge( array $args ): void {
 		$args = wp_parse_args(
 			$args,
@@ -138,6 +177,12 @@ class Controls {
 		<?php
 	}
 
+	/**
+	 * Render an inline notice.
+	 *
+	 * @param array $args Notice arguments.
+	 * @return void
+	 */
 	public static function notice( array $args ): void {
 		$args = wp_parse_args(
 			$args,

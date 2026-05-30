@@ -11,8 +11,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Data display and miscellaneous component rendering helpers.
+ */
 class Components {
 
+	/**
+	 * Render a table.
+	 *
+	 * @param array $args Table arguments.
+	 * @return void
+	 */
 	public static function table( array $args ): void {
 		$args = wp_parse_args(
 			$args,
@@ -48,6 +57,12 @@ class Components {
 		<?php
 	}
 
+	/**
+	 * Render a client-side paginated table.
+	 *
+	 * @param array $args Paginated table arguments.
+	 * @return void
+	 */
 	public static function paginatedTable( array $args ): void {
 		$args = wp_parse_args(
 			$args,
@@ -95,6 +110,12 @@ class Components {
 		<?php
 	}
 
+	/**
+	 * Render an accordion.
+	 *
+	 * @param array $args Accordion arguments.
+	 * @return void
+	 */
 	public static function accordion( array $args ): void {
 		$args = wp_parse_args(
 			$args,
@@ -123,6 +144,12 @@ class Components {
 		<?php
 	}
 
+	/**
+	 * Render a progress indicator.
+	 *
+	 * @param array $args Progress arguments.
+	 * @return void
+	 */
 	public static function progress( array $args ): void {
 		$args = wp_parse_args(
 			$args,
@@ -150,6 +177,12 @@ class Components {
 		<?php
 	}
 
+	/**
+	 * Render a statistic card.
+	 *
+	 * @param array $args Statistic card arguments.
+	 * @return void
+	 */
 	public static function statCard( array $args ): void {
 		$args = wp_parse_args(
 			$args,
@@ -169,6 +202,12 @@ class Components {
 		<?php
 	}
 
+	/**
+	 * Render a lightbox trigger.
+	 *
+	 * @param array $args Lightbox arguments.
+	 * @return void
+	 */
 	public static function lightbox( array $args ): void {
 		$args = wp_parse_args(
 			$args,

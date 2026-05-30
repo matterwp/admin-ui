@@ -17,6 +17,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Provides a structured way to define plugin settings with type checking,
  * automatic sanitization per type, and easy retrieval of defaults and stored values.
  */
+/**
+ * Defines and sanitizes structured admin settings.
+ */
 class Schema {
 
 	/**

@@ -18,126 +18,319 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class MatterAdminUI {
 
+	/**
+	 * Render a tab panel wrapper.
+	 *
+	 * @param string   $id Panel identifier.
+	 * @param callable $content Content callback.
+	 * @return void
+	 */
 	public static function panel( string $id, callable $content ): void {
 		Layout::panel( $id, $content );
 	}
 
+	/**
+	 * Render a settings section.
+	 *
+	 * @param array    $args Section arguments.
+	 * @param callable $content Content callback.
+	 * @return void
+	 */
 	public static function section( array $args, callable $content ): void {
 		Layout::section( $args, $content );
 	}
 
+	/**
+	 * Render a settings option row.
+	 *
+	 * @param array    $args Option arguments.
+	 * @param callable $control Control callback.
+	 * @return void
+	 */
 	public static function option( array $args, callable $control ): void {
 		Layout::option( $args, $control );
 	}
 
+	/**
+	 * Render a card container.
+	 *
+	 * @param array    $args Card arguments.
+	 * @param callable $content Content callback.
+	 * @return void
+	 */
 	public static function card( array $args, callable $content ): void {
 		Layout::card( $args, $content );
 	}
 
+	/**
+	 * Render a grouped form container.
+	 *
+	 * @param array    $args Form arguments.
+	 * @param callable $content Content callback.
+	 * @return void
+	 */
 	public static function form( array $args, callable $content ): void {
 		Layout::form( $args, $content );
 	}
 
+	/**
+	 * Render a labeled field wrapper.
+	 *
+	 * @param string   $label Field label.
+	 * @param callable $control Control callback.
+	 * @return void
+	 */
 	public static function field( string $label, callable $control ): void {
 		Layout::field( $label, $control );
 	}
 
+	/**
+	 * Render an empty state.
+	 *
+	 * @param array $args Empty state arguments.
+	 * @return void
+	 */
 	public static function emptyState( array $args ): void {
 		Layout::emptyState( $args );
 	}
 
+	/**
+	 * Render a toggle switch control.
+	 *
+	 * @param array $args Switch arguments.
+	 * @return void
+	 */
 	public static function switch( array $args ): void {
 		Controls::switch( $args );
 	}
 
+	/**
+	 * Render an input control.
+	 *
+	 * @param array $args Input arguments.
+	 * @return void
+	 */
 	public static function input( array $args ): void {
 		Controls::input( $args );
 	}
 
+	/**
+	 * Render a textarea control.
+	 *
+	 * @param array $args Textarea arguments.
+	 * @return void
+	 */
 	public static function textarea( array $args ): void {
 		Controls::textarea( $args );
 	}
 
+	/**
+	 * Render a select control.
+	 *
+	 * @param array $args Select arguments.
+	 * @return void
+	 */
 	public static function select( array $args ): void {
 		Controls::select( $args );
 	}
 
+	/**
+	 * Render a button control.
+	 *
+	 * @param array $args Button arguments.
+	 * @return void
+	 */
 	public static function button( array $args ): void {
 		Controls::button( $args );
 	}
 
+	/**
+	 * Render a badge.
+	 *
+	 * @param array $args Badge arguments.
+	 * @return void
+	 */
 	public static function badge( array $args ): void {
 		Controls::badge( $args );
 	}
 
+	/**
+	 * Render an inline notice.
+	 *
+	 * @param array $args Notice arguments.
+	 * @return void
+	 */
 	public static function notice( array $args ): void {
 		Controls::notice( $args );
 	}
 
+	/**
+	 * Render a modal and its trigger.
+	 *
+	 * @param array    $args Modal arguments.
+	 * @param callable $content Modal content callback.
+	 * @return void
+	 */
 	public static function modal( array $args, callable $content ): void {
 		Overlays::modal( $args, $content );
 	}
 
+	/**
+	 * Render a confirmation dialog.
+	 *
+	 * @param array $args Confirmation dialog arguments.
+	 * @return void
+	 */
 	public static function confirmDialog( array $args ): void {
 		Overlays::confirmDialog( $args );
 	}
 
+	/**
+	 * Render a lightbox trigger.
+	 *
+	 * @param array $args Lightbox arguments.
+	 * @return void
+	 */
 	public static function lightbox( array $args ): void {
 		Components::lightbox( $args );
 	}
 
+	/**
+	 * Render an accordion.
+	 *
+	 * @param array $args Accordion arguments.
+	 * @return void
+	 */
 	public static function accordion( array $args ): void {
 		Components::accordion( $args );
 	}
 
+	/**
+	 * Render a table.
+	 *
+	 * @param array $args Table arguments.
+	 * @return void
+	 */
 	public static function table( array $args ): void {
 		Components::table( $args );
 	}
 
+	/**
+	 * Render a client-side paginated table.
+	 *
+	 * @param array $args Paginated table arguments.
+	 * @return void
+	 */
 	public static function paginatedTable( array $args ): void {
 		Components::paginatedTable( $args );
 	}
 
+	/**
+	 * Render a progress indicator.
+	 *
+	 * @param array $args Progress arguments.
+	 * @return void
+	 */
 	public static function progress( array $args ): void {
 		Components::progress( $args );
 	}
 
+	/**
+	 * Render a statistic card.
+	 *
+	 * @param array $args Statistic card arguments.
+	 * @return void
+	 */
 	public static function statCard( array $args ): void {
 		Components::statCard( $args );
 	}
 
+	/**
+	 * Render a color picker synced with a text input.
+	 *
+	 * @param array $args Color picker arguments.
+	 * @return void
+	 */
 	public static function colorPicker( array $args ): void {
 		InputGroups::colorPicker( $args );
 	}
 
+	/**
+	 * Render an input and button pair.
+	 *
+	 * @param array $args Input button arguments.
+	 * @return void
+	 */
 	public static function inputButton( array $args ): void {
 		InputGroups::inputButton( $args );
 	}
 
+	/**
+	 * Render a radio group.
+	 *
+	 * @param array $args Radio group arguments.
+	 * @return void
+	 */
 	public static function radioGroup( array $args ): void {
 		InputGroups::radioGroup( $args );
 	}
 
+	/**
+	 * Render a group of buttons.
+	 *
+	 * @param array $args Button group arguments.
+	 * @return void
+	 */
 	public static function buttonGroup( array $args ): void {
 		InputGroups::buttonGroup( $args );
 	}
 
+	/**
+	 * Render a WordPress media picker field.
+	 *
+	 * @param array $args Media field arguments.
+	 * @return void
+	 */
 	public static function mediaField( array $args ): void {
 		InputGroups::mediaField( $args );
 	}
 
+	/**
+	 * Render a premium feature badge.
+	 *
+	 * @param array $args Premium badge arguments.
+	 * @return void
+	 */
 	public static function premiumBadge( array $args ): void {
 		Premium::premiumBadge( $args );
 	}
 
+	/**
+	 * Render disabled attributes for locked controls.
+	 *
+	 * @param bool $locked Whether the control is locked.
+	 * @return void
+	 */
 	public static function controlLockedAttrs( bool $locked ): void {
 		Premium::controlLockedAttrs( $locked );
 	}
 
+	/**
+	 * Render an escaped HTML attribute string.
+	 *
+	 * @param array $attributes Attribute map.
+	 * @return string
+	 */
 	public static function attrs( array $attributes ): string {
 		return Attrs::render( $attributes );
 	}
 
+	/**
+	 * Render escaped data attributes.
+	 *
+	 * @param array $attributes Data attribute map without the data- prefix.
+	 * @return string
+	 */
 	public static function dataAttrs( array $attributes ): string {
 		return Attrs::data( $attributes );
 	}

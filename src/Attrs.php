@@ -11,6 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Utility methods for rendering escaped HTML attributes.
+ */
 class Attrs {
 
 	/**

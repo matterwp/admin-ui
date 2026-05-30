@@ -11,8 +11,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Layout rendering helpers for settings screens.
+ */
 class Layout {
 
+	/**
+	 * Render a tab panel wrapper.
+	 *
+	 * @param string   $id Panel identifier.
+	 * @param callable $content Content callback.
+	 * @return void
+	 */
 	public static function panel( string $id, callable $content ): void {
 		?>
 		<div class="mwp-option-group" data-ui-panel="<?php echo esc_attr( $id ); ?>">
@@ -23,6 +33,13 @@ class Layout {
 		<?php
 	}
 
+	/**
+	 * Render a settings section.
+	 *
+	 * @param array    $args Section arguments.
+	 * @param callable $content Content callback.
+	 * @return void
+	 */
 	public static function section( array $args, callable $content ): void {
 		$args = wp_parse_args(
 			$args,
@@ -57,6 +74,13 @@ class Layout {
 		<?php
 	}
 
+	/**
+	 * Render a settings option row.
+	 *
+	 * @param array    $args Option arguments.
+	 * @param callable $control Control callback.
+	 * @return void
+	 */
 	public static function option( array $args, callable $control ): void {
 		$args = wp_parse_args(
 			$args,
@@ -91,6 +115,13 @@ class Layout {
 		<?php
 	}
 
+	/**
+	 * Render a card container.
+	 *
+	 * @param array    $args Card arguments.
+	 * @param callable $content Content callback.
+	 * @return void
+	 */
 	public static function card( array $args, callable $content ): void {
 		$args = wp_parse_args(
 			$args,
@@ -121,6 +152,13 @@ class Layout {
 		<?php
 	}
 
+	/**
+	 * Render a grouped form container.
+	 *
+	 * @param array    $args Form arguments.
+	 * @param callable $content Content callback.
+	 * @return void
+	 */
 	public static function form( array $args, callable $content ): void {
 		$args = wp_parse_args(
 			$args,
@@ -151,6 +189,13 @@ class Layout {
 		<?php
 	}
 
+	/**
+	 * Render a labeled field wrapper.
+	 *
+	 * @param string   $label Field label.
+	 * @param callable $control Control callback.
+	 * @return void
+	 */
 	public static function field( string $label, callable $control ): void {
 		?>
 		<label class="mwp-field">
@@ -160,6 +205,12 @@ class Layout {
 		<?php
 	}
 
+	/**
+	 * Render an empty state.
+	 *
+	 * @param array $args Empty state arguments.
+	 * @return void
+	 */
 	public static function emptyState( array $args ): void {
 		$args = wp_parse_args(
 			$args,
