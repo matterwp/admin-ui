@@ -18,6 +18,31 @@ function initMediaControls() {
 		}
 	}
 
+	function dispatchMediaEvent(uid, eventName, detail = {}) {
+		const field = document.querySelector(`[data-media-field="${uid}"]`);
+
+		if (!field) {
+			return;
+		}
+
+		field.dispatchEvent(new CustomEvent(eventName, {
+			bubbles: true,
+			detail: {
+				uid,
+				field,
+				...detail,
+			},
+		}));
+	}
+
+	function getAttachmentPreviewUrl(attachment, preferredSize) {
+		if (preferredSize && attachment.sizes?.[preferredSize]?.url) {
+			return attachment.sizes[preferredSize].url;
+		}
+
+		return attachment.sizes?.thumbnail?.url || attachment.url;
+	}
+
 	document.addEventListener('click', event => {
 		const button = event.target.closest('[data-media-target]');
 
@@ -31,7 +56,7 @@ function initMediaControls() {
 			}
 
 			const frame = wp.media({
-				library: { type: 'image' },
+				library: { type: button.dataset.mediaLibraryType || 'image' },
 				title: button.dataset.mediaTitle || 'Select Image',
 				button: { text: button.dataset.mediaButton || 'Use Image' },
 				multiple: false,
@@ -49,11 +74,12 @@ function initMediaControls() {
 
 			frame.on('select', () => {
 				const attachment = frame.state().get('selection').first().toJSON();
+				const previewSize = button.dataset.mediaPreviewSize || 'thumbnail';
 				input.value = attachment.id;
 
 				if (preview) {
 					const img = preview.querySelector('img') || document.createElement('img');
-					img.src = attachment.sizes?.thumbnail?.url || attachment.url;
+					img.src = getAttachmentPreviewUrl(attachment, previewSize);
 					img.alt = attachment.alt || '';
 					preview.innerHTML = '';
 					preview.appendChild(img);
@@ -62,6 +88,11 @@ function initMediaControls() {
 
 				setMediaFieldState(button.dataset.mediaTarget, true);
 				input.dispatchEvent(new Event('change', { bubbles: true }));
+				dispatchMediaEvent(button.dataset.mediaTarget, 'mwp:media-selected', {
+					attachment,
+					input,
+					preview,
+				});
 			});
 
 			frame.open();
@@ -89,6 +120,11 @@ function initMediaControls() {
 			if (input) {
 				input.dispatchEvent(new Event('change', { bubbles: true }));
 			}
+
+			dispatchMediaEvent(removeBtn.dataset.mediaRemove, 'mwp:media-removed', {
+				input,
+				preview,
+			});
 		}
 	});
 }

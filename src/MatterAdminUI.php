@@ -133,4 +133,12 @@ class MatterAdminUI {
 	public static function controlLockedAttrs( bool $locked ): void {
 		Premium::controlLockedAttrs( $locked );
 	}
+
+	public static function attrs( array $attributes ): string {
+		return Attrs::render( $attributes );
+	}
+
+	public static function dataAttrs( array $attributes ): string {
+		return Attrs::data( $attributes );
+	}
 }
