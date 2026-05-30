@@ -204,39 +204,4 @@ class Layout {
 		</label>
 		<?php
 	}
-
-	/**
-	 * Render an empty state.
-	 *
-	 * @param array $args Empty state arguments.
-	 * @return void
-	 */
-	public static function emptyState( array $args ): void {
-		$args = wp_parse_args(
-			$args,
-			array(
-				'title'       => '',
-				'description' => '',
-				'action'      => '',
-				'class'       => '',
-			)
-		);
-
-		$classes = trim( 'mwp-empty-state ' . $args['class'] );
-		?>
-		<div class="<?php echo esc_attr( $classes ); ?>">
-			<?php if ( '' !== $args['title'] ) : ?>
-				<h2><?php echo esc_html( $args['title'] ); ?></h2>
-			<?php endif; ?>
-			<?php if ( '' !== $args['description'] ) : ?>
-				<p><?php echo wp_kses_post( $args['description'] ); ?></p>
-			<?php endif; ?>
-			<?php if ( '' !== $args['action'] ) : ?>
-				<div class="mwp-empty-state__action">
-					<?php echo wp_kses_post( $args['action'] ); ?>
-				</div>
-			<?php endif; ?>
-		</div>
-		<?php
-	}
 }

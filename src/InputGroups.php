@@ -283,7 +283,7 @@ class InputGroups {
 		ob_start();
 		?>
 		<div class="mwp-media-field__actions">
-			<input type="hidden" name="<?php echo esc_attr( $args['name'] ); ?>" value="<?php echo esc_attr( (string) $attachment_id ); ?>" data-media-input="<?php echo esc_attr( $uid ); ?>">
+			<input type="hidden" name="<?php echo esc_attr( $args['name'] ); ?>" value="<?php echo esc_attr( (string) $attachment_id ); ?>" data-media-input="<?php echo esc_attr( $uid ); ?>" data-autosave-hidden>
 			<button class="mwp-button is-secondary mwp-media-field__choose" type="button" data-media-target="<?php echo esc_attr( $uid ); ?>" data-media-library-type="<?php echo esc_attr( (string) $args['library_type'] ); ?>" data-media-preview-size="<?php echo esc_attr( (string) $args['preview_size'] ); ?>" data-media-title="<?php echo esc_attr( (string) $args['media_title'] ); ?>" data-media-button="<?php echo esc_attr( (string) $args['media_button'] ); ?>"<?php echo $has_image ? ' hidden' : ''; ?>>
 				<?php echo esc_html( $args['button_text'] ); ?>
 			</button>

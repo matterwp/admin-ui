@@ -85,16 +85,6 @@ class MatterAdminUI {
 	}
 
 	/**
-	 * Render an empty state.
-	 *
-	 * @param array $args Empty state arguments.
-	 * @return void
-	 */
-	public static function emptyState( array $args ): void {
-		Layout::emptyState( $args );
-	}
-
-	/**
 	 * Render a toggle switch control.
 	 *
 	 * @param array $args Switch arguments.
