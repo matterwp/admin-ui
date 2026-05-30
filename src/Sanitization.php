@@ -154,9 +154,12 @@ class Sanitization {
 
 		$items = explode( $delimiter, $raw );
 		$items = array_map( 'trim', $items );
-		$items = array_filter( $items, function ( $v ) {
-			return '' !== $v;
-		} );
+		$items = array_filter(
+			$items,
+			function ( $v ) {
+				return '' !== $v;
+			}
+		);
 
 		return array_values( $items );
 	}

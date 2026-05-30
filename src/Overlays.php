@@ -123,8 +123,26 @@ class Overlays {
 				</div>
 				<div class="mwp-modal__footer">
 					<div class="mwp-confirm-footer">
-						<?php self::footerAction( array( 'label' => $args['cancel_label'], 'variant' => 'ghost', 'class' => 'mwp-confirm-cancel', 'data_attributes' => array( 'mwp-modal-close' => '' ), 'autofocus' => true ) ); ?>
-						<?php self::footerAction( array( 'label' => $args['confirm_label'], 'variant' => $confirm_variant, 'type' => 'submit' ) ); ?>
+						<?php
+						self::footerAction(
+							array(
+								'label'           => $args['cancel_label'],
+								'variant'         => 'ghost',
+								'class'           => 'mwp-confirm-cancel',
+								'data_attributes' => array( 'mwp-modal-close' => '' ),
+								'autofocus'       => true,
+							)
+						);
+						?>
+						<?php
+						self::footerAction(
+							array(
+								'label'   => $args['confirm_label'],
+								'variant' => $confirm_variant,
+								'type'    => 'submit',
+							)
+						);
+						?>
 					</div>
 				</div>
 			</div>
