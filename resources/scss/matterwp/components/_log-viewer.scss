@@ -184,6 +184,84 @@
 	}
 }
 
+// Dark mode
+html[data-mwp-theme="dark"] .mwp-log-viewer {
+	.mwp-log-viewer__toolbar .mwp-log-viewer__filters button {
+		border-color: var(--mwp-color-border);
+		background: transparent;
+		color: var(--mwp-color-text-secondary);
+
+		&.active {
+			border-color: var(--mwp-ui-primary, #{$color-primary});
+			background: rgba(5, 150, 105, 0.14);
+			color: var(--mwp-ui-primary, #{$color-primary});
+		}
+
+		&[data-log-filter="success"].active {
+			border-color: var(--mwp-color-success-border);
+			background: var(--mwp-color-success-bg);
+			color: var(--mwp-color-success-text);
+		}
+
+		&[data-log-filter="error"].active {
+			border-color: var(--mwp-color-danger-border);
+			background: var(--mwp-color-danger-bg);
+			color: var(--mwp-color-danger-text);
+		}
+
+		&[data-log-filter="warning"].active {
+			border-color: var(--mwp-color-warning-border);
+			background: var(--mwp-color-warning-bg);
+			color: var(--mwp-color-warning-text);
+		}
+
+		&[data-log-filter="info"].active {
+			border-color: var(--mwp-color-info-border);
+			background: var(--mwp-color-info-bg);
+			color: var(--mwp-color-info-text);
+		}
+
+		&:hover:not(.active) {
+			background: var(--mwp-color-bg-hover);
+			color: var(--mwp-color-text);
+		}
+	}
+
+	.mwp-log-viewer__summary-item {
+		border-color: var(--mwp-color-border);
+
+		strong {
+			color: var(--mwp-color-text);
+		}
+
+		span {
+			color: var(--mwp-color-text-secondary);
+		}
+	}
+
+	.mwp-log-viewer__main .mwp-log-entry__badge {
+		&.is-success {
+			background: rgba(20, 83, 45, 0.32);
+			color: #bbf7d0;
+		}
+
+		&.is-error {
+			background: rgba(127, 29, 29, 0.3);
+			color: #fecaca;
+		}
+
+		&.is-warning {
+			background: rgba(180, 83, 9, 0.3);
+			color: #fed7aa;
+		}
+
+		&.is-info {
+			background: rgba(29, 78, 216, 0.25);
+			color: #bfdbfe;
+		}
+	}
+}
+
 @media (max-width: 782px) {
 	.mwp-log-viewer .mwp-log-viewer__summary {
 		grid-template-columns: repeat(3, 1fr);

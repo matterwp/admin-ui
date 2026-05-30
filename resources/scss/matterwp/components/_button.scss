@@ -152,8 +152,29 @@
 		color: $color-white;
 	}
 
-	input:focus-visible + span {
+input:focus-visible + span {
 		outline: 2px solid var(--mwp-ui-primary, #{$color-primary});
 		outline-offset: 2px;
+	}
+}
+
+// Dark mode
+html[data-mwp-theme="dark"] .mwp-button {
+	&.is-primary:hover {
+		background-color: $color-primary-hover;
+	}
+
+	&.is-danger {
+		border-color: var(--mwp-color-danger-border, rgba(225, 29, 72, 0.35));
+		background-color: var(--mwp-color-danger-bg, rgba(225, 29, 72, 0.15));
+		color: var(--mwp-color-danger-text, #fb7185);
+
+		&:hover {
+			background-color: var(--mwp-color-danger-bg-hover, rgba(225, 29, 72, 0.22));
+		}
+	}
+
+	&.is-ghost:hover {
+		background-color: $color-gray-800;
 	}
 }

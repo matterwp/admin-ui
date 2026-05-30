@@ -32,6 +32,54 @@
 	}
 }
 
+// Dark mode
+html[data-mwp-theme="dark"] {
+	.mwp-badge {
+		&.is-primary {
+			background-color: rgba(5, 150, 105, 0.18);
+			color: #6ee7b7;
+		}
+
+		&.is-warning {
+			border-color: var(--mwp-color-warning-border);
+			background-color: var(--mwp-color-warning-bg);
+			color: var(--mwp-color-warning-text);
+		}
+
+		&.is-success {
+			border-color: var(--mwp-color-success-border);
+			background-color: var(--mwp-color-success-bg);
+			color: var(--mwp-color-success-text);
+		}
+	}
+
+	.mwp-inline-notice {
+		&.is-success {
+			border-color: var(--mwp-color-success-border);
+			background-color: var(--mwp-color-success-bg);
+			color: var(--mwp-color-success-text);
+		}
+
+		&.is-error {
+			border-color: var(--mwp-color-danger-border);
+			background-color: var(--mwp-color-danger-bg);
+			color: var(--mwp-color-danger-text);
+		}
+
+		&.is-warning {
+			border-color: var(--mwp-color-warning-border);
+			background-color: var(--mwp-color-warning-bg);
+			color: var(--mwp-color-warning-text);
+		}
+
+		&.is-info {
+			border-color: var(--mwp-color-info-border);
+			background-color: var(--mwp-color-info-bg);
+			color: var(--mwp-color-info-text);
+		}
+	}
+}
+
 .mwp-inline-notice {
 	width: 100%;
 	padding: 10px 12px;

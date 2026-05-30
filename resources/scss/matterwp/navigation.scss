@@ -45,6 +45,46 @@ $nav-item-radius: 8px;
 	}
 }
 
+// Dark mode
+html[data-mwp-theme="dark"] {
+	.mwp-nav-item {
+		color: $color-gray-400;
+
+		&:hover,
+		&.active {
+			color: $color-gray-50;
+		}
+	}
+
+	.mwp-nav-link-account {
+		border-color: $color-gray-800;
+		color: $color-gray-400;
+
+		&:hover {
+			border-color: $color-gray-700;
+			color: $color-gray-50;
+		}
+	}
+
+	.mwp-nav-label {
+		color: $color-gray-500;
+	}
+
+	.mwp-option-nav {
+		border-color: $color-gray-800;
+		background-color: $color-gray-900;
+
+		&::before {
+			background: $color-gray-800;
+		}
+
+		.mwp-nav-misc,
+		.mwp-nav-upgrade {
+			border-color: $color-gray-800;
+		}
+	}
+}
+
 .mwp-nav-label {
 	position: relative;
 	z-index: 2;

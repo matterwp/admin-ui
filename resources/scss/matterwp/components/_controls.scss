@@ -232,6 +232,15 @@
 	}
 }
 
+// Dark mode
+html[data-mwp-theme="dark"] #mwp-settings {
+	input,
+	select,
+	textarea {
+		color-scheme: dark;
+	}
+}
+
 @media (max-width: 782px) {
 	.mwp-input-button {
 		max-width: 100%;

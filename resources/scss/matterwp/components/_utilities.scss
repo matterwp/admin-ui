@@ -148,6 +148,28 @@
 	display: none !important;
 }
 
+// Dark mode
+html[data-mwp-theme="dark"] #mwp-settings {
+	a {
+		color: inherit;
+	}
+
+	code {
+		background-color: rgb(255 255 255 / 0.06);
+		color: $color-gray-200;
+	}
+}
+
+html[data-mwp-theme="dark"] .mwp-upsell-callout {
+	border-color: var(--mwp-color-upsell-border) !important;
+	background: var(--mwp-color-upsell-bg);
+
+	strong,
+	p {
+		color: var(--mwp-color-upsell-text);
+	}
+}
+
 @media (max-width: 782px) {
 	.mwp-component-grid {
 		grid-template-columns: 1fr;

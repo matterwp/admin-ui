@@ -38,3 +38,26 @@
 	color: #064e3b;
 	font-weight: 500;
 }
+
+// Dark mode
+html[data-mwp-theme="dark"] {
+	.mwp-notice,
+	.boilerplate-notice {
+		border-color: rgb(20 83 45 / 0.48);
+		background: rgb(20 83 45 / 1);
+		color: #bbf7d0;
+
+		&.error {
+			border-color: rgb(127 29 29 / 0.44);
+			background: rgb(127 29 29 / 1);
+
+			.notice-text {
+				color: #fecaca;
+			}
+		}
+
+		&.success .notice-text {
+			color: #bbf7d0;
+		}
+	}
+}
