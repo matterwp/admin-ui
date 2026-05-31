@@ -26,9 +26,9 @@ class Premium {
 		$args = wp_parse_args(
 			$args,
 			array(
-				'label'      => __( 'Pro feature', 'boilerplate' ),
+				'label'      => __( 'Pro feature', 'matterwp-admin-ui' ),
 				'url'        => '',
-				'link_label' => __( 'Upgrade', 'boilerplate' ),
+				'link_label' => __( 'Upgrade', 'matterwp-admin-ui' ),
 			)
 		);
 		?>

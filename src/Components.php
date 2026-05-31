@@ -101,9 +101,9 @@ class Components {
 			</table>
 			<?php if ( $total_pages > 1 ) : ?>
 				<div class="mwp-pagination">
-					<button class="mwp-button is-ghost" type="button" data-mwp-page="prev" <?php disabled( $current_page <= 1 ); ?>><?php esc_html_e( 'Previous', 'boilerplate' ); ?></button>
-					<span class="mwp-pagination__info"><?php echo esc_html( sprintf( __( 'Page %1$d of %2$d', 'boilerplate' ), $current_page, $total_pages ) ); ?></span>
-					<button class="mwp-button is-ghost" type="button" data-mwp-page="next" <?php disabled( $current_page >= $total_pages ); ?>><?php esc_html_e( 'Next', 'boilerplate' ); ?></button>
+					<button class="mwp-button is-ghost" type="button" data-mwp-page="prev" <?php disabled( $current_page <= 1 ); ?>><?php esc_html_e( 'Previous', 'matterwp-admin-ui' ); ?></button>
+					<span class="mwp-pagination__info"><?php echo esc_html( sprintf( __( 'Page %1$d of %2$d', 'matterwp-admin-ui' ), $current_page, $total_pages ) ); ?></span>
+					<button class="mwp-button is-ghost" type="button" data-mwp-page="next" <?php disabled( $current_page >= $total_pages ); ?>><?php esc_html_e( 'Next', 'matterwp-admin-ui' ); ?></button>
 				</div>
 			<?php endif; ?>
 		</div>

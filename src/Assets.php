@@ -24,7 +24,7 @@ class Assets {
 	 *
 	 * @var string
 	 */
-	private static string $package_dir = '';
+	private static $package_dir = '';
 
 	/**
 	 * Get the package root directory.

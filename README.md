@@ -2,6 +2,43 @@
 
 Reusable admin UI helpers, styles, and small JavaScript behaviors for MatterWP WordPress plugins.
 
+## Installation
+
+Install the package with Composer:
+
+```bash
+composer require matterwp/admin-ui
+```
+
+Load Composer's autoloader from your plugin bootstrap if your plugin does not already do so:
+
+```php
+require_once __DIR__ . '/vendor/autoload.php';
+```
+
+Import the helpers you need:
+
+```php
+use MatterWP\AdminUI\Assets;
+use MatterWP\AdminUI\MatterAdminUI;
+```
+
+## Assets
+
+The package includes compiled CSS and JavaScript in `dist/` for direct use from WordPress plugins.
+
+```php
+add_action(
+	'admin_enqueue_scripts',
+	static function (): void {
+		Assets::enqueueBuiltStyle( 'my-plugin-admin-ui' );
+		Assets::enqueueBuiltScript( 'my-plugin-admin-ui' );
+	}
+);
+```
+
+Call `wp_enqueue_media()` on admin pages that render media fields.
+
 ## Extension model
 
 `matterwp/admin-ui` is intended to be used as a Composer package. Plugins should consume the base components and extend them with arguments, stable classes, WordPress filters, CSS custom properties, and plugin-specific JavaScript.

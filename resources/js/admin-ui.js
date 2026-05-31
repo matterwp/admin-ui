@@ -2,6 +2,10 @@ import { initClipboard } from './modules/clipboard';
 import { initMediaControls } from './modules/media-controls';
 import { initLogViewer, initPaginatedTables } from './modules/log-viewer';
 
+function hasElement(selector) {
+	return Boolean(document.querySelector(selector));
+}
+
 function isHexColor(value) {
 	return /^#[0-9a-f]{6}$/i.test(value);
 }
@@ -372,7 +376,22 @@ function initAccordions() {
 }
 
 export function initAdminUI() {
-	[initColorPickers, initModals, initLightbox, initAccordions, initClipboard, initMediaControls, initLogViewer, initPaginatedTables].forEach(fn => {
+	const initializers = [
+		['[data-mwp-color-picker]', initColorPickers],
+		['[data-mwp-modal]', initModals],
+		['[data-mwp-lightbox-trigger]', initLightbox],
+		['[data-mwp-accordion]', initAccordions],
+		['[data-copy-value]', initClipboard],
+		['[data-media-target]', initMediaControls],
+		['[data-log-viewer]', initLogViewer],
+		['[data-mwp-paginated-table]', initPaginatedTables],
+	];
+
+	initializers.forEach(([selector, fn]) => {
+		if (!hasElement(selector)) {
+			return;
+		}
+
 		try { fn(); } catch (e) { console.error('AdminUI init error:', fn.name, e); }
 	});
 }

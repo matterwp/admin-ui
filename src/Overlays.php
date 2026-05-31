@@ -91,11 +91,11 @@ class Overlays {
 				'id'              => '',
 				'title'           => '',
 				'description'     => '',
-				'trigger'         => __( 'Delete', 'boilerplate' ),
+				'trigger'         => __( 'Delete', 'matterwp-admin-ui' ),
 				'trigger_variant' => 'danger',
-				'confirm_label'   => __( 'Confirm', 'boilerplate' ),
+				'confirm_label'   => __( 'Confirm', 'matterwp-admin-ui' ),
 				'confirm_variant' => 'danger',
-				'cancel_label'    => __( 'Cancel', 'boilerplate' ),
+				'cancel_label'    => __( 'Cancel', 'matterwp-admin-ui' ),
 				'class'           => '',
 			)
 		);
