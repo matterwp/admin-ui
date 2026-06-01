@@ -27,13 +27,13 @@
 	}
 
 	&.is-primary {
-		border-color: var(--mwp-ui-primary, #{$color-primary});
-		background-color: var(--mwp-ui-primary, #{$color-primary});
-		color: $color-white;
+		border-color: var(--mwp-action-primary-border, var(--mwp-ui-primary, #{$color-primary}));
+		background-color: var(--mwp-action-primary-bg, var(--mwp-ui-primary, #{$color-primary}));
+		color: var(--mwp-action-primary-text, #{$color-white});
 
 		&:hover {
-			border-color: var(--mwp-ui-primary-hover, #{$color-primary-hover});
-			background-color: var(--mwp-ui-primary-hover, #{$color-primary-hover});
+			border-color: var(--mwp-action-primary-border-hover, var(--mwp-ui-primary-hover, #{$color-primary-hover}));
+			background-color: var(--mwp-action-primary-bg-hover, var(--mwp-ui-primary-hover, #{$color-primary-hover}));
 		}
 	}
 
@@ -146,13 +146,13 @@
 
 	input:checked + span {
 		z-index: 1;
-		border-color: var(--mwp-ui-primary, #{$color-primary});
-		background-color: var(--mwp-ui-primary, #{$color-primary});
-		color: $color-white;
+		border-color: var(--mwp-action-primary-border, var(--mwp-ui-primary, #{$color-primary}));
+		background-color: var(--mwp-action-primary-bg, var(--mwp-ui-primary, #{$color-primary}));
+		color: var(--mwp-action-primary-text, #{$color-white});
 	}
 
 	input:focus-visible + span {
-		outline: 2px solid var(--mwp-ui-primary, #{$color-primary});
+		outline: 2px solid var(--mwp-focus-ring-color, var(--mwp-ui-primary, #{$color-primary}));
 		outline-offset: 2px;
 	}
 }
@@ -160,7 +160,7 @@
 // Dark mode
 html[data-mwp-theme="dark"] .mwp-button {
 	&.is-primary:hover {
-		background-color: $color-primary-hover;
+		background-color: var(--mwp-action-primary-bg-hover, var(--mwp-ui-primary-hover, #{$color-primary-hover}));
 	}
 
 	&.is-danger {

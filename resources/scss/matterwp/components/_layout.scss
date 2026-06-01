@@ -171,8 +171,8 @@
 			justify-content: space-between;
 			padding: 11px 20px 28px;
 			border-radius: 8px 8px 0 0;
-			background: var(--mwp-ui-primary, #{$color-primary});
-			color: #fff;
+			background: var(--mwp-premium-badge-bg, var(--mwp-ui-primary, #{$color-primary}));
+			color: var(--mwp-premium-badge-text, #{$color-white});
 			font-size: 12px;
 			font-weight: 600;
 			line-height: 1;
@@ -279,7 +279,7 @@
 // Dark mode
 html[data-mwp-theme="dark"] .mwp-section-options {
 	.mwp-premium-badge {
-		background-color: $color-gray-700;
+		background-color: var(--mwp-premium-badge-bg, #{$color-gray-700});
 	}
 
 	& > *:not(.mwp-premium-badge) {

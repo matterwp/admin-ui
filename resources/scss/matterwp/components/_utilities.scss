@@ -105,8 +105,8 @@
 		margin-top: 14px;
 		font-size: 13px;
 		font-weight: 600;
-		color: #fff;
-		background: var(--mwp-ui-primary, #{$color-primary});
+		color: var(--mwp-upsell-action-text, #{$color-white});
+		background: var(--mwp-upsell-action-bg, var(--mwp-ui-primary, #{$color-primary}));
 		padding: 6px 12px;
 		border-radius: var(--mwp-ui-radius, 8px);
 		text-decoration: none;

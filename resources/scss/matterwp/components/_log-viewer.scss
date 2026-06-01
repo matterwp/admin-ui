@@ -54,9 +54,9 @@
 				cursor: pointer;
 
 				&.active {
-					border-color: var(--mwp-ui-primary, #{$color-primary});
-					background: rgba(5, 150, 105, 0.08);
-					color: var(--mwp-ui-primary, #{$color-primary});
+					border-color: var(--mwp-log-filter-active-border, var(--mwp-ui-primary, #{$color-primary}));
+					background: var(--mwp-log-filter-active-bg, color-mix(in srgb, var(--mwp-ui-primary, #{$color-primary}) 8%, transparent));
+					color: var(--mwp-log-filter-active-text, var(--mwp-ui-primary, #{$color-primary}));
 				}
 
 				&[data-log-filter="success"].active {
@@ -107,7 +107,7 @@
 				}
 
 				&:focus {
-					outline: 2px solid var(--mwp-ui-primary, #{$color-primary});
+					outline: 2px solid var(--mwp-focus-ring-color, var(--mwp-ui-primary, #{$color-primary}));
 					outline-offset: -1px;
 				}
 			}
@@ -163,23 +163,23 @@
 				text-transform: uppercase;
 
 				&.is-success {
-					background: #dcfce7;
-					color: #166534;
+					background: var(--mwp-log-badge-success-bg, var(--mwp-color-success-bg));
+					color: var(--mwp-log-badge-success-text, var(--mwp-color-success-text));
 				}
 
 				&.is-error {
-					background: #fee2e2;
-					color: #991b1b;
+					background: var(--mwp-log-badge-error-bg, var(--mwp-color-danger-bg));
+					color: var(--mwp-log-badge-error-text, var(--mwp-color-danger-text));
 				}
 
 				&.is-warning {
-					background: #fef3c7;
-					color: #92400e;
+					background: var(--mwp-log-badge-warning-bg, var(--mwp-color-warning-bg));
+					color: var(--mwp-log-badge-warning-text, var(--mwp-color-warning-text));
 				}
 
 				&.is-info {
-					background: #e0f2fe;
-					color: #075985;
+					background: var(--mwp-log-badge-info-bg, var(--mwp-color-info-bg));
+					color: var(--mwp-log-badge-info-text, var(--mwp-color-info-text));
 				}
 			}
 
@@ -216,9 +216,9 @@ html[data-mwp-theme="dark"] .mwp-log-viewer {
 		color: var(--mwp-color-text-secondary);
 
 		&.active {
-			border-color: var(--mwp-ui-primary, #{$color-primary});
-			background: rgba(5, 150, 105, 0.14);
-			color: var(--mwp-ui-primary, #{$color-primary});
+			border-color: var(--mwp-log-filter-active-border, var(--mwp-ui-primary, #{$color-primary}));
+			background: var(--mwp-log-filter-active-bg, color-mix(in srgb, var(--mwp-ui-primary, #{$color-primary}) 14%, transparent));
+			color: var(--mwp-log-filter-active-text, var(--mwp-ui-primary, #{$color-primary}));
 		}
 
 		&[data-log-filter="success"].active {
@@ -265,23 +265,23 @@ html[data-mwp-theme="dark"] .mwp-log-viewer {
 
 	.mwp-log-viewer__main .mwp-log-entry__badge {
 		&.is-success {
-			background: rgba(20, 83, 45, 0.32);
-			color: #bbf7d0;
+			background: var(--mwp-log-badge-success-bg, var(--mwp-color-success-bg));
+			color: var(--mwp-log-badge-success-text, var(--mwp-color-success-text));
 		}
 
 		&.is-error {
-			background: rgba(127, 29, 29, 0.3);
-			color: #fecaca;
+			background: var(--mwp-log-badge-error-bg, var(--mwp-color-danger-bg));
+			color: var(--mwp-log-badge-error-text, var(--mwp-color-danger-text));
 		}
 
 		&.is-warning {
-			background: rgba(180, 83, 9, 0.3);
-			color: #fed7aa;
+			background: var(--mwp-log-badge-warning-bg, var(--mwp-color-warning-bg));
+			color: var(--mwp-log-badge-warning-text, var(--mwp-color-warning-text));
 		}
 
 		&.is-info {
-			background: rgba(29, 78, 216, 0.25);
-			color: #bfdbfe;
+			background: var(--mwp-log-badge-info-bg, var(--mwp-color-info-bg));
+			color: var(--mwp-log-badge-info-text, var(--mwp-color-info-text));
 		}
 	}
 }

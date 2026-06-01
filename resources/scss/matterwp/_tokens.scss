@@ -35,6 +35,55 @@
 	--mwp-color-upsell-border: #ecd9d6;
 	--mwp-color-upsell-bg: #fff1ef;
 	--mwp-color-upsell-text: #047857;
+
+	--mwp-focus-ring-color: var(--mwp-ui-primary, #{$color-primary});
+
+	--mwp-action-primary-bg: var(--mwp-ui-primary, #{$color-primary});
+	--mwp-action-primary-bg-hover: var(--mwp-ui-primary-hover, #{$color-primary-hover});
+	--mwp-action-primary-border: var(--mwp-action-primary-bg);
+	--mwp-action-primary-border-hover: var(--mwp-action-primary-bg-hover);
+	--mwp-action-primary-text: #{$color-white};
+
+	--mwp-switch-track-bg: var(--mwp-color-border-strong);
+	--mwp-switch-active-bg: var(--mwp-ui-primary, #{$color-primary});
+	--mwp-switch-thumb-bg: #{$color-white};
+
+	--mwp-progress-track-bg: var(--mwp-color-bg-hover);
+	--mwp-progress-bar-bg: var(--mwp-ui-primary, #{$color-primary});
+
+	--mwp-nav-active-bg: var(--mwp-color-nav-active);
+	--mwp-nav-upgrade-bg: var(--mwp-ui-primary, #{$color-primary});
+	--mwp-nav-upgrade-bg-hover: var(--mwp-ui-primary-hover, #{$color-primary-hover});
+	--mwp-nav-upgrade-text: #{$color-white};
+
+	--mwp-premium-badge-bg: var(--mwp-ui-primary, #{$color-primary});
+	--mwp-premium-badge-text: #{$color-white};
+
+	--mwp-upsell-action-bg: var(--mwp-ui-primary, #{$color-primary});
+	--mwp-upsell-action-text: #{$color-white};
+
+	--mwp-primary-badge-bg: color-mix(in srgb, var(--mwp-ui-primary, #{$color-primary}) 12%, transparent);
+	--mwp-primary-badge-text: var(--mwp-ui-primary-hover, #{$color-primary-hover});
+
+	--mwp-log-filter-active-bg: color-mix(in srgb, var(--mwp-ui-primary, #{$color-primary}) 8%, transparent);
+	--mwp-log-filter-active-text: var(--mwp-ui-primary, #{$color-primary});
+	--mwp-log-filter-active-border: var(--mwp-ui-primary, #{$color-primary});
+
+	--mwp-log-badge-success-bg: #dcfce7;
+	--mwp-log-badge-success-text: #166534;
+	--mwp-log-badge-error-bg: #fee2e2;
+	--mwp-log-badge-error-text: #991b1b;
+	--mwp-log-badge-warning-bg: #fef3c7;
+	--mwp-log-badge-warning-text: #92400e;
+	--mwp-log-badge-info-bg: #e0f2fe;
+	--mwp-log-badge-info-text: #075985;
+
+	--mwp-toast-success-bg: #ecfdf5;
+	--mwp-toast-success-border: #d1fae5;
+	--mwp-toast-success-text: #064e3b;
+	--mwp-toast-error-bg: #fef2f2;
+	--mwp-toast-error-border: #fee2e2;
+	--mwp-toast-error-text: #7c2d12;
 }
 
 // Dark mode
@@ -77,4 +126,26 @@ html[data-mwp-theme="dark"] .mwp-lightbox {
 	--mwp-color-upsell-border: rgba(97, 47, 47, 0.4);
 	--mwp-color-upsell-bg: rgba(95, 35, 35, 0.28);
 	--mwp-color-upsell-text: #ffffff;
+
+	--mwp-nav-active-bg: var(--mwp-color-nav-active);
+	--mwp-primary-badge-bg: color-mix(in srgb, var(--mwp-ui-primary, #{$color-primary}) 18%, transparent);
+	--mwp-primary-badge-text: #6ee7b7;
+	--mwp-log-filter-active-bg: color-mix(in srgb, var(--mwp-ui-primary, #{$color-primary}) 14%, transparent);
+	--mwp-premium-badge-bg: #{$color-gray-700};
+
+	--mwp-log-badge-success-bg: rgba(20, 83, 45, 0.32);
+	--mwp-log-badge-success-text: #bbf7d0;
+	--mwp-log-badge-error-bg: rgba(127, 29, 29, 0.3);
+	--mwp-log-badge-error-text: #fecaca;
+	--mwp-log-badge-warning-bg: rgba(180, 83, 9, 0.3);
+	--mwp-log-badge-warning-text: #fed7aa;
+	--mwp-log-badge-info-bg: rgba(29, 78, 216, 0.25);
+	--mwp-log-badge-info-text: #bfdbfe;
+
+	--mwp-toast-success-bg: #14532d;
+	--mwp-toast-success-border: rgb(20 83 45 / 0.48);
+	--mwp-toast-success-text: #bbf7d0;
+	--mwp-toast-error-bg: #7f1d1d;
+	--mwp-toast-error-border: rgb(127 29 29 / 0.44);
+	--mwp-toast-error-text: #fecaca;
 }

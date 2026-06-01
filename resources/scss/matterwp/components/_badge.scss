@@ -15,8 +15,8 @@
 
 	&.is-primary {
 		border-color: transparent;
-		background-color: rgb(5 150 105 / 0.12);
-		color: $color-primary-hover;
+		background-color: var(--mwp-primary-badge-bg, color-mix(in srgb, var(--mwp-ui-primary, #{$color-primary}) 12%, transparent));
+		color: var(--mwp-primary-badge-text, var(--mwp-ui-primary-hover, #{$color-primary-hover}));
 	}
 
 	&.is-warning {
@@ -36,8 +36,8 @@
 html[data-mwp-theme="dark"] {
 	.mwp-badge {
 		&.is-primary {
-			background-color: rgba(5, 150, 105, 0.18);
-			color: #6ee7b7;
+			background-color: var(--mwp-primary-badge-bg, color-mix(in srgb, var(--mwp-ui-primary, #{$color-primary}) 18%, transparent));
+			color: var(--mwp-primary-badge-text, #6ee7b7);
 		}
 
 		&.is-warning {

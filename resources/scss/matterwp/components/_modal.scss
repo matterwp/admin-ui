@@ -116,7 +116,7 @@ body.mwp-modal-open {
 	}
 
 	&:focus-visible {
-		outline: 2px solid var(--mwp-ui-primary, #{$color-primary});
+		outline: 2px solid var(--mwp-focus-ring-color, var(--mwp-ui-primary, #{$color-primary}));
 		outline-offset: 2px;
 	}
 }

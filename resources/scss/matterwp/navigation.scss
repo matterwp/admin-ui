@@ -75,7 +75,7 @@ html[data-mwp-theme="dark"] {
 		background-color: $color-gray-900;
 
 		&::before {
-			background: $color-gray-800;
+			background: var(--mwp-nav-active-bg, var(--mwp-color-nav-active, #{$color-gray-800}));
 		}
 
 		.mwp-nav-misc,
@@ -106,8 +106,8 @@ html[data-mwp-theme="dark"] {
 	gap: 8px;
 	padding: 10px 12px;
 	border-radius: $nav-item-radius;
-	background: var(--mwp-ui-primary, #{$color-primary});
-	color: $color-white;
+	background: var(--mwp-nav-upgrade-bg, var(--mwp-ui-primary, #{$color-primary}));
+	color: var(--mwp-nav-upgrade-text, #{$color-white});
 	font-weight: 600;
 	font-size: 14px;
 	text-decoration: none;
@@ -125,8 +125,8 @@ html[data-mwp-theme="dark"] {
 	}
 
 	&:hover {
-		background: var(--mwp-ui-primary-hover, #{$color-primary-hover});
-		color: $color-white;
+		background: var(--mwp-nav-upgrade-bg-hover, var(--mwp-ui-primary-hover, #{$color-primary-hover}));
+		color: var(--mwp-nav-upgrade-text, #{$color-white});
 	}
 }
 
@@ -191,7 +191,7 @@ html[data-mwp-theme="dark"] {
 		width: var(--mwp-nav-active-width);
 		height: var(--mwp-nav-active-height);
 		border-radius: $nav-item-radius;
-		background: $color-gray-100;
+		background: var(--mwp-nav-active-bg, var(--mwp-color-nav-active, #{$color-gray-100}));
 		content: "";
 		opacity: 0;
 		pointer-events: none;

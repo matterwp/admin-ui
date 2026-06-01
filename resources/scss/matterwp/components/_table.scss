@@ -174,13 +174,13 @@
 	}
 
 	&.is-primary {
-		border-color: var(--mwp-ui-primary, #{$color-primary});
-		background-color: var(--mwp-ui-primary, #{$color-primary});
-		color: $color-white;
+		border-color: var(--mwp-action-primary-border, var(--mwp-ui-primary, #{$color-primary}));
+		background-color: var(--mwp-action-primary-bg, var(--mwp-ui-primary, #{$color-primary}));
+		color: var(--mwp-action-primary-text, #{$color-white});
 
 		&:hover {
-			background-color: var(--mwp-ui-primary-hover, #{$color-primary-hover});
-			border-color: var(--mwp-ui-primary-hover, #{$color-primary-hover});
+			background-color: var(--mwp-action-primary-bg-hover, var(--mwp-ui-primary-hover, #{$color-primary-hover}));
+			border-color: var(--mwp-action-primary-border-hover, var(--mwp-ui-primary-hover, #{$color-primary-hover}));
 		}
 	}
 

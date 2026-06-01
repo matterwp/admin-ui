@@ -16,26 +16,28 @@
 .boilerplate-notice {
 	min-width: 200px;
 	padding: 8px 16px;
-	background: #ecfdf5;
-	border: 1px solid #d1fae5;
+	background: var(--mwp-toast-success-bg, var(--mwp-color-success-bg));
+	border: 1px solid var(--mwp-toast-success-border, var(--mwp-color-success-border));
 	border-radius: var(--mwp-ui-radius, 8px);
+	color: var(--mwp-toast-success-text, var(--mwp-color-success-text));
 }
 
 .mwp-notice.error,
 .mwp-notice.error,
 .boilerplate-notice.error {
-	background: #fef2f2;
-	border-color: #fee2e2;
+	background: var(--mwp-toast-error-bg, var(--mwp-color-danger-bg));
+	border-color: var(--mwp-toast-error-border, var(--mwp-color-danger-border));
+	color: var(--mwp-toast-error-text, var(--mwp-color-danger-text));
 
 	.notice-text {
-		color: #7c2d12;
+		color: var(--mwp-toast-error-text, var(--mwp-color-danger-text));
 	}
 }
 
 .mwp-notice.success .notice-text,
 .mwp-notice.success .notice-text,
 .boilerplate-notice.success .notice-text {
-	color: #064e3b;
+	color: var(--mwp-toast-success-text, var(--mwp-color-success-text));
 	font-weight: 500;
 }
 
@@ -43,21 +45,22 @@
 html[data-mwp-theme="dark"] {
 	.mwp-notice,
 	.boilerplate-notice {
-		border-color: rgb(20 83 45 / 0.48);
-		background: rgb(20 83 45 / 1);
-		color: #bbf7d0;
+		border-color: var(--mwp-toast-success-border, var(--mwp-color-success-border));
+		background: var(--mwp-toast-success-bg, var(--mwp-color-success-bg));
+		color: var(--mwp-toast-success-text, var(--mwp-color-success-text));
 
 		&.error {
-			border-color: rgb(127 29 29 / 0.44);
-			background: rgb(127 29 29 / 1);
+			border-color: var(--mwp-toast-error-border, var(--mwp-color-danger-border));
+			background: var(--mwp-toast-error-bg, var(--mwp-color-danger-bg));
+			color: var(--mwp-toast-error-text, var(--mwp-color-danger-text));
 
 			.notice-text {
-				color: #fecaca;
+				color: var(--mwp-toast-error-text, var(--mwp-color-danger-text));
 			}
 		}
 
 		&.success .notice-text {
-			color: #bbf7d0;
+			color: var(--mwp-toast-success-text, var(--mwp-color-success-text));
 		}
 	}
 }
