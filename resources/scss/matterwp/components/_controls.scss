@@ -23,57 +23,64 @@
 	background-size: 16px 16px;
 }
 
-	.mwp-option-input {
-		input[type="text"],
-		input[type="number"],
-		input[type="url"],
-		input[type="email"],
-		input[type="password"],
-		input[type="search"],
-		input[type="tel"] {
-			@include field-control;
+.mwp-option-input {
+	input[type="text"],
+	input[type="number"],
+	input[type="url"],
+	input[type="email"],
+	input[type="password"],
+	input[type="search"],
+	input[type="tel"] {
+		@include field-control;
+	}
+
+	select {
+		@include field-control;
+		@include select-arrow;
+
+		&:hover {
+			color: var(--mwp-color-text);
+			background-color: var(--mwp-color-bg);
+			border: 1px solid var(--mwp-color-border);
 		}
 
-		select {
-			@include field-control;
-			@include select-arrow;
-
-			&:hover {
-				color: var(--mwp-color-text);
-				background-color: var(--mwp-color-bg);
-        border: 1px solid var(--mwp-color-border);
-			}
-
-			&.multiple {
-				height: auto;
-				padding: 8px 16px;
-				background-image: none;
-			}
+		&:disabled {
+			border-color: var(--mwp-color-border);
+			background-color: var(--mwp-color-bg);
+			color: var(--mwp-color-text);
+			-webkit-text-fill-color: var(--mwp-color-text);
 		}
 
-		textarea {
-			@include field-control(8px 12px, auto);
+		&.multiple {
+			height: auto;
+			padding: 8px 16px;
+			background-image: none;
 		}
+	}
 
-		input[type="text"]:focus,
-		input[type="number"]:focus,
-		input[type="url"]:focus,
-		input[type="email"]:focus,
-		input[type="password"]:focus,
-		input[type="search"]:focus,
-		input[type="tel"]:focus,
-		select:focus,
-		textarea:focus {
-			border-color: transparent;
-			outline: 2px solid var(--mwp-ui-primary, #{$color-primary});
-		}
+	textarea {
+		@include field-control(8px 12px, auto);
+	}
 
-		input:disabled,
-		select:disabled,
-		textarea:disabled {
-			cursor: not-allowed;
-			opacity: 0.6;
-		}
+	input[type="text"]:focus,
+	input[type="number"]:focus,
+	input[type="url"]:focus,
+	input[type="email"]:focus,
+	input[type="password"]:focus,
+	input[type="search"]:focus,
+	input[type="tel"]:focus,
+	select:focus,
+	textarea:focus {
+		border-color: transparent;
+		outline: 2px solid var(--mwp-ui-primary, #{$color-primary});
+	}
+
+	input:disabled,
+	select:disabled,
+	textarea:disabled {
+		cursor: not-allowed;
+		opacity: 0.6;
+	}
 
 	.switch,
 	.mwp-switch {
@@ -139,6 +146,14 @@
 	select {
 		@include field-control;
 		@include select-arrow;
+
+		&:disabled {
+			border-color: var(--mwp-color-border);
+			background-color: var(--mwp-color-bg);
+			color: var(--mwp-color-text);
+			-webkit-text-fill-color: var(--mwp-color-text);
+			opacity: 0.6;
+		}
 
 		&.multiple {
 			height: auto;
@@ -342,10 +357,16 @@ html[data-mwp-theme="dark"] #mwp-settings {
 
 	select {
 		@include select-arrow("%23d4d4d8");
-    opacity: 0.2;
 
 		&.multiple {
 			background-image: none;
+		}
+
+		&:disabled {
+			background-color: var(--mwp-color-bg);
+			color: var(--mwp-color-text);
+			-webkit-text-fill-color: var(--mwp-color-text);
+			opacity: 0.6;
 		}
 	}
 }
