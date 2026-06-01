@@ -131,6 +131,7 @@ html[data-mwp-theme="dark"] .mwp-lightbox {
 	--mwp-primary-badge-bg: color-mix(in srgb, var(--mwp-ui-primary, #{$color-primary}) 18%, transparent);
 	--mwp-primary-badge-text: #6ee7b7;
 	--mwp-log-filter-active-bg: color-mix(in srgb, var(--mwp-ui-primary, #{$color-primary}) 14%, transparent);
+  --mwp-log-filter-active-text: #{$color-gray-100};
 	--mwp-premium-badge-bg: #{$color-gray-700};
 
 	--mwp-log-badge-success-bg: rgba(20, 83, 45, 0.32);
