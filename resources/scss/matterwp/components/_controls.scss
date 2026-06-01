@@ -41,6 +41,7 @@
 			&:hover {
 				color: var(--mwp-color-text);
 				background-color: var(--mwp-color-bg);
+        border: 1px solid var(--mwp-color-border);
 			}
 
 			&.multiple {
@@ -341,6 +342,7 @@ html[data-mwp-theme="dark"] #mwp-settings {
 
 	select {
 		@include select-arrow("%23d4d4d8");
+    opacity: 0.2;
 
 		&.multiple {
 			background-image: none;

@@ -102,8 +102,7 @@ body.mwp-modal-open {
 	align-items: center;
 	justify-content: flex-end;
 	gap: 10px;
-	padding: 14px 20px;
-	border-top: 1px solid var(--mwp-color-border);
+	padding: 10px 20px;
 	background-color: var(--mwp-color-bg-alt);
 }
 
@@ -173,21 +172,6 @@ body.mwp-modal-open {
 	color: var(--mwp-color-text-secondary);
 	font-size: 13px;
 	line-height: 1.5;
-}
-
-.is-danger.mwp-modal {
-	.mwp-modal__dialog {
-		border-color: var(--mwp-color-danger-border, rgba(225, 29, 72, 0.3));
-	}
-
-	.mwp-modal__header {
-		border-bottom-color: var(--mwp-color-danger-border, rgba(225, 29, 72, 0.3));
-		background-color: var(--mwp-color-danger-bg, #fef2f2);
-	}
-
-	.mwp-modal__header h4 {
-		color: var(--mwp-color-danger-text, #e11d48);
-	}
 }
 
 .mwp-confirm-footer {
