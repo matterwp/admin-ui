@@ -131,7 +131,10 @@
 
 			.mwp-option-input {
 				box-sizing: border-box;
+				flex-wrap: wrap;
+				align-items: flex-start;
 				justify-content: flex-start;
+				gap: 12px;
 				max-width: 100%;
 				width: 100%;
 				margin-top: 0;
@@ -141,14 +144,13 @@
 			}
 		}
 
-			.mwp-option-info {
-				max-width: 550px;
-
-			.mwp-badge {
-				margin-top: 8px;
-			}
+		.mwp-option-info {
+			max-width: 550px;
 
 			.mwp-option-title {
+				display: inline-flex;
+				align-items: center;
+				margin-right: 8px;
 				font-weight: 600;
 				font-size: 15px;
 				color: var(--mwp-color-text);
@@ -161,6 +163,10 @@
 					font-size: 12px;
 					margin-left: 10px;
 				}
+			}
+
+			.mwp-badge {
+				vertical-align: 2px;
 			}
 
 			.mwp-option-description {

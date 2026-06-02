@@ -17,6 +17,14 @@
 	cursor: pointer;
 	transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
 
+	&.is-compact {
+		min-height: 28px;
+		padding: 4px 10px;
+		border-radius: calc(var(--mwp-ui-radius, 8px) - 2px);
+		font-size: 12px;
+		line-height: 1.2;
+	}
+
 	&:hover {
 		background-color: var(--mwp-color-bg-alt);
 	}

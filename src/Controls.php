@@ -194,6 +194,7 @@ class Controls {
 				'label'           => '',
 				'type'            => 'button',
 				'variant'         => 'secondary',
+				'size'            => 'standard',
 				'class'           => '',
 				'disabled'        => false,
 				'attributes'      => array(),
@@ -203,7 +204,8 @@ class Controls {
 
 		$type                   = in_array( $args['type'], array( 'button', 'submit', 'reset' ), true ) ? $args['type'] : 'button';
 		$variant                = in_array( $args['variant'], array( 'primary', 'secondary', 'ghost', 'danger' ), true ) ? $args['variant'] : 'secondary';
-		$classes                = trim( 'mwp-button is-' . $variant . ' ' . $args['class'] );
+		$size                   = in_array( $args['size'], array( 'standard', 'compact' ), true ) ? $args['size'] : 'standard';
+		$classes                = trim( 'mwp-button is-' . $variant . ' ' . ( 'compact' === $size ? 'is-compact ' : '' ) . $args['class'] );
 		$attributes             = Attrs::merge( is_array( $args['attributes'] ) ? $args['attributes'] : array(), $classes, is_array( $args['data_attributes'] ) ? $args['data_attributes'] : array() );
 		$attributes['type']     = $type;
 		$attributes['disabled'] = wp_validate_boolean( $args['disabled'] );

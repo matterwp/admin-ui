@@ -232,6 +232,13 @@
 	max-width: 420px;
 }
 
+html[data-mwp-theme="dark"] {
+	.mwp-color-picker__swatch {
+		background-color: var(--mwp-color-bg-hover);
+		border-color: var(--mwp-color-border-strong);
+	}
+}
+
 .mwp-progress {
 	width: 100%;
 	max-width: 420px;
