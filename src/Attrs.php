@@ -64,4 +64,47 @@ class Attrs {
 
 		return self::render( $normalized );
 	}
+
+	/**
+	 * Merge base attributes with component class and data attribute arguments.
+	 *
+	 * @param array<string, mixed> $attributes Base attribute map.
+	 * @param string              $classes Root class string.
+	 * @param array<string, mixed> $data_attributes Data attribute map.
+	 * @return array<string, mixed>
+	 */
+	public static function merge( array $attributes, string $classes = '', array $data_attributes = array() ): array {
+		$merged = $attributes;
+
+		if ( '' !== $classes ) {
+			$merged['class'] = trim( $classes . ' ' . ( isset( $merged['class'] ) ? (string) $merged['class'] : '' ) );
+		}
+
+		foreach ( $data_attributes as $key => $value ) {
+			$key                       = (string) $key;
+			$normalized_key            = 0 === strpos( $key, 'data-' ) ? $key : 'data-' . ltrim( $key, '-' );
+			$merged[ $normalized_key ] = $value;
+		}
+
+		return $merged;
+	}
+
+	/**
+	 * Get a scoped class value from a classes map with a legacy fallback key.
+	 *
+	 * @param array<string, mixed> $args Args containing optional classes map.
+	 * @param string              $slot Slot name.
+	 * @param string              $fallback_key Legacy class arg key.
+	 * @return string
+	 */
+	public static function slotClass( array $args, string $slot, string $fallback_key = '' ): string {
+		$classes = isset( $args['classes'] ) && is_array( $args['classes'] ) ? $args['classes'] : array();
+		$value   = $classes[ $slot ] ?? '';
+
+		if ( '' === $value && '' !== $fallback_key && isset( $args[ $fallback_key ] ) ) {
+			$value = $args[ $fallback_key ];
+		}
+
+		return is_scalar( $value ) ? (string) $value : '';
+	}
 }

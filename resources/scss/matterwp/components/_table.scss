@@ -61,6 +61,42 @@
 	gap: 8px;
 }
 
+.mwp-table-link {
+	color: var(--mwp-ui-primary, #{$color-primary});
+	font-weight: 700;
+	text-decoration: none;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
+.mwp-table-code {
+	display: inline-flex;
+	max-width: 100%;
+	padding: 2px 6px;
+	border-radius: 4px;
+	background: var(--mwp-color-bg-alt);
+	color: var(--mwp-color-text);
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 1.4;
+}
+
+.mwp-table-image {
+	display: block;
+	width: 34px;
+	height: 34px;
+	border-radius: 6px;
+	object-fit: cover;
+	background: var(--mwp-color-bg-alt);
+}
+
+.mwp-table-date {
+	color: var(--mwp-color-text-secondary);
+	font-weight: 600;
+}
+
 .mwp-table-action {
 	display: inline-flex;
 	align-items: center;

@@ -55,6 +55,22 @@
 			align-items: flex-start;
 		}
 
+		&.is-align-stretch {
+			align-items: stretch;
+		}
+
+		&.is-control-width-narrow .mwp-option-input {
+			max-width: 140px;
+		}
+
+		&.is-control-width-wide .mwp-option-input {
+			max-width: 360px;
+		}
+
+		&.is-control-width-full .mwp-option-input {
+			max-width: 100%;
+		}
+
 		&.has-no-input-label {
 			.mwp-option-info {
 				display: none;
@@ -125,8 +141,12 @@
 			}
 		}
 
-		.mwp-option-info {
-			max-width: 550px;
+			.mwp-option-info {
+				max-width: 550px;
+
+			.mwp-badge {
+				margin-top: 8px;
+			}
 
 			.mwp-option-title {
 				font-weight: 600;
@@ -161,6 +181,21 @@
 			padding: 2px 8px;
 			border-radius: 4px;
 			display: inline-block;
+		}
+
+		.mwp-option-help {
+			flex: 0 0 100%;
+			width: 100%;
+			color: var(--mwp-color-text-muted);
+			font-size: 12px;
+			line-height: 1.45;
+			text-align: left;
+		}
+
+		.mwp-option-actions {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
 		}
 
 		.mwp-option-input {

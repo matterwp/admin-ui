@@ -52,6 +52,18 @@ class MatterAdminUI {
 	}
 
 	/**
+	 * Render an option row from a schema field definition.
+	 *
+	 * @param array $schema Field schema.
+	 * @param mixed $value Current value.
+	 * @param array $overrides Option/control overrides.
+	 * @return void
+	 */
+	public static function schemaOption( array $schema, $value = null, array $overrides = array() ): void {
+		Layout::schemaOption( $schema, $value, $overrides );
+	}
+
+	/**
 	 * Render a card container.
 	 *
 	 * @param array    $args Card arguments.
@@ -223,6 +235,122 @@ class MatterAdminUI {
 	 */
 	public static function actionGroup( array $args ): void {
 		Components::actionGroup( $args );
+	}
+
+	/**
+	 * Render an empty state.
+	 *
+	 * @param array $args Empty state arguments.
+	 * @return void
+	 */
+	public static function emptyState( array $args ): void {
+		Components::emptyState( $args );
+	}
+
+	/**
+	 * Render a switch grid.
+	 *
+	 * @param array $args Switch grid arguments.
+	 * @return void
+	 */
+	public static function switchGrid( array $args ): void {
+		Components::switchGrid( $args );
+	}
+
+	/**
+	 * Render a choice grid.
+	 *
+	 * @param array $args Choice grid arguments.
+	 * @return void
+	 */
+	public static function choiceGrid( array $args ): void {
+		Components::choiceGrid( $args );
+	}
+
+	/**
+	 * Render a key/value list.
+	 *
+	 * @param array $args Key/value list arguments.
+	 * @return void
+	 */
+	public static function keyValueList( array $args ): void {
+		Components::keyValueList( $args );
+	}
+
+	/**
+	 * Render an action bar.
+	 *
+	 * @param array $args Action bar arguments.
+	 * @return void
+	 */
+	public static function actionBar( array $args ): void {
+		Components::actionBar( $args );
+	}
+
+	/**
+	 * Return a badge table cell.
+	 *
+	 * @param string $label Badge label.
+	 * @param mixed  $args Badge args.
+	 * @return string
+	 */
+	public static function badgeCell( string $label, $args = array() ): string {
+		return Components::badgeCell( $label, $args );
+	}
+
+	/**
+	 * Return a link table cell.
+	 *
+	 * @param string $label Link label.
+	 * @param string $url Link URL.
+	 * @param array  $args Link args.
+	 * @return string
+	 */
+	public static function linkCell( string $label, string $url, array $args = array() ): string {
+		return Components::linkCell( $label, $url, $args );
+	}
+
+	/**
+	 * Return a code table cell.
+	 *
+	 * @param mixed $value Cell value.
+	 * @return string
+	 */
+	public static function codeCell( $value ): string {
+		return Components::codeCell( $value );
+	}
+
+	/**
+	 * Return an image table cell.
+	 *
+	 * @param string $src Image URL.
+	 * @param string $alt Image alt.
+	 * @param array  $args Image args.
+	 * @return string
+	 */
+	public static function imageCell( string $src, string $alt = '', array $args = array() ): string {
+		return Components::imageCell( $src, $alt, $args );
+	}
+
+	/**
+	 * Return a date table cell.
+	 *
+	 * @param mixed  $value Date value.
+	 * @param string $format Date format.
+	 * @return string
+	 */
+	public static function dateCell( $value, string $format = '' ): string {
+		return Components::dateCell( $value, $format );
+	}
+
+	/**
+	 * Return an actions table cell.
+	 *
+	 * @param array $actions Actions.
+	 * @return string
+	 */
+	public static function actionsCell( array $actions ): string {
+		return Components::actionsCell( $actions );
 	}
 
 	/**

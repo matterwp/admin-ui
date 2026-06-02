@@ -13,6 +13,13 @@
 	font-weight: 600;
 	line-height: 1.2;
 
+	&.is-compact {
+		min-height: 0;
+		padding: 1px 6px;
+		font-size: 10px;
+		line-height: 1.4;
+	}
+
 	&.is-primary {
 		border-color: transparent;
 		background-color: var(--mwp-primary-badge-bg, color-mix(in srgb, var(--mwp-ui-primary, #{$color-primary}) 12%, transparent));

@@ -49,7 +49,7 @@ class Assets {
 	 * @param string $fallback_version Fallback version.
 	 * @return void
 	 */
-	public static function enqueueStyle( string $handle, string $url, string $path, array $dependencies = array(), string $fallback_version = '1.0.1' ): void {
+	public static function enqueueStyle( string $handle, string $url, string $path, array $dependencies = array(), string $fallback_version = '1.0.2' ): void {
 		wp_enqueue_style(
 			$handle,
 			$url,
@@ -70,7 +70,7 @@ class Assets {
 	 * @param string $fallback_version Fallback version.
 	 * @return void
 	 */
-	public static function enqueueScript( string $handle, string $url, string $path, array $dependencies = array(), bool $in_footer = true, string $fallback_version = '1.0.1' ): void {
+	public static function enqueueScript( string $handle, string $url, string $path, array $dependencies = array(), bool $in_footer = true, string $fallback_version = '1.0.2' ): void {
 		wp_enqueue_script(
 			$handle,
 			$url,
@@ -97,7 +97,7 @@ class Assets {
 
 		if ( '' === $version ) {
 			$path    = $dir . '/' . $file;
-			$version = file_exists( $path ) ? (string) filemtime( $path ) : '1.0.1';
+			$version = file_exists( $path ) ? (string) filemtime( $path ) : '1.0.2';
 		}
 
 		wp_enqueue_style(
@@ -124,7 +124,7 @@ class Assets {
 
 		if ( '' === $version ) {
 			$path    = $dir . '/' . $file;
-			$version = file_exists( $path ) ? (string) filemtime( $path ) : '1.0.1';
+			$version = file_exists( $path ) ? (string) filemtime( $path ) : '1.0.2';
 		}
 
 		wp_enqueue_script(

@@ -63,7 +63,7 @@ echo MatterAdminUI::attrs(
 
 Sections and options are the base shells for admin screens. A section groups related content. An option row arranges the label, supporting copy, counters, and the control/content area. Inputs, buttons, forms, cards, tables, and custom markup should fit into these shells without each component inventing layout chrome.
 
-Most helpers accept `class` for the component root. Nested wrappers also accept scoped class arguments such as `title_class`, `options_class`, `info_class`, `description_class`, `input_class`, `header_class`, `content_class`, `table_class`, and `pagination_class` where relevant.
+Most helpers accept `class`, `attributes`, and `data_attributes` for the component root. Nested wrappers accept `classes` slot maps, while legacy scoped keys such as `title_class`, `options_class`, `info_class`, `description_class`, `input_class`, `header_class`, `content_class`, `table_class`, and `pagination_class` still work.
 
 Sections support:
 
@@ -90,7 +90,10 @@ Options support:
 - `title` and `description`: string content, or `false` to hide.
 - `input_label`: show or hide the option label/info block. When true and `input_id` is provided, the title renders as a `<label>`.
 - `label_width`: `standard` or `full`.
-- `style`: `row`, `column`, or `divided`.
+- `layout`: `row`, `column`, or `divided`. Legacy `style`, `wide`, and `divider` aliases still map here.
+- `control_width`: `narrow`, `standard`, `wide`, or `full`.
+- `align`: `center`, `start`, or `stretch`.
+- `badge`, `help`, and `actions` for option metadata and inline commands.
 
 ```php
 MatterAdminUI::option(
@@ -137,13 +140,37 @@ MatterAdminUI::section(
 );
 ```
 
-Legacy aliases still map to the new language: `wide => true` maps to `style => 'column'`, and `divider => true` maps to `style => 'divided'`.
+Schema-driven rows can use `schemaOption()`:
+
+```php
+MatterAdminUI::schemaOption(
+	array(
+		'name'        => 'plugin_limit',
+		'label'       => __( 'Limit', 'plugin' ),
+		'description' => __( 'Maximum items to process.', 'plugin' ),
+		'type'        => 'number',
+		'min'         => 1,
+		'max'         => 100,
+		'step'        => 1,
+	),
+	10,
+	array(
+		'option' => array( 'control_width' => 'narrow' ),
+	)
+);
+```
+
+Forms support `variant => 'plain'`, `columns => 1|2|3|'auto'`, and `actions_align => 'left'|'right'|'between'`.
+
+Badges support `size => 'compact'`.
 
 ## Tables
 
-Admin tables use `.mwp-table-wrap` and `.mwp-table`. `MatterAdminUI::paginatedTable()` provides static client-side pagination with previous/next buttons, a page label, default `per_page` of 10, mutation re-rendering, and an `mwp:table-refresh` event for manual refreshes.
+Admin tables use `.mwp-table-wrap` and `.mwp-table`. Columns can be strings or typed arrays with `label`, `type`, and optional `callback`. Supported cell types include `badge`, `link`, `code`, `image`, `date`, and `actions`.
 
-For compact table action columns, use `MatterAdminUI::actionGroup()` with inline SVG icons:
+`MatterAdminUI::paginatedTable()` provides static client-side pagination with previous/next buttons, a page label, default `per_page` of 10, mutation re-rendering, `empty_selector`/`empty_target`, `initial_page => 'first'|'last'|1`, and an `mwp:table-refresh` event for manual refreshes.
+
+For compact table action columns, use `MatterAdminUI::actionGroup()` with named or custom SVG icons:
 
 ```php
 MatterAdminUI::actionGroup(
@@ -151,24 +178,49 @@ MatterAdminUI::actionGroup(
 		'actions' => array(
 			array(
 				'label' => __( 'Edit', 'plugin' ),
-				'icon'  => '<svg aria-hidden="true" ...></svg>',
+				'icon'  => 'edit',
 				'url'   => $edit_url,
 			),
 			array(
 				'label'   => __( 'Delete', 'plugin' ),
-				'icon'    => '<svg aria-hidden="true" ...></svg>',
+				'icon'    => 'delete',
 				'variant' => 'danger',
+				'confirm' => __( 'Delete this row?', 'plugin' ),
 			),
 		),
 	)
 );
 ```
 
+Use `MatterAdminUI::emptyState()` for neutral dashed empty blocks. Pair with paginated tables via `empty_target` or `empty_selector`.
+
 ## Dynamic modals
 
 Modal markup follows the package contract: triggers use `data-mwp-modal-trigger`, `aria-controls`, `aria-haspopup="dialog"`, and `aria-expanded`; modals use `data-mwp-modal`, `aria-hidden`, and `hidden`; close controls use `data-mwp-modal-close`.
 
 JavaScript exposes `window.MatterAdminUI.openModal(idOrElement, values, trigger)`, `closeModal(idOrElement)`, and `populateModal(idOrElement, values)` for edit modals. Values are matched by `name` or `data-mwp-field`.
+
+Modals can generate simple fields with `fields` and submit controls with `footer_actions`:
+
+```php
+MatterAdminUI::modal(
+	array(
+		'id'     => 'plugin-edit-modal',
+		'title'  => __( 'Edit item', 'plugin' ),
+		'fields' => array(
+			array(
+				'name'  => 'item_name',
+				'label' => __( 'Name', 'plugin' ),
+				'type'  => 'text',
+			),
+		),
+		'footer_actions' => array(
+			array( 'label' => __( 'Save', 'plugin' ), 'type' => 'submit', 'variant' => 'primary' ),
+		),
+	),
+	static function (): void {}
+);
+```
 
 ## Media field customization
 

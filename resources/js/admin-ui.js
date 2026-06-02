@@ -433,6 +433,23 @@ function initAccordions() {
 	});
 }
 
+function initConfirmActions() {
+	document.addEventListener('click', event => {
+		const trigger = event.target.closest('[data-mwp-confirm]');
+
+		if (!trigger || trigger.dataset.mwpConfirmHandled === 'true') {
+			return;
+		}
+
+		const message = trigger.dataset.mwpConfirm || 'Are you sure?';
+
+		if (!window.confirm(message)) {
+			event.preventDefault();
+			event.stopPropagation();
+		}
+	});
+}
+
 export function initAdminUI() {
 	const initializers = [
 		['[data-mwp-color-picker]', initColorPickers],
@@ -443,6 +460,7 @@ export function initAdminUI() {
 		['[data-media-target]', initMediaControls],
 		['[data-log-viewer]', initLogViewer],
 		['[data-mwp-paginated-table]', initPaginatedTables],
+		['[data-mwp-confirm]', initConfirmActions],
 	];
 
 	initializers.forEach(([selector, fn]) => {

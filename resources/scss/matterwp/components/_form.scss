@@ -6,6 +6,41 @@
 	border-radius: var(--mwp-ui-radius, 8px);
 	background-color: var(--mwp-color-bg);
 
+	&.is-plain {
+		padding: 0;
+		border: 0;
+		border-radius: 0;
+		background: transparent;
+	}
+
+	&.has-1-columns .mwp-form-fields {
+		grid-template-columns: 1fr;
+	}
+
+	&.has-2-columns .mwp-form-fields {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	&.has-3-columns .mwp-form-fields {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+
+	&.has-auto-columns .mwp-form-fields {
+		grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
+	}
+
+	&.has-actions-left .mwp-form-actions {
+		justify-content: flex-start;
+	}
+
+	&.has-actions-right .mwp-form-actions {
+		justify-content: flex-end;
+	}
+
+	&.has-actions-between .mwp-form-actions {
+		justify-content: space-between;
+	}
+
 	.mwp-form-header {
 		margin-bottom: 14px;
 

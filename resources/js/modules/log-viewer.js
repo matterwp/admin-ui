@@ -45,7 +45,8 @@ function initPaginatedTables() {
 		const tbody = table.querySelector('tbody');
 		const pagination = table.querySelector('[data-mwp-pagination], .mwp-pagination');
 		const perPage = parseInt(table.dataset.perPage, 10) || 10;
-		let currentPage = parseInt(table.dataset.currentPage, 10) || 1;
+		const initialPage = table.dataset.initialPage || table.dataset.currentPage || '1';
+		let currentPage = initialPage === 'last' ? 1 : (parseInt(initialPage, 10) || 1);
 
 		function getRows() {
 			return Array.from(table.querySelectorAll('tbody tr'));
@@ -55,12 +56,27 @@ function initPaginatedTables() {
 			return Math.max(1, Math.ceil(rows.length / perPage));
 		}
 
+		function getEmptyTarget() {
+			if (table.dataset.emptyTarget) {
+				return document.getElementById(table.dataset.emptyTarget) || document.querySelector(table.dataset.emptyTarget);
+			}
+
+			if (table.dataset.emptySelector) {
+				return document.querySelector(table.dataset.emptySelector);
+			}
+
+			return null;
+		}
+
 		function showPage(page = currentPage) {
 			const rows = getRows();
 			const totalPages = getTotalPages(rows);
-			currentPage = Math.max(1, Math.min(page, totalPages));
+			const targetPage = page === 'last' ? totalPages : page;
+			currentPage = Math.max(1, Math.min(targetPage, totalPages));
 			const start = (currentPage - 1) * perPage;
 			const end = start + perPage;
+			const emptyTarget = getEmptyTarget();
+			const hasRows = rows.length > 0;
 
 			rows.forEach((row, index) => {
 				row.classList.toggle('is-hidden', index < start || index >= end);
@@ -74,6 +90,8 @@ function initPaginatedTables() {
 			if (nextBtn) nextBtn.disabled = currentPage >= totalPages;
 			if (info) info.textContent = 'Page ' + currentPage + ' of ' + totalPages;
 			if (pagination) pagination.hidden = totalPages <= 1;
+			if (emptyTarget) emptyTarget.hidden = hasRows;
+			table.classList.toggle('has-no-rows', !hasRows);
 			table.dataset.currentPage = String(currentPage);
 			table.dispatchEvent(new CustomEvent('mwp:table-page', {
 				bubbles: true,
@@ -107,7 +125,7 @@ function initPaginatedTables() {
 		}
 
 		table.addEventListener('mwp:table-refresh', () => showPage(currentPage));
-		showPage(currentPage);
+		showPage(initialPage === 'last' ? 'last' : currentPage);
 	});
 }
 

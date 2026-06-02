@@ -23,25 +23,36 @@ class Controls {
 	 * @return void
 	 */
 	public static function switch( array $args ): void {
-		$args           = wp_parse_args(
+		$args                    = wp_parse_args(
 			$args,
 			array(
-				'id'           => '',
-				'name'         => '',
-				'value'        => null,
-				'checked'      => false,
-				'disabled'     => false,
-				'class'        => '',
-				'input_class'  => '',
-				'slider_class' => '',
+				'id'              => '',
+				'name'            => '',
+				'value'           => null,
+				'checked'         => false,
+				'disabled'        => false,
+				'class'           => '',
+				'input_class'     => '',
+				'slider_class'    => '',
+				'attributes'      => array(),
+				'input_attrs'     => array(),
+				'data_attributes' => array(),
 			)
 		);
-		$classes        = trim( 'mwp-switch ' . $args['class'] );
-		$input_classes  = trim( $args['input_class'] );
-		$slider_classes = trim( 'mwp-switch__slider ' . $args['slider_class'] );
+		$classes                 = trim( 'mwp-switch ' . $args['class'] );
+		$input_classes           = trim( $args['input_class'] );
+		$slider_classes          = trim( 'mwp-switch__slider ' . $args['slider_class'] );
+		$attributes              = Attrs::merge( is_array( $args['attributes'] ) ? $args['attributes'] : array(), $classes, is_array( $args['data_attributes'] ) ? $args['data_attributes'] : array() );
+		$input_attrs             = Attrs::merge( is_array( $args['input_attrs'] ) ? $args['input_attrs'] : array(), $input_classes );
+		$input_attrs['id']       = '' !== $args['id'] ? $args['id'] : null;
+		$input_attrs['name']     = '' !== $args['name'] ? $args['name'] : null;
+		$input_attrs['type']     = 'checkbox';
+		$input_attrs['value']    = null !== $args['value'] ? $args['value'] : null;
+		$input_attrs['checked']  = wp_validate_boolean( $args['checked'] );
+		$input_attrs['disabled'] = wp_validate_boolean( $args['disabled'] );
 		?>
-		<label class="<?php echo esc_attr( $classes ); ?>">
-			<input class="<?php echo esc_attr( $input_classes ); ?>" <?php echo '' !== $args['id'] ? ' id="' . esc_attr( $args['id'] ) . '"' : ''; ?> name="<?php echo esc_attr( $args['name'] ); ?>" type="checkbox" <?php echo null !== $args['value'] ? ' value="' . esc_attr( $args['value'] ) . '"' : ''; ?> <?php checked( $args['checked'] ); ?> <?php disabled( $args['disabled'] ); ?>>
+		<label <?php echo Attrs::render( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+			<input <?php echo Attrs::render( $input_attrs ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<span class="<?php echo esc_attr( $slider_classes ); ?>"></span>
 		</label>
 		<?php
@@ -57,19 +68,40 @@ class Controls {
 		$args = wp_parse_args(
 			$args,
 			array(
-				'type'        => 'text',
-				'id'          => '',
-				'name'        => '',
-				'value'       => '',
-				'placeholder' => '',
-				'class'       => '',
-				'disabled'    => false,
+				'type'            => 'text',
+				'id'              => '',
+				'name'            => '',
+				'value'           => '',
+				'placeholder'     => '',
+				'class'           => '',
+				'disabled'        => false,
+				'readonly'        => false,
+				'required'        => false,
+				'min'             => null,
+				'max'             => null,
+				'step'            => null,
+				'autocomplete'    => '',
+				'attributes'      => array(),
+				'data_attributes' => array(),
 			)
 		);
 
-		$type = in_array( $args['type'], array( 'text', 'number', 'url', 'email', 'password', 'search', 'color' ), true ) ? $args['type'] : 'text';
+		$type                       = in_array( $args['type'], array( 'text', 'number', 'url', 'email', 'password', 'search', 'color', 'tel', 'hidden' ), true ) ? $args['type'] : 'text';
+		$attributes                 = Attrs::merge( is_array( $args['attributes'] ) ? $args['attributes'] : array(), (string) $args['class'], is_array( $args['data_attributes'] ) ? $args['data_attributes'] : array() );
+		$attributes['id']           = '' !== $args['id'] ? $args['id'] : null;
+		$attributes['name']         = '' !== $args['name'] ? $args['name'] : null;
+		$attributes['type']         = $type;
+		$attributes['value']        = $args['value'];
+		$attributes['placeholder']  = '' !== $args['placeholder'] ? $args['placeholder'] : null;
+		$attributes['disabled']     = wp_validate_boolean( $args['disabled'] );
+		$attributes['readonly']     = wp_validate_boolean( $args['readonly'] );
+		$attributes['required']     = wp_validate_boolean( $args['required'] );
+		$attributes['min']          = null !== $args['min'] ? $args['min'] : null;
+		$attributes['max']          = null !== $args['max'] ? $args['max'] : null;
+		$attributes['step']         = null !== $args['step'] ? $args['step'] : null;
+		$attributes['autocomplete'] = '' !== $args['autocomplete'] ? $args['autocomplete'] : null;
 		?>
-		<input class="<?php echo esc_attr( $args['class'] ); ?>" <?php echo '' !== $args['id'] ? ' id="' . esc_attr( $args['id'] ) . '"' : ''; ?> <?php echo '' !== $args['name'] ? ' name="' . esc_attr( $args['name'] ) . '"' : ''; ?> type="<?php echo esc_attr( $type ); ?>" value="<?php echo esc_attr( $args['value'] ); ?>" placeholder="<?php echo esc_attr( $args['placeholder'] ); ?>" <?php disabled( $args['disabled'] ); ?>>
+		<input <?php echo Attrs::render( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 		<?php
 	}
 
@@ -80,20 +112,34 @@ class Controls {
 	 * @return void
 	 */
 	public static function textarea( array $args ): void {
-		$args = wp_parse_args(
+		$args                       = wp_parse_args(
 			$args,
 			array(
-				'name'        => '',
-				'id'          => '',
-				'value'       => '',
-				'placeholder' => '',
-				'class'       => '',
-				'rows'        => 4,
-				'disabled'    => false,
+				'name'            => '',
+				'id'              => '',
+				'value'           => '',
+				'placeholder'     => '',
+				'class'           => '',
+				'rows'            => 4,
+				'disabled'        => false,
+				'readonly'        => false,
+				'required'        => false,
+				'autocomplete'    => '',
+				'attributes'      => array(),
+				'data_attributes' => array(),
 			)
 		);
+		$attributes                 = Attrs::merge( is_array( $args['attributes'] ) ? $args['attributes'] : array(), (string) $args['class'], is_array( $args['data_attributes'] ) ? $args['data_attributes'] : array() );
+		$attributes['id']           = '' !== $args['id'] ? $args['id'] : null;
+		$attributes['name']         = '' !== $args['name'] ? $args['name'] : null;
+		$attributes['rows']         = max( 1, absint( $args['rows'] ) );
+		$attributes['placeholder']  = '' !== $args['placeholder'] ? $args['placeholder'] : null;
+		$attributes['disabled']     = wp_validate_boolean( $args['disabled'] );
+		$attributes['readonly']     = wp_validate_boolean( $args['readonly'] );
+		$attributes['required']     = wp_validate_boolean( $args['required'] );
+		$attributes['autocomplete'] = '' !== $args['autocomplete'] ? $args['autocomplete'] : null;
 		?>
-		<textarea class="<?php echo esc_attr( $args['class'] ); ?>" <?php echo '' !== $args['id'] ? ' id="' . esc_attr( $args['id'] ) . '"' : ''; ?> <?php echo '' !== $args['name'] ? ' name="' . esc_attr( $args['name'] ) . '"' : ''; ?> rows="<?php echo esc_attr( (string) absint( $args['rows'] ) ); ?>" placeholder="<?php echo esc_attr( $args['placeholder'] ); ?>" <?php disabled( $args['disabled'] ); ?>><?php echo esc_textarea( $args['value'] ); ?></textarea>
+		<textarea <?php echo Attrs::render( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php echo esc_textarea( $args['value'] ); ?></textarea>
 		<?php
 	}
 
@@ -104,21 +150,29 @@ class Controls {
 	 * @return void
 	 */
 	public static function select( array $args ): void {
-		$args = wp_parse_args(
+		$args                   = wp_parse_args(
 			$args,
 			array(
-				'name'           => '',
-				'id'             => '',
-				'value'          => '',
-				'options'        => array(),
-				'class'          => '',
-				'option_class'   => '',
-				'option_classes' => array(),
-				'disabled'       => false,
+				'name'            => '',
+				'id'              => '',
+				'value'           => '',
+				'options'         => array(),
+				'class'           => '',
+				'option_class'    => '',
+				'option_classes'  => array(),
+				'disabled'        => false,
+				'required'        => false,
+				'attributes'      => array(),
+				'data_attributes' => array(),
 			)
 		);
+		$attributes             = Attrs::merge( is_array( $args['attributes'] ) ? $args['attributes'] : array(), (string) $args['class'], is_array( $args['data_attributes'] ) ? $args['data_attributes'] : array() );
+		$attributes['id']       = '' !== $args['id'] ? $args['id'] : null;
+		$attributes['name']     = '' !== $args['name'] ? $args['name'] : null;
+		$attributes['disabled'] = wp_validate_boolean( $args['disabled'] );
+		$attributes['required'] = wp_validate_boolean( $args['required'] );
 		?>
-		<select class="<?php echo esc_attr( $args['class'] ); ?>" <?php echo '' !== $args['id'] ? ' id="' . esc_attr( $args['id'] ) . '"' : ''; ?> <?php echo '' !== $args['name'] ? ' name="' . esc_attr( $args['name'] ) . '"' : ''; ?> <?php disabled( $args['disabled'] ); ?>>
+		<select <?php echo Attrs::render( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<?php foreach ( $args['options'] as $value => $label ) : ?>
 				<?php $option_classes = trim( $args['option_class'] . ' ' . ( is_array( $args['option_classes'] ) ? ( $args['option_classes'][ $value ] ?? '' ) : '' ) ); ?>
 				<option class="<?php echo esc_attr( $option_classes ); ?>" value="<?php echo esc_attr( (string) $value ); ?>" <?php selected( (string) $args['value'], (string) $value ); ?>><?php echo esc_html( $label ); ?></option>
@@ -137,34 +191,25 @@ class Controls {
 		$args = wp_parse_args(
 			$args,
 			array(
-				'label'      => '',
-				'type'       => 'button',
-				'variant'    => 'secondary',
-				'class'      => '',
-				'disabled'   => false,
-				'attributes' => array(),
+				'label'           => '',
+				'type'            => 'button',
+				'variant'         => 'secondary',
+				'class'           => '',
+				'disabled'        => false,
+				'attributes'      => array(),
+				'data_attributes' => array(),
 			)
 		);
 
-		$type    = in_array( $args['type'], array( 'button', 'submit', 'reset' ), true ) ? $args['type'] : 'button';
-		$variant = in_array( $args['variant'], array( 'primary', 'secondary', 'ghost', 'danger' ), true ) ? $args['variant'] : 'secondary';
-		$classes = trim( 'mwp-button is-' . $variant . ' ' . $args['class'] );
-
-		$data_attrs = '';
-		if ( ! empty( $args['data_attributes'] ) && is_array( $args['data_attributes'] ) ) {
-			foreach ( $args['data_attributes'] as $key => $value ) {
-				$data_attrs .= ' data-' . esc_attr( $key ) . '="' . esc_attr( $value ) . '"';
-			}
-		}
-
-		$key_attr = '';
-		if ( ! empty( $args['key'] ) ) {
-			$key_attr = ' key="' . esc_attr( $args['key'] ) . '"';
-		}
-		$attributes  = is_array( $args['attributes'] ) ? $args['attributes'] : array();
-		$attr_string = Attrs::render( $attributes );
+		$type                   = in_array( $args['type'], array( 'button', 'submit', 'reset' ), true ) ? $args['type'] : 'button';
+		$variant                = in_array( $args['variant'], array( 'primary', 'secondary', 'ghost', 'danger' ), true ) ? $args['variant'] : 'secondary';
+		$classes                = trim( 'mwp-button is-' . $variant . ' ' . $args['class'] );
+		$attributes             = Attrs::merge( is_array( $args['attributes'] ) ? $args['attributes'] : array(), $classes, is_array( $args['data_attributes'] ) ? $args['data_attributes'] : array() );
+		$attributes['type']     = $type;
+		$attributes['disabled'] = wp_validate_boolean( $args['disabled'] );
+		$attributes['key']      = ! empty( $args['key'] ) ? $args['key'] : null;
 		?>
-		<button class="<?php echo esc_attr( $classes ); ?>" type="<?php echo esc_attr( $type ); ?>" <?php disabled( $args['disabled'] ); ?><?php echo $data_attrs; ?><?php echo $key_attr; ?><?php echo '' !== $attr_string ? ' ' . $attr_string : ''; ?>>
+		<button <?php echo Attrs::render( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<?php echo esc_html( $args['label'] ); ?>
 		</button>
 		<?php
@@ -180,16 +225,21 @@ class Controls {
 		$args = wp_parse_args(
 			$args,
 			array(
-				'label'   => '',
-				'variant' => 'neutral',
-				'class'   => '',
+				'label'           => '',
+				'variant'         => 'neutral',
+				'size'            => 'standard',
+				'class'           => '',
+				'attributes'      => array(),
+				'data_attributes' => array(),
 			)
 		);
 
-		$variant = in_array( $args['variant'], array( 'neutral', 'primary', 'warning', 'success' ), true ) ? $args['variant'] : 'neutral';
-		$classes = trim( 'mwp-badge is-' . $variant . ' ' . $args['class'] );
+		$variant    = in_array( $args['variant'], array( 'neutral', 'primary', 'warning', 'success' ), true ) ? $args['variant'] : 'neutral';
+		$size       = in_array( $args['size'], array( 'standard', 'compact' ), true ) ? $args['size'] : 'standard';
+		$classes    = trim( 'mwp-badge is-' . $variant . ' ' . ( 'compact' === $size ? 'is-compact ' : '' ) . $args['class'] );
+		$attributes = Attrs::merge( is_array( $args['attributes'] ) ? $args['attributes'] : array(), $classes, is_array( $args['data_attributes'] ) ? $args['data_attributes'] : array() );
 		?>
-		<span class="<?php echo esc_attr( $classes ); ?>"><?php echo esc_html( $args['label'] ); ?></span>
+		<span <?php echo Attrs::render( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php echo esc_html( $args['label'] ); ?></span>
 		<?php
 	}
 
@@ -203,16 +253,19 @@ class Controls {
 		$args = wp_parse_args(
 			$args,
 			array(
-				'message' => '',
-				'variant' => 'success',
-				'class'   => '',
+				'message'         => '',
+				'variant'         => 'success',
+				'class'           => '',
+				'attributes'      => array(),
+				'data_attributes' => array(),
 			)
 		);
 
-		$variant = in_array( $args['variant'], array( 'success', 'error', 'warning', 'info' ), true ) ? $args['variant'] : 'success';
-		$classes = trim( 'mwp-inline-notice is-' . $variant . ' ' . $args['class'] );
+		$variant    = in_array( $args['variant'], array( 'success', 'error', 'warning', 'info' ), true ) ? $args['variant'] : 'success';
+		$classes    = trim( 'mwp-inline-notice is-' . $variant . ' ' . $args['class'] );
+		$attributes = Attrs::merge( is_array( $args['attributes'] ) ? $args['attributes'] : array(), $classes, is_array( $args['data_attributes'] ) ? $args['data_attributes'] : array() );
 		?>
-		<div class="<?php echo esc_attr( $classes ); ?>">
+		<div <?php echo Attrs::render( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<span class="notice-text"><?php echo esc_html( $args['message'] ); ?></span>
 		</div>
 		<?php

@@ -38,19 +38,29 @@ class Overlays {
 				'header_class'    => '',
 				'content_class'   => '',
 				'footer_class'    => '',
+				'fields_class'    => '',
 				'footer'          => '',
 				'footer_actions'  => array(),
+				'fields'          => array(),
+				'classes'         => array(),
+				'attributes'      => array(),
+				'data_attributes' => array(),
 			)
 		);
 
-		$id             = '' !== $args['id'] ? $args['id'] : 'mwp-modal-' . wp_unique_id();
-		$title_id       = $id . '-title';
-		$description_id = $id . '-description';
-		$classes        = trim( 'mwp-modal ' . $args['class'] );
-		$has_footer     = '' !== $args['footer'] || ! empty( $args['footer_actions'] );
+		$id                           = '' !== $args['id'] ? $args['id'] : 'mwp-modal-' . wp_unique_id();
+		$title_id                     = $id . '-title';
+		$description_id               = $id . '-description';
+		$classes                      = trim( 'mwp-modal ' . $args['class'] );
+		$attributes                   = Attrs::merge( is_array( $args['attributes'] ) ? $args['attributes'] : array(), $classes, is_array( $args['data_attributes'] ) ? $args['data_attributes'] : array() );
+		$attributes['id']             = $id;
+		$attributes['data-mwp-modal'] = '';
+		$attributes['aria-hidden']    = 'true';
+		$attributes['hidden']         = true;
+		$has_footer                   = '' !== $args['footer'] || ! empty( $args['footer_actions'] );
 		self::modalTrigger( $id, (string) $args['trigger'], (string) $args['trigger_variant'], (string) $args['trigger_class'] );
 		?>
-		<div class="<?php echo esc_attr( $classes ); ?>" id="<?php echo esc_attr( $id ); ?>" data-mwp-modal aria-hidden="true" hidden>
+		<div <?php echo Attrs::render( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<div class="mwp-modal__overlay" data-mwp-modal-close></div>
 			<div class="<?php echo esc_attr( trim( 'mwp-modal__dialog ' . $args['dialog_class'] ) ); ?>" role="dialog" aria-modal="true" aria-labelledby="<?php echo esc_attr( $title_id ); ?>"<?php echo '' !== $args['description'] ? ' aria-describedby="' . esc_attr( $description_id ) . '"' : ''; ?> tabindex="-1">
 				<div class="<?php echo esc_attr( trim( 'mwp-modal__header ' . $args['header_class'] ) ); ?>">
@@ -63,6 +73,13 @@ class Overlays {
 					<button class="mwp-icon-button mwp-modal__close" type="button" aria-label="Close" data-mwp-modal-close><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
 				</div>
 				<div class="<?php echo esc_attr( trim( 'mwp-modal__content ' . $args['content_class'] ) ); ?>">
+					<?php if ( ! empty( $args['fields'] ) && is_array( $args['fields'] ) ) : ?>
+						<div class="<?php echo esc_attr( trim( 'mwp-modal__fields mwp-form-fields ' . $args['fields_class'] ) ); ?>">
+							<?php foreach ( $args['fields'] as $field ) : ?>
+								<?php self::modalField( is_array( $field ) ? $field : array() ); ?>
+							<?php endforeach; ?>
+						</div>
+					<?php endif; ?>
 					<?php $content(); ?>
 				</div>
 				<?php if ( $has_footer ) : ?>
@@ -194,23 +211,78 @@ class Overlays {
 				'disabled'        => false,
 				'autofocus'       => false,
 				'data_attributes' => array(),
+				'attributes'      => array(),
 			)
 		);
 
-		$type       = in_array( $args['type'], array( 'button', 'submit', 'reset' ), true ) ? $args['type'] : 'button';
-		$variant    = in_array( $args['variant'], array( 'primary', 'secondary', 'ghost', 'danger' ), true ) ? $args['variant'] : 'secondary';
-		$classes    = trim( 'mwp-button is-' . $variant . ' ' . $args['class'] );
-		$data_attrs = '';
-
-		if ( ! empty( $args['data_attributes'] ) && is_array( $args['data_attributes'] ) ) {
-			foreach ( $args['data_attributes'] as $key => $value ) {
-				$data_attrs .= ' data-' . esc_attr( $key ) . '="' . esc_attr( $value ) . '"';
-			}
-		}
+		$type                             = in_array( $args['type'], array( 'button', 'submit', 'reset' ), true ) ? $args['type'] : 'button';
+		$variant                          = in_array( $args['variant'], array( 'primary', 'secondary', 'ghost', 'danger' ), true ) ? $args['variant'] : 'secondary';
+		$classes                          = trim( 'mwp-button is-' . $variant . ' ' . $args['class'] );
+		$attributes                       = Attrs::merge( is_array( $args['attributes'] ) ? $args['attributes'] : array(), $classes, is_array( $args['data_attributes'] ) ? $args['data_attributes'] : array() );
+		$attributes['type']               = $type;
+		$attributes['disabled']           = wp_validate_boolean( $args['disabled'] );
+		$attributes['data-mwp-autofocus'] = $args['autofocus'] ? '' : null;
 		?>
-		<button class="<?php echo esc_attr( $classes ); ?>" type="<?php echo esc_attr( $type ); ?>"<?php disabled( $args['disabled'] ); ?><?php echo $data_attrs; ?><?php echo $args['autofocus'] ? ' data-mwp-autofocus' : ''; ?>>
+		<button <?php echo Attrs::render( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<?php echo esc_html( $args['label'] ); ?>
 		</button>
 		<?php
+	}
+
+	/**
+	 * Render a generated modal field.
+	 *
+	 * @param array<string, mixed> $field Field schema.
+	 * @return void
+	 */
+	private static function modalField( array $field ): void {
+		$name  = (string) ( $field['name'] ?? ( $field['key'] ?? '' ) );
+		$id    = (string) ( $field['id'] ?? ( '' !== $name ? str_replace( '_', '-', $name ) : wp_unique_id( 'mwp-modal-field-' ) ) );
+		$type  = (string) ( $field['type'] ?? 'text' );
+		$label = (string) ( $field['label'] ?? ( $field['title'] ?? $name ) );
+
+		Layout::field(
+			$label,
+			static function () use ( $field, $name, $id, $type ): void {
+				$attributes                   = is_array( $field['attributes'] ?? null ) ? $field['attributes'] : array();
+				$attributes['data-mwp-field'] = $name;
+				$control_args                 = array_merge(
+					$field,
+					array(
+						'id'         => $id,
+						'name'       => $name,
+						'value'      => $field['value'] ?? '',
+						'attributes' => $attributes,
+					)
+				);
+
+				if ( in_array( $type, array( 'boolean', 'bool', 'switch' ), true ) ) {
+					$input_attrs                   = is_array( $control_args['input_attrs'] ?? null ) ? $control_args['input_attrs'] : array();
+					$input_attrs['data-mwp-field'] = $name;
+					$control_args['input_attrs']   = $input_attrs;
+					$control_args['attributes']    = is_array( $field['switch_attributes'] ?? null ) ? $field['switch_attributes'] : array();
+					$control_args['checked']       = ! empty( $field['checked'] );
+					Controls::switch( $control_args );
+					return;
+				}
+
+				if ( in_array( $type, array( 'select', 'choice' ), true ) ) {
+					$control_args['options'] = $field['options'] ?? ( $field['choices'] ?? array() );
+					Controls::select( $control_args );
+					return;
+				}
+
+				if ( 'textarea' === $type ) {
+					Controls::textarea( $control_args );
+					return;
+				}
+
+				$control_args['type'] = in_array( $type, array( 'number', 'url', 'email', 'password', 'search', 'color', 'tel' ), true ) ? $type : 'text';
+				Controls::input( $control_args );
+			},
+			array(
+				'class' => $field['field_class'] ?? '',
+			)
+		);
 	}
 }
