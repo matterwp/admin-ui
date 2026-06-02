@@ -148,6 +148,10 @@
 	display: none !important;
 }
 
+[hidden] {
+	display: none !important;
+}
+
 // Dark mode
 html[data-mwp-theme="dark"] #mwp-settings {
 	a {

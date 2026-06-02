@@ -145,9 +145,10 @@ body.mwp-modal-open {
 	img {
 		display: block;
 		width: 100%;
-		aspect-ratio: 4 / 3;
+		aspect-ratio: 6 / 2;
 		background-color: var(--mwp-color-bg-alt);
 		object-fit: contain;
+    padding: 14px 0;
 	}
 }
 

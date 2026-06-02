@@ -80,8 +80,8 @@ class MatterAdminUI {
 	 * @param callable $control Control callback.
 	 * @return void
 	 */
-	public static function field( string $label, callable $control ): void {
-		Layout::field( $label, $control );
+	public static function field( string $label, callable $control, array $args = array() ): void {
+		Layout::field( $label, $control, $args );
 	}
 
 	/**
@@ -213,6 +213,16 @@ class MatterAdminUI {
 	 */
 	public static function paginatedTable( array $args ): void {
 		Components::paginatedTable( $args );
+	}
+
+	/**
+	 * Render compact action buttons for table action columns.
+	 *
+	 * @param array $args Action group arguments.
+	 * @return void
+	 */
+	public static function actionGroup( array $args ): void {
+		Components::actionGroup( $args );
 	}
 
 	/**

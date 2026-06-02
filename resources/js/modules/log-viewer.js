@@ -37,13 +37,27 @@ function initLogViewer() {
 
 function initPaginatedTables() {
 	document.querySelectorAll('[data-mwp-paginated-table]').forEach(table => {
-		const rows = table.querySelectorAll('tbody tr');
+		if (table.dataset.mwpPaginationReady === 'true') {
+			return;
+		}
+
+		table.dataset.mwpPaginationReady = 'true';
+		const tbody = table.querySelector('tbody');
+		const pagination = table.querySelector('[data-mwp-pagination], .mwp-pagination');
 		const perPage = parseInt(table.dataset.perPage, 10) || 10;
 		let currentPage = parseInt(table.dataset.currentPage, 10) || 1;
-		const total = parseInt(table.dataset.total, 10) || rows.length;
-		const totalPages = Math.max(1, Math.ceil(total / perPage));
 
-		function showPage(page) {
+		function getRows() {
+			return Array.from(table.querySelectorAll('tbody tr'));
+		}
+
+		function getTotalPages(rows) {
+			return Math.max(1, Math.ceil(rows.length / perPage));
+		}
+
+		function showPage(page = currentPage) {
+			const rows = getRows();
+			const totalPages = getTotalPages(rows);
 			currentPage = Math.max(1, Math.min(page, totalPages));
 			const start = (currentPage - 1) * perPage;
 			const end = start + perPage;
@@ -59,6 +73,12 @@ function initPaginatedTables() {
 			if (prevBtn) prevBtn.disabled = currentPage <= 1;
 			if (nextBtn) nextBtn.disabled = currentPage >= totalPages;
 			if (info) info.textContent = 'Page ' + currentPage + ' of ' + totalPages;
+			if (pagination) pagination.hidden = totalPages <= 1;
+			table.dataset.currentPage = String(currentPage);
+			table.dispatchEvent(new CustomEvent('mwp:table-page', {
+				bubbles: true,
+				detail: { currentPage, totalPages, perPage, total: rows.length }
+			}));
 		}
 
 		table.addEventListener('click', event => {
@@ -76,11 +96,17 @@ function initPaginatedTables() {
 				page = parseInt(button.dataset.mwpPage, 10);
 			}
 
-			if (page && page >= 1 && page <= totalPages) {
+			if (page) {
 				showPage(page);
 			}
 		});
 
+		if (tbody) {
+			const observer = new MutationObserver(() => showPage(currentPage));
+			observer.observe(tbody, { childList: true });
+		}
+
+		table.addEventListener('mwp:table-refresh', () => showPage(currentPage));
 		showPage(currentPage);
 	});
 }

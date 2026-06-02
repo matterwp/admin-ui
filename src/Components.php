@@ -26,16 +26,18 @@ class Components {
 		$args = wp_parse_args(
 			$args,
 			array(
-				'columns' => array(),
-				'rows'    => array(),
-				'class'   => '',
+				'columns'     => array(),
+				'rows'        => array(),
+				'class'       => '',
+				'table_class' => '',
 			)
 		);
 
-		$classes = trim( 'mwp-table-wrap ' . $args['class'] );
+		$classes       = trim( 'mwp-table-wrap ' . $args['class'] );
+		$table_classes = trim( 'mwp-table ' . $args['table_class'] );
 		?>
 		<div class="<?php echo esc_attr( $classes ); ?>">
-			<table class="mwp-table">
+			<table class="<?php echo esc_attr( $table_classes ); ?>">
 				<thead>
 					<tr>
 						<?php foreach ( $args['columns'] as $column_label ) : ?>
@@ -47,7 +49,7 @@ class Components {
 					<?php foreach ( $args['rows'] as $row ) : ?>
 						<tr>
 							<?php foreach ( array_keys( $args['columns'] ) as $column_key ) : ?>
-								<td><?php echo wp_kses_post( $row[ $column_key ] ?? '' ); ?></td>
+								<td><?php echo self::ksesCell( $row[ $column_key ] ?? '' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></td>
 							<?php endforeach; ?>
 						</tr>
 					<?php endforeach; ?>
@@ -67,21 +69,32 @@ class Components {
 		$args = wp_parse_args(
 			$args,
 			array(
-				'columns'      => array(),
-				'rows'         => array(),
-				'per_page'     => 10,
-				'current_page' => 1,
-				'total'        => 0,
-				'class'        => '',
+				'columns'          => array(),
+				'rows'             => array(),
+				'per_page'         => 10,
+				'current_page'     => 1,
+				'total'            => 0,
+				'class'            => '',
+				'table_class'      => '',
+				'pagination_class' => '',
+				'prev_class'       => '',
+				'next_class'       => '',
+				'info_class'       => '',
 			)
 		);
 
-		$total_pages  = max( 1, (int) ceil( $args['total'] / max( 1, $args['per_page'] ) ) );
-		$current_page = max( 1, min( $total_pages, absint( $args['current_page'] ) ) );
-		$classes      = trim( 'mwp-table-wrap ' . $args['class'] );
+		$total              = $args['total'] ? absint( $args['total'] ) : count( $args['rows'] );
+		$total_pages        = max( 1, (int) ceil( $total / max( 1, absint( $args['per_page'] ) ) ) );
+		$current_page       = max( 1, min( $total_pages, absint( $args['current_page'] ) ) );
+		$classes            = trim( 'mwp-table-wrap ' . $args['class'] );
+		$table_classes      = trim( 'mwp-table ' . $args['table_class'] );
+		$pagination_classes = trim( 'mwp-pagination ' . $args['pagination_class'] );
+		$prev_classes       = trim( 'mwp-button is-ghost ' . $args['prev_class'] );
+		$next_classes       = trim( 'mwp-button is-ghost ' . $args['next_class'] );
+		$info_classes       = trim( 'mwp-pagination__info ' . $args['info_class'] );
 		?>
-		<div class="<?php echo esc_attr( $classes ); ?>" data-mwp-paginated-table data-total="<?php echo esc_attr( (string) $args['total'] ); ?>" data-per-page="<?php echo esc_attr( (string) $args['per_page'] ); ?>" data-current-page="<?php echo esc_attr( (string) $current_page ); ?>">
-			<table class="mwp-table">
+		<div class="<?php echo esc_attr( $classes ); ?>" data-mwp-paginated-table data-per-page="<?php echo esc_attr( (string) max( 1, absint( $args['per_page'] ) ) ); ?>" data-current-page="<?php echo esc_attr( (string) $current_page ); ?>">
+			<table class="<?php echo esc_attr( $table_classes ); ?>">
 				<thead>
 					<tr>
 						<?php foreach ( $args['columns'] as $column_label ) : ?>
@@ -93,21 +106,129 @@ class Components {
 					<?php foreach ( $args['rows'] as $row ) : ?>
 						<tr>
 							<?php foreach ( array_keys( $args['columns'] ) as $column_key ) : ?>
-								<td><?php echo wp_kses_post( $row[ $column_key ] ?? '' ); ?></td>
+								<td><?php echo self::ksesCell( $row[ $column_key ] ?? '' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></td>
 							<?php endforeach; ?>
 						</tr>
 					<?php endforeach; ?>
 				</tbody>
 			</table>
-			<?php if ( $total_pages > 1 ) : ?>
-				<div class="mwp-pagination">
-					<button class="mwp-button is-ghost" type="button" data-mwp-page="prev" <?php disabled( $current_page <= 1 ); ?>><?php esc_html_e( 'Previous', 'matterwp-admin-ui' ); ?></button>
-					<span class="mwp-pagination__info"><?php echo esc_html( sprintf( __( 'Page %1$d of %2$d', 'matterwp-admin-ui' ), $current_page, $total_pages ) ); ?></span>
-					<button class="mwp-button is-ghost" type="button" data-mwp-page="next" <?php disabled( $current_page >= $total_pages ); ?>><?php esc_html_e( 'Next', 'matterwp-admin-ui' ); ?></button>
-				</div>
-			<?php endif; ?>
+			<div class="<?php echo esc_attr( $pagination_classes ); ?>" data-mwp-pagination>
+				<button class="<?php echo esc_attr( $prev_classes ); ?>" type="button" data-mwp-page="prev" <?php disabled( $current_page <= 1 ); ?>><?php esc_html_e( 'Previous', 'matterwp-admin-ui' ); ?></button>
+				<span class="<?php echo esc_attr( $info_classes ); ?>"><?php echo esc_html( sprintf( __( 'Page %1$d of %2$d', 'matterwp-admin-ui' ), $current_page, $total_pages ) ); ?></span>
+				<button class="<?php echo esc_attr( $next_classes ); ?>" type="button" data-mwp-page="next" <?php disabled( $current_page >= $total_pages ); ?>><?php esc_html_e( 'Next', 'matterwp-admin-ui' ); ?></button>
+			</div>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Render compact action buttons for table action columns.
+	 *
+	 * @param array $args Action group arguments.
+	 * @return void
+	 */
+	public static function actionGroup( array $args ): void {
+		$args = wp_parse_args(
+			$args,
+			array(
+				'actions' => array(),
+				'class'   => '',
+			)
+		);
+
+		$classes = trim( 'mwp-table-actions ' . $args['class'] );
+		?>
+		<div class="<?php echo esc_attr( $classes ); ?>">
+			<?php foreach ( $args['actions'] as $action ) : ?>
+				<?php self::actionButton( is_array( $action ) ? $action : array() ); ?>
+			<?php endforeach; ?>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render one compact table action.
+	 *
+	 * @param array $args Action arguments.
+	 * @return void
+	 */
+	private static function actionButton( array $args ): void {
+		$args = wp_parse_args(
+			$args,
+			array(
+				'label'           => '',
+				'icon'            => '',
+				'url'             => '',
+				'variant'         => 'normal',
+				'class'           => '',
+				'type'            => 'button',
+				'disabled'        => false,
+				'data_attributes' => array(),
+				'attributes'      => array(),
+			)
+		);
+
+		$variant                  = in_array( $args['variant'], array( 'normal', 'danger' ), true ) ? $args['variant'] : 'normal';
+		$classes                  = trim( 'mwp-table-action is-' . $variant . ' ' . $args['class'] );
+		$attributes               = is_array( $args['attributes'] ) ? $args['attributes'] : array();
+		$attributes['class']      = $classes;
+		$attributes['aria-label'] = $args['label'];
+
+		if ( is_array( $args['data_attributes'] ) ) {
+			foreach ( $args['data_attributes'] as $key => $value ) {
+				$key = (string) $key;
+				$attributes[ 0 === strpos( $key, 'data-' ) ? $key : 'data-' . ltrim( $key, '-' ) ] = $value;
+			}
+		}
+
+		$tag = '' !== $args['url'] ? 'a' : 'button';
+		if ( 'a' === $tag ) {
+			$attributes['href'] = $args['url'];
+		} else {
+			$attributes['type']     = in_array( $args['type'], array( 'button', 'submit', 'reset' ), true ) ? $args['type'] : 'button';
+			$attributes['disabled'] = (bool) $args['disabled'];
+		}
+		?>
+		<<?php echo tag_escape( $tag ); ?> <?php echo Attrs::render( $attributes ); ?>>
+			<?php echo self::ksesCell( $args['icon'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		</<?php echo tag_escape( $tag ); ?>>
+		<?php
+	}
+
+	/**
+	 * Allow safe table cell markup, including inline lucide-style SVG icons.
+	 *
+	 * @param mixed $html Cell markup.
+	 * @return string
+	 */
+	private static function ksesCell( $html ): string {
+		$allowed = wp_kses_allowed_html( 'post' );
+
+		$allowed['svg'] = array(
+			'aria-hidden'     => true,
+			'class'           => true,
+			'fill'            => true,
+			'height'          => true,
+			'role'            => true,
+			'stroke'          => true,
+			'stroke-linecap'  => true,
+			'stroke-linejoin' => true,
+			'stroke-width'    => true,
+			'viewbox'         => true,
+			'width'           => true,
+			'xmlns'           => true,
+		);
+
+		$allowed['path'] = array(
+			'd'               => true,
+			'fill'            => true,
+			'stroke'          => true,
+			'stroke-linecap'  => true,
+			'stroke-linejoin' => true,
+			'stroke-width'    => true,
+		);
+
+		return wp_kses( (string) $html, $allowed );
 	}
 
 	/**

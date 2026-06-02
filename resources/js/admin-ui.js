@@ -66,6 +66,14 @@ function initModals() {
 		'[tabindex]:not([tabindex="-1"])'
 	].join(',');
 
+	function escapeSelector(value) {
+		if (window.CSS?.escape) {
+			return CSS.escape(String(value));
+		}
+
+		return String(value).replace(/["\\]/g, '\\$&');
+	}
+
 	function moveModalToBody(modal) {
 		if (modal.parentElement !== document.body) {
 			document.body.appendChild(modal);
@@ -180,6 +188,56 @@ function initModals() {
 			}
 		}
 	}
+
+	function populateModal(modal, values = {}) {
+		if (!modal || !values || typeof values !== 'object') {
+			return;
+		}
+
+		Object.entries(values).forEach(([name, value]) => {
+			const fieldName = escapeSelector(name);
+			const fields = modal.querySelectorAll(`[name="${fieldName}"], [data-mwp-field="${fieldName}"]`);
+
+			fields.forEach(field => {
+				if (field.matches('input[type="checkbox"], input[type="radio"]')) {
+					field.checked = Array.isArray(value) ? value.map(String).includes(field.value) : field.value === String(value) || value === true;
+					return;
+				}
+
+				if ('value' in field) {
+					field.value = value ?? '';
+					field.dispatchEvent(new Event('input', { bubbles: true }));
+					field.dispatchEvent(new Event('change', { bubbles: true }));
+				} else {
+					field.textContent = value ?? '';
+				}
+			});
+		});
+	}
+
+	window.MatterAdminUI = {
+		...(window.MatterAdminUI || {}),
+		openModal(target, values = {}, trigger = null) {
+			const modal = typeof target === 'string' ? document.getElementById(target) : target;
+
+			if (!modal || !modal.matches('[data-mwp-modal]')) {
+				return null;
+			}
+
+			moveModalToBody(modal);
+			populateModal(modal, values);
+			openModal(modal, trigger || document.querySelector(`[aria-controls="${escapeSelector(modal.id)}"]`));
+			return modal;
+		},
+		closeModal(target, restoreFocus = true) {
+			const modal = typeof target === 'string' ? document.getElementById(target) : target;
+			closeModal(modal, restoreFocus);
+		},
+		populateModal(target, values = {}) {
+			const modal = typeof target === 'string' ? document.getElementById(target) : target;
+			populateModal(modal, values);
+		}
+	};
 
 	document.addEventListener('click', event => {
 		const trigger = event.target.closest('[data-mwp-modal-trigger], .mwp-modal-trigger');

@@ -59,6 +59,117 @@ echo MatterAdminUI::attrs(
 );
 ```
 
+## Layout Shells
+
+Sections and options are the base shells for admin screens. A section groups related content. An option row arranges the label, supporting copy, counters, and the control/content area. Inputs, buttons, forms, cards, tables, and custom markup should fit into these shells without each component inventing layout chrome.
+
+Most helpers accept `class` for the component root. Nested wrappers also accept scoped class arguments such as `title_class`, `options_class`, `info_class`, `description_class`, `input_class`, `header_class`, `content_class`, `table_class`, and `pagination_class` where relevant.
+
+Sections support:
+
+- `title` and `description`: string content, or `false` to hide.
+- `option_box`: `standard` for normal grouped option chrome, or `minimal` for no option-box borders, radius, background, or option padding.
+- `variant`: specialized compatibility variants such as `borderless` and `table-only`.
+
+Use `option_box => 'minimal'` for direct content such as stat grids:
+
+```php
+MatterAdminUI::section(
+	array(
+		'title'      => __( 'Stats', 'plugin' ),
+		'option_box' => 'minimal',
+	),
+	static function (): void {
+		// Render stat cards, grids, or other direct content.
+	}
+);
+```
+
+Options support:
+
+- `title` and `description`: string content, or `false` to hide.
+- `input_label`: show or hide the option label/info block. When true and `input_id` is provided, the title renders as a `<label>`.
+- `label_width`: `standard` or `full`.
+- `style`: `row`, `column`, or `divided`.
+
+```php
+MatterAdminUI::option(
+	array(
+		'title'       => __( 'Status', 'plugin' ),
+		'description' => __( 'Full-width label with a divided control area.', 'plugin' ),
+		'style'       => 'divided',
+		'label_width' => 'full',
+		'input_label' => true,
+		'input_id'    => 'plugin-status',
+	),
+	static function (): void {
+		MatterAdminUI::select(
+			array(
+				'id'      => 'plugin-status',
+				'value'   => 'queued',
+				'options' => array(
+					'queued' => __( 'Queued', 'plugin' ),
+					'done'   => __( 'Done', 'plugin' ),
+				),
+			)
+		);
+	}
+);
+```
+
+Use `variant => 'table-only'` for a table rendered directly in a section:
+
+```php
+MatterAdminUI::section(
+	array(
+		'title'   => __( 'Entries', 'plugin' ),
+		'variant' => 'table-only',
+	),
+	static function (): void {
+		MatterAdminUI::paginatedTable(
+			array(
+				'columns'  => array( 'name' => __( 'Name', 'plugin' ) ),
+				'rows'     => $rows,
+				'per_page' => 10,
+			)
+		);
+	}
+);
+```
+
+Legacy aliases still map to the new language: `wide => true` maps to `style => 'column'`, and `divider => true` maps to `style => 'divided'`.
+
+## Tables
+
+Admin tables use `.mwp-table-wrap` and `.mwp-table`. `MatterAdminUI::paginatedTable()` provides static client-side pagination with previous/next buttons, a page label, default `per_page` of 10, mutation re-rendering, and an `mwp:table-refresh` event for manual refreshes.
+
+For compact table action columns, use `MatterAdminUI::actionGroup()` with inline SVG icons:
+
+```php
+MatterAdminUI::actionGroup(
+	array(
+		'actions' => array(
+			array(
+				'label' => __( 'Edit', 'plugin' ),
+				'icon'  => '<svg aria-hidden="true" ...></svg>',
+				'url'   => $edit_url,
+			),
+			array(
+				'label'   => __( 'Delete', 'plugin' ),
+				'icon'    => '<svg aria-hidden="true" ...></svg>',
+				'variant' => 'danger',
+			),
+		),
+	)
+);
+```
+
+## Dynamic modals
+
+Modal markup follows the package contract: triggers use `data-mwp-modal-trigger`, `aria-controls`, `aria-haspopup="dialog"`, and `aria-expanded`; modals use `data-mwp-modal`, `aria-hidden`, and `hidden`; close controls use `data-mwp-modal-close`.
+
+JavaScript exposes `window.MatterAdminUI.openModal(idOrElement, values, trigger)`, `closeModal(idOrElement)`, and `populateModal(idOrElement, values)` for edit modals. Values are matched by `name` or `data-mwp-field`.
+
 ## Media field customization
 
 The media field supports compact, logo, wide, and button-only modes. It can also be customized with CSS variables, data attributes, slots, and filters.

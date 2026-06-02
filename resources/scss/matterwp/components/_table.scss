@@ -55,6 +55,57 @@
 	}
 }
 
+.mwp-table-actions {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.mwp-table-action {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	padding: 0;
+	border: 1px solid var(--mwp-color-border);
+	border-radius: 6px;
+	background-color: var(--mwp-color-bg);
+	color: var(--mwp-color-text-secondary);
+	line-height: 0;
+	text-decoration: none;
+	cursor: pointer;
+	transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+
+	svg {
+		display: block;
+		width: 15px;
+		height: 15px;
+		stroke: currentColor;
+	}
+
+	&:hover {
+		border-color: var(--mwp-color-border-hover, var(--mwp-color-border));
+		background-color: var(--mwp-color-bg-alt);
+		color: var(--mwp-color-text);
+	}
+
+	&:disabled {
+		opacity: 0.55;
+		cursor: not-allowed;
+	}
+
+	&.is-danger {
+		border-color: var(--mwp-color-danger-border, #fecaca);
+		background-color: var(--mwp-color-danger-bg, #fef2f2);
+		color: var(--mwp-color-danger-text, #991b1b);
+
+		&:hover {
+			background-color: var(--mwp-color-danger-bg-hover, #fee2e2);
+		}
+	}
+}
+
 .mwp-system-info-block {
 	width: 100%;
 	text-align: left;

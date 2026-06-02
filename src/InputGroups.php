@@ -26,20 +26,24 @@ class InputGroups {
 		$args = wp_parse_args(
 			$args,
 			array(
-				'name'        => '',
-				'value'       => '#059669',
-				'label'       => '',
-				'placeholder' => '#000000',
-				'class'       => '',
-				'disabled'    => false,
+				'name'         => '',
+				'value'        => '#059669',
+				'label'        => '',
+				'placeholder'  => '#000000',
+				'class'        => '',
+				'swatch_class' => '',
+				'input_class'  => '',
+				'disabled'     => false,
 			)
 		);
 
-		$classes = trim( 'mwp-color-picker ' . $args['class'] );
+		$classes        = trim( 'mwp-color-picker ' . $args['class'] );
+		$swatch_classes = trim( 'mwp-color-picker__swatch ' . $args['swatch_class'] );
+		$input_classes  = trim( 'mwp-color-picker__input ' . $args['input_class'] );
 		?>
 		<div class="<?php echo esc_attr( $classes ); ?>" data-mwp-color-picker>
-			<input class="mwp-color-picker__swatch" type="color" value="<?php echo esc_attr( $args['value'] ); ?>" data-mwp-color-swatch <?php disabled( $args['disabled'] ); ?>>
-			<input class="mwp-color-picker__input" <?php echo '' !== $args['name'] ? ' name="' . esc_attr( $args['name'] ) . '"' : ''; ?> type="text" value="<?php echo esc_attr( $args['value'] ); ?>" placeholder="<?php echo esc_attr( $args['placeholder'] ); ?>" data-mwp-color-input <?php disabled( $args['disabled'] ); ?>>
+			<input class="<?php echo esc_attr( $swatch_classes ); ?>" type="color" value="<?php echo esc_attr( $args['value'] ); ?>" data-mwp-color-swatch <?php disabled( $args['disabled'] ); ?>>
+			<input class="<?php echo esc_attr( $input_classes ); ?>" <?php echo '' !== $args['name'] ? ' name="' . esc_attr( $args['name'] ) . '"' : ''; ?> type="text" value="<?php echo esc_attr( $args['value'] ); ?>" placeholder="<?php echo esc_attr( $args['placeholder'] ); ?>" data-mwp-color-input <?php disabled( $args['disabled'] ); ?>>
 		</div>
 		<?php
 	}
@@ -82,22 +86,28 @@ class InputGroups {
 		$args = wp_parse_args(
 			$args,
 			array(
-				'name'    => '',
-				'value'   => '',
-				'options' => array(),
-				'class'   => '',
+				'name'        => '',
+				'value'       => '',
+				'options'     => array(),
+				'class'       => '',
+				'item_class'  => '',
+				'input_class' => '',
+				'label_class' => '',
 			)
 		);
 
-		$has_name = '' !== $args['name'];
-		$name     = $has_name ? $args['name'] : 'mwp-radio-' . wp_unique_id();
-		$classes  = trim( 'mwp-radio-group ' . $args['class'] );
+		$has_name      = '' !== $args['name'];
+		$name          = $has_name ? $args['name'] : 'mwp-radio-' . wp_unique_id();
+		$classes       = trim( 'mwp-radio-group ' . $args['class'] );
+		$item_classes  = trim( 'mwp-radio-group__item ' . $args['item_class'] );
+		$input_classes = trim( $args['input_class'] );
+		$label_classes = trim( $args['label_class'] );
 		?>
 		<div class="<?php echo esc_attr( $classes ); ?>" role="radiogroup">
 			<?php foreach ( $args['options'] as $value => $label ) : ?>
-				<label class="mwp-radio-group__item">
-					<input name="<?php echo esc_attr( $name ); ?>" type="radio" value="<?php echo esc_attr( (string) $value ); ?>" <?php checked( (string) $args['value'], (string) $value ); ?> <?php echo $has_name ? '' : ' data-mwp-ignore-autosave="true"'; ?>>
-					<span><?php echo esc_html( $label ); ?></span>
+				<label class="<?php echo esc_attr( $item_classes ); ?>">
+					<input class="<?php echo esc_attr( $input_classes ); ?>" name="<?php echo esc_attr( $name ); ?>" type="radio" value="<?php echo esc_attr( (string) $value ); ?>" <?php checked( (string) $args['value'], (string) $value ); ?> <?php echo $has_name ? '' : ' data-mwp-ignore-autosave="true"'; ?>>
+					<span class="<?php echo esc_attr( $label_classes ); ?>"><?php echo esc_html( $label ); ?></span>
 				</label>
 			<?php endforeach; ?>
 		</div>

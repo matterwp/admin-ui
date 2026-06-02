@@ -33,6 +33,11 @@ class Overlays {
 				'trigger'         => 'Open Modal',
 				'trigger_variant' => 'primary',
 				'class'           => '',
+				'trigger_class'   => '',
+				'dialog_class'    => '',
+				'header_class'    => '',
+				'content_class'   => '',
+				'footer_class'    => '',
 				'footer'          => '',
 				'footer_actions'  => array(),
 			)
@@ -43,12 +48,12 @@ class Overlays {
 		$description_id = $id . '-description';
 		$classes        = trim( 'mwp-modal ' . $args['class'] );
 		$has_footer     = '' !== $args['footer'] || ! empty( $args['footer_actions'] );
-		self::modalTrigger( $id, (string) $args['trigger'], (string) $args['trigger_variant'] );
+		self::modalTrigger( $id, (string) $args['trigger'], (string) $args['trigger_variant'], (string) $args['trigger_class'] );
 		?>
 		<div class="<?php echo esc_attr( $classes ); ?>" id="<?php echo esc_attr( $id ); ?>" data-mwp-modal aria-hidden="true" hidden>
 			<div class="mwp-modal__overlay" data-mwp-modal-close></div>
-			<div class="mwp-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="<?php echo esc_attr( $title_id ); ?>"<?php echo '' !== $args['description'] ? ' aria-describedby="' . esc_attr( $description_id ) . '"' : ''; ?> tabindex="-1">
-				<div class="mwp-modal__header">
+			<div class="<?php echo esc_attr( trim( 'mwp-modal__dialog ' . $args['dialog_class'] ) ); ?>" role="dialog" aria-modal="true" aria-labelledby="<?php echo esc_attr( $title_id ); ?>"<?php echo '' !== $args['description'] ? ' aria-describedby="' . esc_attr( $description_id ) . '"' : ''; ?> tabindex="-1">
+				<div class="<?php echo esc_attr( trim( 'mwp-modal__header ' . $args['header_class'] ) ); ?>">
 					<div class="mwp-modal__heading">
 						<h4 id="<?php echo esc_attr( $title_id ); ?>"><?php echo esc_html( $args['title'] ); ?></h4>
 						<?php if ( '' !== $args['description'] ) : ?>
@@ -57,11 +62,11 @@ class Overlays {
 					</div>
 					<button class="mwp-icon-button mwp-modal__close" type="button" aria-label="Close" data-mwp-modal-close><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
 				</div>
-				<div class="mwp-modal__content">
+				<div class="<?php echo esc_attr( trim( 'mwp-modal__content ' . $args['content_class'] ) ); ?>">
 					<?php $content(); ?>
 				</div>
 				<?php if ( $has_footer ) : ?>
-					<div class="mwp-modal__footer">
+					<div class="<?php echo esc_attr( trim( 'mwp-modal__footer ' . $args['footer_class'] ) ); ?>">
 						<?php
 						if ( ! empty( $args['footer_actions'] ) && is_array( $args['footer_actions'] ) ) {
 							foreach ( $args['footer_actions'] as $action ) {
@@ -97,6 +102,10 @@ class Overlays {
 				'confirm_variant' => 'danger',
 				'cancel_label'    => __( 'Cancel', 'matterwp-admin-ui' ),
 				'class'           => '',
+				'trigger_class'   => '',
+				'dialog_class'    => '',
+				'header_class'    => '',
+				'footer_class'    => '',
 			)
 		);
 
@@ -107,12 +116,12 @@ class Overlays {
 		$confirm_variant = in_array( $args['confirm_variant'], array( 'primary', 'secondary', 'ghost', 'danger' ), true ) ? $args['confirm_variant'] : 'danger';
 		$classes         = trim( 'mwp-modal is-danger ' . $args['class'] );
 
-		self::modalTrigger( $id, (string) $args['trigger'], $trigger_variant );
+		self::modalTrigger( $id, (string) $args['trigger'], $trigger_variant, (string) $args['trigger_class'] );
 		?>
 		<div class="<?php echo esc_attr( $classes ); ?>" id="<?php echo esc_attr( $id ); ?>" data-mwp-modal aria-hidden="true" hidden>
 			<div class="mwp-modal__overlay" data-mwp-modal-close></div>
-			<div class="mwp-modal__dialog" role="alertdialog" aria-modal="true" aria-labelledby="<?php echo esc_attr( $title_id ); ?>"<?php echo '' !== $args['description'] ? ' aria-describedby="' . esc_attr( $description_id ) . '"' : ''; ?> tabindex="-1">
-				<div class="mwp-modal__header">
+			<div class="<?php echo esc_attr( trim( 'mwp-modal__dialog ' . $args['dialog_class'] ) ); ?>" role="alertdialog" aria-modal="true" aria-labelledby="<?php echo esc_attr( $title_id ); ?>"<?php echo '' !== $args['description'] ? ' aria-describedby="' . esc_attr( $description_id ) . '"' : ''; ?> tabindex="-1">
+				<div class="<?php echo esc_attr( trim( 'mwp-modal__header ' . $args['header_class'] ) ); ?>">
 					<div class="mwp-modal__heading">
 						<h4 id="<?php echo esc_attr( $title_id ); ?>"><?php echo esc_html( $args['title'] ); ?></h4>
 						<?php if ( '' !== $args['description'] ) : ?>
@@ -121,7 +130,7 @@ class Overlays {
 					</div>
 					<button class="mwp-icon-button mwp-modal__close" type="button" aria-label="Close" data-mwp-modal-close><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
 				</div>
-				<div class="mwp-modal__footer">
+				<div class="<?php echo esc_attr( trim( 'mwp-modal__footer ' . $args['footer_class'] ) ); ?>">
 					<div class="mwp-confirm-footer">
 						<?php
 						self::footerAction(
@@ -158,10 +167,11 @@ class Overlays {
 	 * @param string $variant Button variant.
 	 * @return void
 	 */
-	private static function modalTrigger( string $modal_id, string $label, string $variant ): void {
+	private static function modalTrigger( string $modal_id, string $label, string $variant, string $trigger_class = '' ): void {
 		$variant = in_array( $variant, array( 'primary', 'secondary', 'ghost', 'danger' ), true ) ? $variant : 'primary';
+		$classes = trim( 'mwp-button is-' . $variant . ' mwp-modal-trigger ' . $trigger_class );
 		?>
-		<button class="<?php echo esc_attr( 'mwp-button is-' . $variant . ' mwp-modal-trigger' ); ?>" type="button" data-mwp-modal-trigger aria-haspopup="dialog" aria-controls="<?php echo esc_attr( $modal_id ); ?>" aria-expanded="false">
+		<button class="<?php echo esc_attr( $classes ); ?>" type="button" data-mwp-modal-trigger aria-haspopup="dialog" aria-controls="<?php echo esc_attr( $modal_id ); ?>" aria-expanded="false">
 			<?php echo esc_html( $label ); ?>
 		</button>
 		<?php
