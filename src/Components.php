@@ -26,14 +26,19 @@ class Components {
 		$args = wp_parse_args(
 			$args,
 			array(
-				'columns'          => array(),
-				'rows'             => array(),
-				'class'            => '',
-				'table_class'      => '',
-				'classes'          => array(),
-				'attributes'       => array(),
-				'table_attributes' => array(),
-				'data_attributes'  => array(),
+				'columns'             => array(),
+				'rows'                => array(),
+				'class'               => '',
+				'table_class'         => '',
+				'classes'             => array(),
+				'attributes'          => array(),
+				'table_attributes'    => array(),
+				'data_attributes'     => array(),
+				'row_id'              => '',
+				'row_key'             => '',
+				'row_class'           => '',
+				'row_attributes'      => array(),
+				'row_data_attributes' => array(),
 			)
 		);
 
@@ -54,11 +59,7 @@ class Components {
 				</thead>
 				<tbody>
 					<?php foreach ( $args['rows'] as $row ) : ?>
-						<tr>
-							<?php foreach ( $columns as $column ) : ?>
-								<td><?php echo self::renderCell( is_array( $row ) ? $row : array(), $column ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></td>
-							<?php endforeach; ?>
-						</tr>
+						<?php echo self::renderRow( is_array( $row ) ? $row : array(), $columns, $args ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					<?php endforeach; ?>
 				</tbody>
 			</table>
@@ -76,37 +77,51 @@ class Components {
 		$args = wp_parse_args(
 			$args,
 			array(
-				'columns'          => array(),
-				'rows'             => array(),
-				'per_page'         => 10,
-				'current_page'     => 1,
-				'total'            => 0,
-				'class'            => '',
-				'table_class'      => '',
-				'pagination_class' => '',
-				'prev_class'       => '',
-				'next_class'       => '',
-				'info_class'       => '',
-				'empty_selector'   => '',
-				'empty_target'     => '',
-				'initial_page'     => '',
-				'classes'          => array(),
-				'attributes'       => array(),
-				'table_attributes' => array(),
-				'data_attributes'  => array(),
+				'columns'             => array(),
+				'rows'                => array(),
+				'per_page'            => 10,
+				'current_page'        => 1,
+				'total'               => 0,
+				'class'               => '',
+				'table_class'         => '',
+				'pagination_class'    => '',
+				'prev_class'          => '',
+				'next_class'          => '',
+				'info_class'          => '',
+				'empty_selector'      => '',
+				'empty_target'        => '',
+				'initial_page'        => '',
+				'classes'             => array(),
+				'attributes'          => array(),
+				'table_attributes'    => array(),
+				'data_attributes'     => array(),
+				'empty_state'         => null,
+				'pagination'          => true,
+				'row_id'              => '',
+				'row_key'             => '',
+				'row_class'           => '',
+				'row_attributes'      => array(),
+				'row_data_attributes' => array(),
 			)
 		);
 
-		$columns                                = self::normalizeColumns( $args['columns'] );
-		$total                                  = $args['total'] ? absint( $args['total'] ) : count( $args['rows'] );
-		$total_pages                            = max( 1, (int) ceil( $total / max( 1, absint( $args['per_page'] ) ) ) );
-		$current_page                           = self::resolveInitialPage( $args['initial_page'], $args['current_page'], $total_pages );
-		$classes                                = trim( 'mwp-table-wrap ' . $args['class'] );
-		$table_classes                          = trim( 'mwp-table ' . Attrs::slotClass( $args, 'table', 'table_class' ) );
-		$pagination_classes                     = trim( 'mwp-pagination ' . Attrs::slotClass( $args, 'pagination', 'pagination_class' ) );
-		$prev_classes                           = trim( 'mwp-button is-ghost ' . Attrs::slotClass( $args, 'prev', 'prev_class' ) );
-		$next_classes                           = trim( 'mwp-button is-ghost ' . Attrs::slotClass( $args, 'next', 'next_class' ) );
-		$info_classes                           = trim( 'mwp-pagination__info ' . Attrs::slotClass( $args, 'info', 'info_class' ) );
+		$columns            = self::normalizeColumns( $args['columns'] );
+		$total              = $args['total'] ? absint( $args['total'] ) : count( $args['rows'] );
+		$total_pages        = max( 1, (int) ceil( $total / max( 1, absint( $args['per_page'] ) ) ) );
+		$current_page       = self::resolveInitialPage( $args['initial_page'], $args['current_page'], $total_pages );
+		$classes            = trim( 'mwp-table-wrap ' . $args['class'] );
+		$table_classes      = trim( 'mwp-table ' . Attrs::slotClass( $args, 'table', 'table_class' ) );
+		$pagination_classes = trim( 'mwp-pagination ' . Attrs::slotClass( $args, 'pagination', 'pagination_class' ) );
+		$empty_id           = '';
+		$prev_classes       = trim( 'mwp-button is-ghost ' . Attrs::slotClass( $args, 'prev', 'prev_class' ) );
+		$next_classes       = trim( 'mwp-button is-ghost ' . Attrs::slotClass( $args, 'next', 'next_class' ) );
+		$info_classes       = trim( 'mwp-pagination__info ' . Attrs::slotClass( $args, 'info', 'info_class' ) );
+
+		if ( is_array( $args['empty_state'] ) && '' === $args['empty_target'] && '' === $args['empty_selector'] ) {
+			$empty_id             = 'mwp-empty-' . wp_unique_id();
+			$args['empty_target'] = $empty_id;
+		}
+
 		$data_attributes                        = is_array( $args['data_attributes'] ) ? $args['data_attributes'] : array();
 		$data_attributes['mwp-paginated-table'] = '';
 		$data_attributes['per-page']            = max( 1, absint( $args['per_page'] ) );
@@ -128,21 +143,48 @@ class Components {
 				</thead>
 				<tbody>
 					<?php foreach ( $args['rows'] as $row ) : ?>
-						<tr>
-							<?php foreach ( $columns as $column ) : ?>
-								<td><?php echo self::renderCell( is_array( $row ) ? $row : array(), $column ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></td>
-							<?php endforeach; ?>
-						</tr>
+						<?php echo self::renderRow( is_array( $row ) ? $row : array(), $columns, $args ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					<?php endforeach; ?>
 				</tbody>
 			</table>
-			<div class="<?php echo esc_attr( $pagination_classes ); ?>" data-mwp-pagination>
-				<button class="<?php echo esc_attr( $prev_classes ); ?>" type="button" data-mwp-page="prev" <?php disabled( $current_page <= 1 ); ?>><?php esc_html_e( 'Previous', 'matterwp-admin-ui' ); ?></button>
-				<span class="<?php echo esc_attr( $info_classes ); ?>"><?php echo esc_html( sprintf( __( 'Page %1$d of %2$d', 'matterwp-admin-ui' ), $current_page, $total_pages ) ); ?></span>
-				<button class="<?php echo esc_attr( $next_classes ); ?>" type="button" data-mwp-page="next" <?php disabled( $current_page >= $total_pages ); ?>><?php esc_html_e( 'Next', 'matterwp-admin-ui' ); ?></button>
-			</div>
+			<?php if ( wp_validate_boolean( $args['pagination'] ) ) : ?>
+				<div class="<?php echo esc_attr( $pagination_classes ); ?>" data-mwp-pagination>
+					<button class="<?php echo esc_attr( $prev_classes ); ?>" type="button" data-mwp-page="prev" <?php disabled( $current_page <= 1 ); ?>><?php esc_html_e( 'Previous', 'matterwp-admin-ui' ); ?></button>
+					<span class="<?php echo esc_attr( $info_classes ); ?>"><?php echo esc_html( sprintf( __( 'Page %1$d of %2$d', 'matterwp-admin-ui' ), $current_page, $total_pages ) ); ?></span>
+					<button class="<?php echo esc_attr( $next_classes ); ?>" type="button" data-mwp-page="next" <?php disabled( $current_page >= $total_pages ); ?>><?php esc_html_e( 'Next', 'matterwp-admin-ui' ); ?></button>
+				</div>
+			<?php endif; ?>
+			<?php if ( is_array( $args['empty_state'] ) ) : ?>
+				<?php
+				$empty_state = $args['empty_state'];
+				if ( '' !== $empty_id ) {
+					$empty_state['attributes']       = is_array( $empty_state['attributes'] ?? null ) ? $empty_state['attributes'] : array();
+					$empty_state['attributes']['id'] = $empty_id;
+				}
+				$empty_state['attributes']           = is_array( $empty_state['attributes'] ?? null ) ? $empty_state['attributes'] : array();
+				$empty_state['attributes']['hidden'] = count( $args['rows'] ) > 0;
+				self::emptyState( $empty_state );
+				?>
+			<?php endif; ?>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Render a richer data table.
+	 *
+	 * @param array $args Data table arguments.
+	 * @return void
+	 */
+	public static function dataTable( array $args ): void {
+		$has_pagination = array_key_exists( 'pagination', $args ) ? wp_validate_boolean( $args['pagination'] ) : true;
+
+		if ( $has_pagination ) {
+			self::paginatedTable( $args );
+			return;
+		}
+
+		self::table( $args );
 	}
 
 	/**
@@ -201,10 +243,10 @@ class Components {
 		$attributes               = is_array( $args['attributes'] ) ? $args['attributes'] : array();
 		$attributes['class']      = $classes;
 		$attributes['aria-label'] = $args['label'];
-		$icon                     = self::icon( (string) $args['icon'] );
+		$icon                     = self::iconMarkup( (string) $args['icon'] );
 
 		if ( '' === $icon && '' !== $args['label'] ) {
-			$icon = self::icon( strtolower( (string) $args['label'] ) );
+			$icon = self::iconMarkup( strtolower( (string) $args['label'] ) );
 		}
 
 		if ( '' !== $args['confirm'] ) {
@@ -296,9 +338,16 @@ class Components {
 	 */
 	public static function linkCell( string $label, string $url, array $args = array() ): string {
 		$attributes          = is_array( $args['attributes'] ?? null ) ? $args['attributes'] : array();
+		$display_label       = self::formatDisplayValue( $label, $args );
 		$attributes['href']  = esc_url( $url );
-		$attributes['class'] = trim( 'mwp-table-link ' . ( $args['class'] ?? '' ) );
-		return '<a ' . Attrs::render( $attributes ) . '>' . esc_html( $label ) . '</a>';
+		$attributes['class'] = trim( 'mwp-table-link ' . ( ! empty( $args['external'] ) ? 'is-external ' : '' ) . ( $args['class'] ?? '' ) );
+
+		if ( ! empty( $args['external'] ) ) {
+			$attributes['target'] = $attributes['target'] ?? '_blank';
+			$attributes['rel']    = $attributes['rel'] ?? 'noopener noreferrer';
+		}
+
+		return '<a ' . Attrs::render( $attributes ) . '>' . esc_html( $display_label ) . '</a>';
 	}
 
 	/**
@@ -361,6 +410,90 @@ class Components {
 	}
 
 	/**
+	 * Render a result/preview card.
+	 *
+	 * @param array<string, mixed> $args Result card args.
+	 * @return void
+	 */
+	public static function resultCard( array $args ): void {
+		$args = wp_parse_args(
+			$args,
+			array(
+				'title'           => '',
+				'description'     => '',
+				'image'           => '',
+				'image_alt'       => '',
+				'status'          => '',
+				'variant'         => 'standard',
+				'meta'            => array(),
+				'values'          => array(),
+				'actions'         => array(),
+				'primary_link'    => array(),
+				'class'           => '',
+				'attributes'      => array(),
+				'data_attributes' => array(),
+			)
+		);
+
+		$variant    = in_array( $args['variant'], array( 'standard', 'success', 'warning', 'danger' ), true ) ? $args['variant'] : 'standard';
+		$attributes = Attrs::merge( is_array( $args['attributes'] ) ? $args['attributes'] : array(), trim( 'mwp-result-card is-' . $variant . ' ' . $args['class'] ), is_array( $args['data_attributes'] ) ? $args['data_attributes'] : array() );
+		?>
+		<div <?php echo Attrs::render( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+			<?php if ( '' !== $args['image'] ) : ?>
+				<div class="mwp-result-card__preview">
+					<img src="<?php echo esc_url( $args['image'] ); ?>" alt="<?php echo esc_attr( $args['image_alt'] ); ?>">
+				</div>
+			<?php endif; ?>
+			<div class="mwp-result-card__body">
+				<div class="mwp-result-card__header">
+					<?php if ( '' !== $args['title'] ) : ?>
+						<h4><?php echo esc_html( $args['title'] ); ?></h4>
+					<?php endif; ?>
+					<?php if ( '' !== $args['status'] ) : ?>
+						<?php
+						Controls::badge(
+							array(
+								'label'   => $args['status'],
+								'variant' => 'success',
+								'size'    => 'compact',
+							)
+						);
+						?>
+					<?php endif; ?>
+				</div>
+				<?php if ( '' !== $args['description'] ) : ?>
+					<p><?php echo esc_html( $args['description'] ); ?></p>
+				<?php endif; ?>
+				<?php self::renderMetaRows( 'mwp-result-card__meta', $args['meta'] ); ?>
+				<?php self::renderMetaRows( 'mwp-result-card__values', $args['values'] ); ?>
+				<?php if ( ! empty( $args['primary_link'] ) || ! empty( $args['actions'] ) ) : ?>
+					<div class="mwp-result-card__actions">
+						<?php
+						if ( is_array( $args['primary_link'] ) && ! empty( $args['primary_link']['url'] ) ) {
+							$primary_attributes           = is_array( $args['primary_link']['attributes'] ?? null ) ? $args['primary_link']['attributes'] : array();
+							$primary_attributes['class']  = trim( 'mwp-button is-primary is-compact ' . ( $args['primary_link']['class'] ?? '' ) );
+							$primary_attributes['href']   = esc_url( $args['primary_link']['url'] );
+							$primary_attributes['target'] = $primary_attributes['target'] ?? '_blank';
+							$primary_attributes['rel']    = $primary_attributes['rel'] ?? 'noopener noreferrer';
+							?>
+							<a <?php echo Attrs::render( $primary_attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php echo esc_html( $args['primary_link']['label'] ?? __( 'Open', 'matterwp-admin-ui' ) ); ?></a>
+							<?php
+						}
+
+						foreach ( is_array( $args['actions'] ) ? $args['actions'] : array() as $action ) {
+							$action         = is_array( $action ) ? $action : array();
+							$action['size'] = $action['size'] ?? 'compact';
+							Controls::button( $action );
+						}
+						?>
+					</div>
+				<?php endif; ?>
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
 	 * Render a key/value list.
 	 *
 	 * @param array<string, mixed> $args List args.
@@ -401,13 +534,15 @@ class Components {
 			array(
 				'actions'         => array(),
 				'align'           => 'right',
+				'item_size'       => '',
 				'class'           => '',
 				'attributes'      => array(),
 				'data_attributes' => array(),
 			)
 		);
 		$align      = in_array( $args['align'], array( 'left', 'right', 'between' ), true ) ? $args['align'] : 'right';
-		$attributes = Attrs::merge( is_array( $args['attributes'] ) ? $args['attributes'] : array(), trim( 'mwp-action-bar is-align-' . $align . ' ' . $args['class'] ), is_array( $args['data_attributes'] ) ? $args['data_attributes'] : array() );
+		$item_size  = in_array( $args['item_size'], array( 'auto', 'grow' ), true ) ? $args['item_size'] : '';
+		$attributes = Attrs::merge( is_array( $args['attributes'] ) ? $args['attributes'] : array(), trim( 'mwp-action-bar is-align-' . $align . ( '' !== $item_size ? ' has-item-' . $item_size : '' ) . ' ' . $args['class'] ), is_array( $args['data_attributes'] ) ? $args['data_attributes'] : array() );
 		?>
 		<div <?php echo Attrs::render( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<?php foreach ( $args['actions'] as $action ) : ?>
@@ -510,18 +645,22 @@ class Components {
 				$normalized[] = wp_parse_args(
 					$column,
 					array(
-						'key'   => $column_key,
-						'label' => $column_key,
-						'type'  => 'text',
+						'key'      => $column_key,
+						'label'    => $column_key,
+						'type'     => 'text',
+						'wrap'     => false,
+						'overflow' => '',
 					)
 				);
 				continue;
 			}
 
 			$normalized[] = array(
-				'key'   => (string) $key,
-				'label' => (string) $column,
-				'type'  => 'text',
+				'key'      => (string) $key,
+				'label'    => (string) $column,
+				'type'     => 'text',
+				'wrap'     => false,
+				'overflow' => '',
 			);
 		}
 
@@ -565,8 +704,14 @@ class Components {
 		}
 
 		switch ( $column['type'] ?? 'text' ) {
+			case 'title':
+				return '<strong class="mwp-table-title">' . esc_html( self::formatDisplayValue( (string) $value, $column ) ) . '</strong>';
 			case 'badge':
 				return self::ksesCell( self::badgeCell( (string) $value, $column['badge'] ?? array() ) );
+			case 'external_link':
+				$column['external'] = true;
+				$url                = (string) ( $column['url'] ?? ( $row[ (string) ( $column['url_key'] ?? 'url' ) ] ?? $value ) );
+				return self::ksesCell( self::linkCell( (string) $value, $url, $column ) );
 			case 'link':
 				$url = (string) ( $column['url'] ?? ( $row[ (string) ( $column['url_key'] ?? 'url' ) ] ?? $value ) );
 				return self::ksesCell( self::linkCell( (string) $value, $url, $column ) );
@@ -578,9 +723,140 @@ class Components {
 				return self::ksesCell( self::dateCell( $value, (string) ( $column['format'] ?? '' ) ) );
 			case 'actions':
 				return self::ksesCell( self::actionsCell( is_array( $value ) ? $value : array() ) );
+			case 'text':
+				return esc_html( self::formatDisplayValue( (string) $value, $column ) );
 			default:
 				return self::ksesCell( $value );
 		}
+	}
+
+	/**
+	 * Render a typed table row.
+	 *
+	 * @param array<string, mixed> $row Row data.
+	 * @param array<int, array<string, mixed>> $columns Columns.
+	 * @param array<string, mixed> $args Table args.
+	 * @return string
+	 */
+	private static function renderRow( array $row, array $columns, array $args ): string {
+		$row_attributes = is_array( $args['row_attributes'] ?? null ) ? $args['row_attributes'] : array();
+		$row_data       = is_array( $args['row_data_attributes'] ?? null ) ? $args['row_data_attributes'] : array();
+		$row_key        = (string) ( $args['row_key'] ?? '' );
+		$row_id_key     = (string) ( $args['row_id'] ?? '' );
+		$row_classes    = trim( 'mwp-table-row ' . ( $args['row_class'] ?? '' ) . ' ' . ( $row['row_class'] ?? '' ) );
+
+		if ( is_array( $row['row_attributes'] ?? null ) ) {
+			$row_attributes = array_merge( $row_attributes, $row['row_attributes'] );
+		}
+
+		if ( is_array( $row['row_data_attributes'] ?? null ) ) {
+			$row_data = array_merge( $row_data, $row['row_data_attributes'] );
+		}
+
+		if ( '' !== $row_id_key && isset( $row[ $row_id_key ] ) ) {
+			$row_attributes['id'] = $row[ $row_id_key ];
+		}
+
+		if ( '' !== $row_key && isset( $row[ $row_key ] ) ) {
+			$row_data['row-key']    = $row[ $row_key ];
+			$row_data['mwp-row-id'] = $row[ $row_key ];
+		}
+
+		$attributes = Attrs::merge( $row_attributes, $row_classes, $row_data );
+
+		ob_start();
+		?>
+		<tr <?php echo Attrs::render( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+			<?php foreach ( $columns as $column ) : ?>
+				<td <?php echo Attrs::render( self::cellAttributes( $column ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php echo self::renderCell( $row, $column ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></td>
+			<?php endforeach; ?>
+		</tr>
+		<?php
+		return (string) ob_get_clean();
+	}
+
+	/**
+	 * Build table cell attributes from a column definition.
+	 *
+	 * @param array<string, mixed> $column Column definition.
+	 * @return array<string, mixed>
+	 */
+	private static function cellAttributes( array $column ): array {
+		$classes = array( 'mwp-table-cell', 'is-type-' . sanitize_html_class( (string) ( $column['type'] ?? 'text' ) ) );
+		$styles  = array();
+
+		if ( ! empty( $column['wrap'] ) ) {
+			$classes[] = 'is-wrap';
+		}
+
+		if ( ! empty( $column['overflow'] ) ) {
+			$classes[] = 'has-overflow-' . sanitize_html_class( (string) $column['overflow'] );
+		}
+
+		foreach ( array(
+			'min_width' => 'min-width',
+			'max_width' => 'max-width',
+			'width'     => 'width',
+		) as $arg => $property ) {
+			if ( ! empty( $column[ $arg ] ) ) {
+				$styles[] = $property . ': ' . esc_attr( (string) $column[ $arg ] );
+			}
+		}
+
+		if ( ! empty( $column['vertical_align'] ) ) {
+			$styles[] = 'vertical-align: ' . esc_attr( (string) $column['vertical_align'] );
+		}
+
+		return array(
+			'class' => trim( implode( ' ', $classes ) . ' ' . ( $column['cell_class'] ?? '' ) ),
+			'style' => ! empty( $styles ) ? implode( '; ', $styles ) : null,
+		);
+	}
+
+	/**
+	 * Format display text for common table/link cells.
+	 *
+	 * @param string $value Raw value.
+	 * @param array<string, mixed> $args Cell args.
+	 * @return string
+	 */
+	private static function formatDisplayValue( string $value, array $args ): string {
+		if ( is_callable( $args['display_callback'] ?? null ) ) {
+			return (string) call_user_func( $args['display_callback'], $value, $args );
+		}
+
+		if ( ! empty( $args['strip_site_url'] ) || 'relative_site_url' === ( $args['format'] ?? '' ) ) {
+			$site_url = home_url();
+			if ( 0 === strpos( $value, $site_url ) ) {
+				return '/' . ltrim( substr( $value, strlen( $site_url ) ), '/' );
+			}
+		}
+
+		return $value;
+	}
+
+	/**
+	 * Render keyed meta rows.
+	 *
+	 * @param string $class Wrapper class.
+	 * @param mixed  $rows Rows.
+	 * @return void
+	 */
+	private static function renderMetaRows( string $wrapper_class, $rows ): void {
+		if ( empty( $rows ) || ! is_array( $rows ) ) {
+			return;
+		}
+
+		?>
+		<div class="<?php echo esc_attr( $wrapper_class ); ?>">
+			<?php foreach ( $rows as $label => $value ) : ?>
+				<div>
+					<span><?php echo esc_html( (string) $label ); ?></span>
+					<strong><?php echo self::ksesCell( $value ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></strong>
+				</div>
+			<?php endforeach; ?>
+		</div>
+		<?php
 	}
 
 	/**
@@ -589,18 +865,27 @@ class Components {
 	 * @param string $icon Icon name or SVG.
 	 * @return string
 	 */
-	private static function icon( string $icon ): string {
+	public static function iconMarkup( string $icon ): string {
 		if ( false !== strpos( $icon, '<svg' ) ) {
 			return $icon;
 		}
 
 		$icons = array(
-			'edit'     => '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>',
-			'delete'   => '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>',
-			'link'     => '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1"/></svg>',
-			'download' => '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>',
-			'copy'     => '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 8h12v12H8z"/><path d="M4 16V4h12"/></svg>',
-			'view'     => '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>',
+			'edit'          => '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>',
+			'delete'        => '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>',
+			'link'          => '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1"/></svg>',
+			'download'      => '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>',
+			'copy'          => '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 8h12v12H8z"/><path d="M4 16V4h12"/></svg>',
+			'view'          => '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>',
+			'x'             => '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>',
+			'trash'         => '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6l-1 14H6L5 6"/></svg>',
+			'external-link' => '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M21 14v7H3V3h7"/></svg>',
+			'image'         => '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>',
+			'play'          => '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 3 14 9-14 9Z"/></svg>',
+			'pause'         => '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4v16"/><path d="M16 4v16"/></svg>',
+			'refresh'       => '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8.1 8.1 0 0 0-15.5-2M4 5v4h4"/><path d="M4 13a8.1 8.1 0 0 0 15.5 2M20 19v-4h-4"/></svg>',
+			'sun'           => '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>',
+			'moon'          => '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.99 12.43A9 9 0 1 1 11.57 3a7 7 0 0 0 9.42 9.43Z"/></svg>',
 		);
 
 		return $icons[ $icon ] ?? '';
@@ -710,16 +995,36 @@ class Components {
 		$args = wp_parse_args(
 			$args,
 			array(
-				'value' => 0,
-				'label' => '',
-				'class' => '',
+				'value'           => 0,
+				'label'           => '',
+				'max_width'       => '',
+				'grow'            => false,
+				'hidden'          => false,
+				'class'           => '',
+				'attributes'      => array(),
+				'data_attributes' => array(),
 			)
 		);
 
-		$value   = max( 0, min( 100, absint( $args['value'] ) ) );
-		$classes = trim( 'mwp-progress ' . $args['class'] );
+		$value                       = max( 0, min( 100, absint( $args['value'] ) ) );
+		$styles                      = array();
+		$classes                     = trim( 'mwp-progress ' . ( $args['grow'] ? 'is-grow ' : '' ) . $args['class'] );
+		$attributes                  = Attrs::merge( is_array( $args['attributes'] ) ? $args['attributes'] : array(), $classes, is_array( $args['data_attributes'] ) ? $args['data_attributes'] : array() );
+		$attributes['role']          = 'progressbar';
+		$attributes['aria-valuemin'] = 0;
+		$attributes['aria-valuemax'] = 100;
+		$attributes['aria-valuenow'] = $value;
+		$attributes['hidden']        = wp_validate_boolean( $args['hidden'] );
+
+		if ( '' !== $args['max_width'] ) {
+			$styles[] = 'max-width: ' . esc_attr( (string) $args['max_width'] );
+		}
+
+		if ( ! empty( $styles ) ) {
+			$attributes['style'] = implode( '; ', $styles );
+		}
 		?>
-		<div class="<?php echo esc_attr( $classes ); ?>" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="<?php echo esc_attr( (string) $value ); ?>">
+		<div <?php echo Attrs::render( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<?php if ( '' !== $args['label'] ) : ?>
 				<div class="mwp-progress__header">
 					<span><?php echo esc_html( $args['label'] ); ?></span>

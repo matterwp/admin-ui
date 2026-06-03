@@ -124,7 +124,7 @@ function initPaginatedTables() {
 			observer.observe(tbody, { childList: true });
 		}
 
-		table.addEventListener('mwp:table-refresh', () => showPage(currentPage));
+		table.addEventListener('mwp:table-refresh', event => showPage(event.detail?.page || currentPage));
 		showPage(initialPage === 'last' ? 'last' : currentPage);
 	});
 }

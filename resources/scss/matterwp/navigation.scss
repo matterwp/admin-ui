@@ -27,6 +27,7 @@ $nav-item-radius: 8px;
 		color: $color-gray-500;
 		font-weight: 500;
 		font-size: 14px;
+		text-decoration: none;
 		white-space: nowrap;
 		cursor: pointer;
 		transition: color 0.3s ease;
@@ -37,6 +38,13 @@ $nav-item-radius: 8px;
 
 		&:hover {
 			color: $color-black;
+			text-decoration: none;
+		}
+
+		&:focus,
+		&:focus-visible {
+			outline: none;
+			box-shadow: none;
 		}
 
 		&.active {

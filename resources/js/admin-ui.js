@@ -20,6 +20,243 @@ function normalizeHexColor(value) {
 	return color;
 }
 
+function mergeGlobalApi(api) {
+	window.MatterAdminUI = {
+		...(window.MatterAdminUI || {}),
+		...api
+	};
+}
+
+function getElement(target) {
+	if (typeof target === 'string') {
+		return document.querySelector(target);
+	}
+
+	return target || null;
+}
+
+function cssEscape(value) {
+	if (window.CSS?.escape) {
+		return CSS.escape(String(value));
+	}
+
+	return String(value).replace(/["\\#.:\\[\\]]/g, '\\$&');
+}
+
+function rowFromHtml(rowHtmlOrData) {
+	if (rowHtmlOrData instanceof HTMLTableRowElement) {
+		return rowHtmlOrData;
+	}
+
+	if (rowHtmlOrData instanceof HTMLElement) {
+		return rowHtmlOrData.querySelector('tr') || rowHtmlOrData;
+	}
+
+	if (rowHtmlOrData && typeof rowHtmlOrData === 'object' && rowHtmlOrData.html) {
+		return rowFromHtml(rowHtmlOrData.html);
+	}
+
+	const template = document.createElement('template');
+	template.innerHTML = String(rowHtmlOrData || '').trim();
+	return template.content.querySelector('tr');
+}
+
+function findTableRoot(tableOrRoot) {
+	const root = getElement(tableOrRoot);
+
+	if (!root) {
+		return null;
+	}
+
+	return root.matches('[data-mwp-paginated-table], .mwp-table-wrap') ? root : root.closest('[data-mwp-paginated-table], .mwp-table-wrap');
+}
+
+function initTableApi() {
+	mergeGlobalApi({
+		table: {
+			appendRow(tableOrRoot, rowHtmlOrData, options = {}) {
+				const table = findTableRoot(tableOrRoot);
+				const row = rowFromHtml(rowHtmlOrData);
+				const tbody = table?.querySelector('tbody');
+
+				if (!table || !row || !tbody) {
+					return null;
+				}
+
+				tbody.appendChild(row);
+				this.refresh(table, { page: options.page || table.dataset.currentPage || 'last' });
+				return row;
+			},
+			updateRow(tableOrRoot, rowId, rowHtmlOrData) {
+				const table = findTableRoot(tableOrRoot);
+				const row = rowFromHtml(rowHtmlOrData);
+				const escapedId = cssEscape(rowId);
+				const current = table?.querySelector(`[data-mwp-row-id="${escapedId}"], [data-row-key="${escapedId}"], #${escapedId}`);
+
+				if (!table || !row || !current) {
+					return null;
+				}
+
+				current.replaceWith(row);
+				this.refresh(table);
+				return row;
+			},
+			removeRow(tableOrRoot, rowId) {
+				const table = findTableRoot(tableOrRoot);
+				const escapedId = cssEscape(rowId);
+				const row = table?.querySelector(`[data-mwp-row-id="${escapedId}"], [data-row-key="${escapedId}"], #${escapedId}`);
+
+				if (!table || !row) {
+					return false;
+				}
+
+				row.remove();
+				this.refresh(table);
+				return true;
+			},
+			refresh(tableOrRoot, options = {}) {
+				const table = findTableRoot(tableOrRoot);
+
+				if (!table) {
+					return;
+				}
+
+				table.dispatchEvent(new CustomEvent('mwp:table-refresh', {
+					bubbles: true,
+					detail: { page: options.page }
+				}));
+			}
+		}
+	});
+}
+
+function ensureNoticeContainer(options = {}) {
+	const selector = options.container || '[data-mwp-notices]';
+	let container = document.querySelector(selector);
+
+	if (!container) {
+		container = document.createElement('div');
+		container.className = 'mwp-notice-wrapper';
+		container.dataset.mwpNotices = '';
+		document.body.appendChild(container);
+	}
+
+	return container;
+}
+
+function showNotice(message, type = 'success', options = {}) {
+	const container = ensureNoticeContainer(options);
+	const notice = document.createElement('div');
+	const duration = Number(options.duration ?? 4000);
+
+	notice.className = `mwp-notice ${type}`;
+	notice.setAttribute('role', type === 'error' ? 'alert' : 'status');
+	notice.innerHTML = `<span class="notice-text">${String(message || '')}</span>`;
+	container.appendChild(notice);
+
+	if (duration > 0) {
+		window.setTimeout(() => notice.remove(), duration);
+	}
+
+	return notice;
+}
+
+function serializeAjaxRoot(formOrRoot) {
+	const root = getElement(formOrRoot);
+
+	if (!root) {
+		return null;
+	}
+
+	if (root.matches('form')) {
+		return new FormData(root);
+	}
+
+	const form = root.querySelector('form');
+	return form ? new FormData(form) : new FormData();
+}
+
+function setLoading(root, loading) {
+	const buttons = root.querySelectorAll('[data-mwp-submit], button[type="submit"], input[type="submit"]');
+	root.classList.toggle('is-loading', loading);
+	root.dataset.mwpLoading = loading ? 'true' : 'false';
+	buttons.forEach(button => {
+		button.disabled = loading;
+		button.classList.toggle('is-loading', loading);
+	});
+}
+
+function initAjaxApi() {
+	async function submit(formOrRoot, options = {}) {
+		const root = getElement(formOrRoot);
+		const formData = serializeAjaxRoot(root);
+
+		if (!root || !formData) {
+			throw new Error('MatterAdminUI.ajax.submit requires a form or root element.');
+		}
+
+		const action = options.action || root.dataset.mwpAction || formData.get('action');
+		const endpoint = options.url || root.getAttribute('action') || window.ajaxurl || root.dataset.mwpEndpoint || '';
+
+		if (action && !formData.has('action')) {
+			formData.set('action', action);
+		}
+
+		root.dispatchEvent(new CustomEvent('mwp:ajax-before', { bubbles: true, detail: { formData, options } }));
+		setLoading(root, true);
+
+		try {
+			const response = await fetch(endpoint, {
+				method: options.method || 'POST',
+				body: formData,
+				credentials: 'same-origin'
+			});
+			const contentType = response.headers.get('content-type') || '';
+			const data = contentType.includes('application/json') ? await response.json() : await response.text();
+
+			if (!response.ok || data?.success === false) {
+				throw new Error(data?.data?.message || data?.message || response.statusText);
+			}
+
+			root.dispatchEvent(new CustomEvent('mwp:ajax-success', { bubbles: true, detail: { data, response } }));
+			return data;
+		} catch (error) {
+			root.dispatchEvent(new CustomEvent('mwp:ajax-error', { bubbles: true, detail: { error } }));
+			throw error;
+		} finally {
+			setLoading(root, false);
+			root.dispatchEvent(new CustomEvent('mwp:ajax-complete', { bubbles: true }));
+		}
+	}
+
+	mergeGlobalApi({
+		ajax: { submit },
+		notice: showNotice
+	});
+}
+
+function initAjaxForms() {
+	if (document.documentElement.dataset.mwpAjaxFormsReady === 'true') {
+		return;
+	}
+
+	document.documentElement.dataset.mwpAjaxFormsReady = 'true';
+	document.addEventListener('submit', event => {
+		const root = event.target.closest('[data-mwp-ajax-form]');
+
+		if (!root) {
+			return;
+		}
+
+		event.preventDefault();
+		window.MatterAdminUI.ajax.submit(root).catch(error => {
+			if (root.dataset.mwpNotice !== 'false') {
+				window.MatterAdminUI.notice(error.message, 'error');
+			}
+		});
+	});
+}
+
 function initColorPickers() {
 	document.addEventListener('input', event => {
 		const swatch = event.target.closest('[data-mwp-color-swatch]');
@@ -215,8 +452,7 @@ function initModals() {
 		});
 	}
 
-	window.MatterAdminUI = {
-		...(window.MatterAdminUI || {}),
+	mergeGlobalApi({
 		openModal(target, values = {}, trigger = null) {
 			const modal = typeof target === 'string' ? document.getElementById(target) : target;
 
@@ -237,7 +473,7 @@ function initModals() {
 			const modal = typeof target === 'string' ? document.getElementById(target) : target;
 			populateModal(modal, values);
 		}
-	};
+	});
 
 	document.addEventListener('click', event => {
 		const trigger = event.target.closest('[data-mwp-modal-trigger], .mwp-modal-trigger');
@@ -450,8 +686,198 @@ function initConfirmActions() {
 	});
 }
 
+function initTabs() {
+	const tabs = Array.from(document.querySelectorAll('[data-ui-tab]'));
+
+	if (!tabs.length || document.documentElement.dataset.mwpTabsReady === 'true') {
+		return;
+	}
+
+	document.documentElement.dataset.mwpTabsReady = 'true';
+
+	function getGroup(tab) {
+		return tab.closest('.mwp-admin-app, #mwp-settings, form, body') || document.body;
+	}
+
+	function measureActive(group) {
+		const nav = group.querySelector('.mwp-option-nav');
+		const active = nav?.querySelector('[data-ui-tab].active');
+
+		if (!nav || !active) {
+			return;
+		}
+
+		const navRect = nav.getBoundingClientRect();
+		const activeRect = active.getBoundingClientRect();
+		nav.style.setProperty('--mwp-nav-active-x', `${activeRect.left - navRect.left}px`);
+		nav.style.setProperty('--mwp-nav-active-y', `${activeRect.top - navRect.top}px`);
+		nav.style.setProperty('--mwp-nav-active-width', `${activeRect.width}px`);
+		nav.style.setProperty('--mwp-nav-active-height', `${activeRect.height}px`);
+		nav.classList.add('has-active-indicator');
+		window.requestAnimationFrame(() => nav.classList.add('is-indicator-ready'));
+	}
+
+	function activate(tab, persist = true) {
+		const id = tab.dataset.uiTab;
+		const group = getGroup(tab);
+		const storageKey = `mwp-active-tab:${group.id || 'default'}`;
+
+		group.querySelectorAll('[data-ui-tab]').forEach(item => item.classList.toggle('active', item === tab));
+		group.querySelectorAll('[data-ui-panel]').forEach(panel => {
+			const isActive = panel.dataset.uiPanel === id;
+			panel.hidden = !isActive;
+			panel.classList.toggle('active', isActive);
+		});
+
+		if (persist) {
+			localStorage.setItem(storageKey, id);
+		}
+
+		measureActive(group);
+		group.dispatchEvent(new CustomEvent('mwp:tab-change', { bubbles: true, detail: { id, tab } }));
+	}
+
+	tabs.forEach(tab => {
+		const group = getGroup(tab);
+		const storageKey = `mwp-active-tab:${group.id || 'default'}`;
+		const stored = localStorage.getItem(storageKey);
+		const initial = stored ? group.querySelector(`[data-ui-tab="${cssEscape(stored)}"]`) : group.querySelector('[data-ui-tab].active');
+
+		if (initial) {
+			activate(initial, false);
+		} else if (tab === tabs[0]) {
+			activate(tab, false);
+		}
+	});
+
+	document.addEventListener('click', event => {
+		const tab = event.target.closest('[data-ui-tab]');
+
+		if (!tab) {
+			return;
+		}
+
+		const group = getGroup(tab);
+		const panel = group.querySelector(`[data-ui-panel="${cssEscape(tab.dataset.uiTab)}"]`);
+
+		if (!panel) {
+			return;
+		}
+
+		event.preventDefault();
+		activate(tab);
+	});
+
+	window.addEventListener('resize', () => {
+		document.querySelectorAll('.mwp-admin-app, #mwp-settings').forEach(measureActive);
+	});
+}
+
+function initThemeToggle() {
+	const storageKey = 'mwp-theme';
+	const applyTheme = theme => {
+		const next = theme === 'dark' ? 'dark' : 'light';
+		document.documentElement.dataset.mwpTheme = next;
+		document.querySelectorAll('[data-mwp-theme-toggle]').forEach(toggle => {
+			toggle.dataset.mwpTheme = next;
+			toggle.setAttribute('aria-pressed', next === 'dark' ? 'true' : 'false');
+		});
+	};
+
+	applyTheme(localStorage.getItem(storageKey) || document.documentElement.dataset.mwpTheme || 'light');
+
+	document.addEventListener('click', event => {
+		const toggle = event.target.closest('[data-mwp-theme-toggle]');
+
+		if (!toggle) {
+			return;
+		}
+
+		const next = document.documentElement.dataset.mwpTheme === 'dark' ? 'light' : 'dark';
+		localStorage.setItem(storageKey, next);
+		applyTheme(next);
+	});
+}
+
+function parseCondition(value) {
+	try {
+		return JSON.parse(value || '{}');
+	} catch (error) {
+		return {};
+	}
+}
+
+function fieldValue(field) {
+	if (!field) {
+		return null;
+	}
+
+	if (field.matches('input[type="checkbox"]')) {
+		return field.checked;
+	}
+
+	if (field.matches('input[type="radio"]')) {
+		return field.form?.querySelector(`[name="${cssEscape(field.name)}"]:checked`)?.value || '';
+	}
+
+	return field.value;
+}
+
+function matchesCondition(condition, root) {
+	if (!condition || typeof condition !== 'object') {
+		return true;
+	}
+
+	if (!('field' in condition) && !('name' in condition)) {
+		return Object.entries(condition).every(([name, expected]) => matchesCondition({ field: name, value: expected }, root));
+	}
+
+	const fieldName = condition.field || condition.name;
+	const field = root.querySelector(`[name="${cssEscape(fieldName)}"], #${cssEscape(fieldName)}`);
+	const current = fieldValue(field);
+	const expected = condition.value ?? condition.equals ?? true;
+	const matched = Array.isArray(expected) ? expected.map(String).includes(String(current)) : String(current) === String(expected) || current === expected;
+
+	return condition.not ? !matched : matched;
+}
+
+function initDependencies() {
+	const rows = Array.from(document.querySelectorAll('[data-mwp-visible-if], [data-mwp-disabled-if], [data-mwp-requires]'));
+
+	if (!rows.length || document.documentElement.dataset.mwpDependenciesReady === 'true') {
+		return;
+	}
+
+	document.documentElement.dataset.mwpDependenciesReady = 'true';
+
+	function update() {
+		rows.forEach(row => {
+			const root = row.closest('form, .mwp-admin-app, #mwp-settings') || document.body;
+			const visible = row.dataset.mwpVisibleIf ? matchesCondition(parseCondition(row.dataset.mwpVisibleIf), root) : true;
+			const disabled = row.dataset.mwpDisabledIf ? matchesCondition(parseCondition(row.dataset.mwpDisabledIf), root) : false;
+			const requires = row.dataset.mwpRequires ? matchesCondition(parseCondition(row.dataset.mwpRequires), root) : true;
+
+			row.hidden = !visible;
+			row.querySelectorAll('input, select, textarea, button').forEach(control => {
+				control.disabled = disabled || !requires;
+			});
+		});
+	}
+
+	document.addEventListener('input', update);
+	document.addEventListener('change', update);
+	update();
+}
+
 export function initAdminUI() {
+	initTableApi();
+	initAjaxApi();
+	initAjaxForms();
+	initThemeToggle();
+
 	const initializers = [
+		['[data-ui-tab]', initTabs],
+		['[data-mwp-visible-if], [data-mwp-disabled-if], [data-mwp-requires]', initDependencies],
 		['[data-mwp-color-picker]', initColorPickers],
 		['[data-mwp-modal]', initModals],
 		['[data-mwp-lightbox-trigger]', initLightbox],

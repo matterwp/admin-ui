@@ -17,6 +17,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Controls {
 
 	/**
+	 * Return supported HTML input types.
+	 *
+	 * @return array<int, string>
+	 */
+	public static function inputTypes(): array {
+		return array( 'text', 'number', 'url', 'email', 'password', 'search', 'color', 'tel', 'hidden', 'date', 'time', 'datetime-local', 'month', 'week' );
+	}
+
+	/**
+	 * Normalize an HTML input type.
+	 *
+	 * @param string $type Requested input type.
+	 * @return string
+	 */
+	public static function normalizeInputType( string $type ): string {
+		return in_array( $type, self::inputTypes(), true ) ? $type : 'text';
+	}
+
+	/**
 	 * Render a toggle switch control.
 	 *
 	 * @param array $args Switch arguments.
@@ -86,7 +105,7 @@ class Controls {
 			)
 		);
 
-		$type                       = in_array( $args['type'], array( 'text', 'number', 'url', 'email', 'password', 'search', 'color', 'tel', 'hidden' ), true ) ? $args['type'] : 'text';
+		$type                       = self::normalizeInputType( (string) $args['type'] );
 		$attributes                 = Attrs::merge( is_array( $args['attributes'] ) ? $args['attributes'] : array(), (string) $args['class'], is_array( $args['data_attributes'] ) ? $args['data_attributes'] : array() );
 		$attributes['id']           = '' !== $args['id'] ? $args['id'] : null;
 		$attributes['name']         = '' !== $args['name'] ? $args['name'] : null;
@@ -195,23 +214,30 @@ class Controls {
 				'type'            => 'button',
 				'variant'         => 'secondary',
 				'size'            => 'standard',
+				'icon'            => '',
 				'class'           => '',
 				'disabled'        => false,
+				'loading'         => false,
 				'attributes'      => array(),
 				'data_attributes' => array(),
 			)
 		);
 
-		$type                   = in_array( $args['type'], array( 'button', 'submit', 'reset' ), true ) ? $args['type'] : 'button';
-		$variant                = in_array( $args['variant'], array( 'primary', 'secondary', 'ghost', 'danger' ), true ) ? $args['variant'] : 'secondary';
-		$size                   = in_array( $args['size'], array( 'standard', 'compact' ), true ) ? $args['size'] : 'standard';
-		$classes                = trim( 'mwp-button is-' . $variant . ' ' . ( 'compact' === $size ? 'is-compact ' : '' ) . $args['class'] );
-		$attributes             = Attrs::merge( is_array( $args['attributes'] ) ? $args['attributes'] : array(), $classes, is_array( $args['data_attributes'] ) ? $args['data_attributes'] : array() );
-		$attributes['type']     = $type;
-		$attributes['disabled'] = wp_validate_boolean( $args['disabled'] );
-		$attributes['key']      = ! empty( $args['key'] ) ? $args['key'] : null;
+		$type                           = in_array( $args['type'], array( 'button', 'submit', 'reset' ), true ) ? $args['type'] : 'button';
+		$variant                        = in_array( $args['variant'], array( 'primary', 'secondary', 'ghost', 'danger' ), true ) ? $args['variant'] : 'secondary';
+		$size                           = in_array( $args['size'], array( 'standard', 'compact' ), true ) ? $args['size'] : 'standard';
+		$classes                        = trim( 'mwp-button is-' . $variant . ' ' . ( 'compact' === $size ? 'is-compact ' : '' ) . ( $args['loading'] ? 'is-loading ' : '' ) . $args['class'] );
+		$attributes                     = Attrs::merge( is_array( $args['attributes'] ) ? $args['attributes'] : array(), $classes, is_array( $args['data_attributes'] ) ? $args['data_attributes'] : array() );
+		$attributes['type']             = $type;
+		$attributes['disabled']         = wp_validate_boolean( $args['disabled'] ) || wp_validate_boolean( $args['loading'] );
+		$attributes['key']              = ! empty( $args['key'] ) ? $args['key'] : null;
+		$attributes['data-mwp-loading'] = wp_validate_boolean( $args['loading'] ) ? 'true' : null;
+		$icon                           = Components::iconMarkup( (string) $args['icon'] );
 		?>
 		<button <?php echo Attrs::render( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+			<?php if ( '' !== $icon ) : ?>
+				<span class="mwp-button__icon" aria-hidden="true"><?php echo $icon; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+			<?php endif; ?>
 			<?php echo esc_html( $args['label'] ); ?>
 		</button>
 		<?php

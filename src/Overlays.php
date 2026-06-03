@@ -31,6 +31,7 @@ class Overlays {
 				'title'           => '',
 				'description'     => '',
 				'trigger'         => 'Open Modal',
+				'render_trigger'  => true,
 				'trigger_variant' => 'primary',
 				'class'           => '',
 				'trigger_class'   => '',
@@ -58,7 +59,10 @@ class Overlays {
 		$attributes['aria-hidden']    = 'true';
 		$attributes['hidden']         = true;
 		$has_footer                   = '' !== $args['footer'] || ! empty( $args['footer_actions'] );
-		self::modalTrigger( $id, (string) $args['trigger'], (string) $args['trigger_variant'], (string) $args['trigger_class'] );
+
+		if ( wp_validate_boolean( $args['render_trigger'] ) && false !== $args['trigger'] ) {
+			self::modalTrigger( $id, (string) $args['trigger'], (string) $args['trigger_variant'], (string) $args['trigger_class'] );
+		}
 		?>
 		<div <?php echo Attrs::render( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<div class="mwp-modal__overlay" data-mwp-modal-close></div>
@@ -114,6 +118,7 @@ class Overlays {
 				'title'           => '',
 				'description'     => '',
 				'trigger'         => __( 'Delete', 'matterwp-admin-ui' ),
+				'render_trigger'  => true,
 				'trigger_variant' => 'danger',
 				'confirm_label'   => __( 'Confirm', 'matterwp-admin-ui' ),
 				'confirm_variant' => 'danger',
@@ -133,7 +138,9 @@ class Overlays {
 		$confirm_variant = in_array( $args['confirm_variant'], array( 'primary', 'secondary', 'ghost', 'danger' ), true ) ? $args['confirm_variant'] : 'danger';
 		$classes         = trim( 'mwp-modal is-danger ' . $args['class'] );
 
-		self::modalTrigger( $id, (string) $args['trigger'], $trigger_variant, (string) $args['trigger_class'] );
+		if ( wp_validate_boolean( $args['render_trigger'] ) && false !== $args['trigger'] ) {
+			self::modalTrigger( $id, (string) $args['trigger'], $trigger_variant, (string) $args['trigger_class'] );
+		}
 		?>
 		<div class="<?php echo esc_attr( $classes ); ?>" id="<?php echo esc_attr( $id ); ?>" data-mwp-modal aria-hidden="true" hidden>
 			<div class="mwp-modal__overlay" data-mwp-modal-close></div>
@@ -205,10 +212,14 @@ class Overlays {
 			$args,
 			array(
 				'label'           => '',
+				'id'              => '',
 				'type'            => 'button',
 				'variant'         => 'secondary',
+				'size'            => 'standard',
+				'icon'            => '',
 				'class'           => '',
 				'disabled'        => false,
+				'loading'         => false,
 				'autofocus'       => false,
 				'data_attributes' => array(),
 				'attributes'      => array(),
@@ -217,13 +228,20 @@ class Overlays {
 
 		$type                             = in_array( $args['type'], array( 'button', 'submit', 'reset' ), true ) ? $args['type'] : 'button';
 		$variant                          = in_array( $args['variant'], array( 'primary', 'secondary', 'ghost', 'danger' ), true ) ? $args['variant'] : 'secondary';
-		$classes                          = trim( 'mwp-button is-' . $variant . ' ' . $args['class'] );
+		$size                             = in_array( $args['size'], array( 'standard', 'compact' ), true ) ? $args['size'] : 'standard';
+		$classes                          = trim( 'mwp-button is-' . $variant . ' ' . ( 'compact' === $size ? 'is-compact ' : '' ) . ( $args['loading'] ? 'is-loading ' : '' ) . $args['class'] );
 		$attributes                       = Attrs::merge( is_array( $args['attributes'] ) ? $args['attributes'] : array(), $classes, is_array( $args['data_attributes'] ) ? $args['data_attributes'] : array() );
+		$attributes['id']                 = '' !== $args['id'] ? $args['id'] : null;
 		$attributes['type']               = $type;
-		$attributes['disabled']           = wp_validate_boolean( $args['disabled'] );
+		$attributes['disabled']           = wp_validate_boolean( $args['disabled'] ) || wp_validate_boolean( $args['loading'] );
 		$attributes['data-mwp-autofocus'] = $args['autofocus'] ? '' : null;
+		$attributes['data-mwp-loading']   = $args['loading'] ? 'true' : null;
+		$icon                             = Components::iconMarkup( (string) $args['icon'] );
 		?>
 		<button <?php echo Attrs::render( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+			<?php if ( '' !== $icon ) : ?>
+				<span class="mwp-button__icon" aria-hidden="true"><?php echo Components::iconMarkup( (string) $args['icon'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+			<?php endif; ?>
 			<?php echo esc_html( $args['label'] ); ?>
 		</button>
 		<?php
@@ -236,10 +254,15 @@ class Overlays {
 	 * @return void
 	 */
 	private static function modalField( array $field ): void {
-		$name  = (string) ( $field['name'] ?? ( $field['key'] ?? '' ) );
-		$id    = (string) ( $field['id'] ?? ( '' !== $name ? str_replace( '_', '-', $name ) : wp_unique_id( 'mwp-modal-field-' ) ) );
-		$type  = (string) ( $field['type'] ?? 'text' );
-		$label = (string) ( $field['label'] ?? ( $field['title'] ?? $name ) );
+		$name       = (string) ( $field['name'] ?? ( $field['key'] ?? '' ) );
+		$id         = (string) ( $field['id'] ?? ( '' !== $name ? str_replace( '_', '-', $name ) : wp_unique_id( 'mwp-modal-field-' ) ) );
+		$type       = (string) ( $field['type'] ?? 'text' );
+		$label      = (string) ( $field['label'] ?? ( $field['title'] ?? $name ) );
+		$field_args = array(
+			'class'           => trim( ( $field['field_class'] ?? '' ) . ' ' . ( ! empty( $field['wide'] ) ? 'is-wide ' : '' ) . ( ! empty( $field['layout'] ) ? 'is-layout-' . sanitize_html_class( (string) $field['layout'] ) : '' ) ),
+			'attributes'      => is_array( $field['field_attributes'] ?? null ) ? $field['field_attributes'] : array(),
+			'data_attributes' => is_array( $field['field_data_attributes'] ?? null ) ? $field['field_data_attributes'] : array(),
+		);
 
 		Layout::field(
 			$label,
@@ -249,10 +272,19 @@ class Overlays {
 				$control_args                 = array_merge(
 					$field,
 					array(
-						'id'         => $id,
-						'name'       => $name,
-						'value'      => $field['value'] ?? '',
-						'attributes' => $attributes,
+						'id'              => $id,
+						'name'            => $name,
+						'value'           => $field['value'] ?? '',
+						'placeholder'     => $field['placeholder'] ?? '',
+						'autocomplete'    => $field['autocomplete'] ?? '',
+						'min'             => $field['min'] ?? null,
+						'max'             => $field['max'] ?? null,
+						'step'            => $field['step'] ?? null,
+						'readonly'        => ! empty( $field['readonly'] ),
+						'required'        => ! empty( $field['required'] ),
+						'disabled'        => ! empty( $field['disabled'] ),
+						'attributes'      => $attributes,
+						'data_attributes' => is_array( $field['data_attributes'] ?? null ) ? $field['data_attributes'] : array(),
 					)
 				);
 
@@ -280,9 +312,7 @@ class Overlays {
 				$control_args['type'] = in_array( $type, array( 'number', 'url', 'email', 'password', 'search', 'color', 'tel' ), true ) ? $type : 'text';
 				Controls::input( $control_args );
 			},
-			array(
-				'class' => $field['field_class'] ?? '',
-			)
+			$field_args
 		);
 	}
 }

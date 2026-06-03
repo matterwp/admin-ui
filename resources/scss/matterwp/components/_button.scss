@@ -1,6 +1,7 @@
 @use "./../variables" as *;
 
 .mwp-button {
+	box-sizing: border-box;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -23,6 +24,27 @@
 		border-radius: calc(var(--mwp-ui-radius, 8px) - 2px);
 		font-size: 12px;
 		line-height: 1.2;
+	}
+
+	&.is-loading {
+		opacity: 0.68;
+		cursor: wait;
+	}
+
+	.mwp-button__icon {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 14px;
+		height: 14px;
+		margin-right: 6px;
+		line-height: 0;
+	}
+
+	.mwp-button__icon svg {
+		display: block;
+		width: 14px;
+		height: 14px;
 	}
 
 	&:hover {

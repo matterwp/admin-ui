@@ -30,6 +30,17 @@ class MatterAdminUI {
 	}
 
 	/**
+	 * Render an admin app shell.
+	 *
+	 * @param array    $args App shell arguments.
+	 * @param callable $content Content callback.
+	 * @return void
+	 */
+	public static function app( array $args, callable $content ): void {
+		Layout::app( $args, $content );
+	}
+
+	/**
 	 * Render a settings section.
 	 *
 	 * @param array    $args Section arguments.
@@ -94,6 +105,17 @@ class MatterAdminUI {
 	 */
 	public static function field( string $label, callable $control, array $args = array() ): void {
 		Layout::field( $label, $control, $args );
+	}
+
+	/**
+	 * Render a field grid wrapper.
+	 *
+	 * @param array    $args Field grid arguments.
+	 * @param callable $content Content callback.
+	 * @return void
+	 */
+	public static function fieldGrid( array $args, callable $content ): void {
+		Layout::fieldGrid( $args, $content );
 	}
 
 	/**
@@ -228,6 +250,16 @@ class MatterAdminUI {
 	}
 
 	/**
+	 * Render a richer data table.
+	 *
+	 * @param array $args Data table arguments.
+	 * @return void
+	 */
+	public static function dataTable( array $args ): void {
+		Components::dataTable( $args );
+	}
+
+	/**
 	 * Render compact action buttons for table action columns.
 	 *
 	 * @param array $args Action group arguments.
@@ -235,6 +267,16 @@ class MatterAdminUI {
 	 */
 	public static function actionGroup( array $args ): void {
 		Components::actionGroup( $args );
+	}
+
+	/**
+	 * Return named icon markup.
+	 *
+	 * @param string $icon Icon name.
+	 * @return string
+	 */
+	public static function icon( string $icon ): string {
+		return Components::iconMarkup( $icon );
 	}
 
 	/**
@@ -285,6 +327,16 @@ class MatterAdminUI {
 	 */
 	public static function actionBar( array $args ): void {
 		Components::actionBar( $args );
+	}
+
+	/**
+	 * Render a result/preview card.
+	 *
+	 * @param array $args Result card arguments.
+	 * @return void
+	 */
+	public static function resultCard( array $args ): void {
+		Components::resultCard( $args );
 	}
 
 	/**

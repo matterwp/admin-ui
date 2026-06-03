@@ -97,6 +97,35 @@
 	font-weight: 600;
 }
 
+.mwp-table-title {
+	color: var(--mwp-color-text);
+	font-weight: 700;
+}
+
+.mwp-table-cell {
+	&.is-wrap {
+		white-space: normal;
+	}
+
+	&.has-overflow-anywhere {
+		overflow-wrap: anywhere;
+		word-break: break-word;
+	}
+
+	&.has-overflow-truncate {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	&.is-type-code .mwp-table-code,
+	&.is-type-link .mwp-table-link,
+	&.is-type-external_link .mwp-table-link {
+		overflow-wrap: anywhere;
+		word-break: break-word;
+	}
+}
+
 .mwp-table-action {
 	display: inline-flex;
 	align-items: center;

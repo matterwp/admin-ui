@@ -242,6 +242,10 @@ html[data-mwp-theme="dark"] {
 .mwp-progress {
 	width: 100%;
 	max-width: 420px;
+
+	&.is-grow {
+		max-width: 100%;
+	}
 }
 
 .mwp-progress__header {

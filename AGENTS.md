@@ -2,6 +2,166 @@
 
 These items came from QR Factory admin-screen customizations. Consider moving them into the Admin UI package so future plugin screens can use them without plugin-specific CSS/JS.
 
+## v1.0.4 updates
+
+Maintainer's Activation Schedule option shows a common scheduling row pattern: start datetime, end datetime, timezone select, and an auto-disable switch. Admin UI can compose most of this today with `option()` + `fieldGrid()`, but date/time inputs still require raw HTML because `Controls::input()` downgrades unsupported types to `text`.
+
+### Highest value
+
+- Expand input type support for schedule/date controls.
+  - Add `date`, `time`, `datetime-local`, `month`, and `week` to `Controls::input()`.
+  - Add the same allowed types to generated fields in `form( array( 'fields' => ... ) )` and `schemaOption()`.
+  - Preserve existing sanitization and attribute support: `min`, `max`, `step`, `readonly`, `required`, `autocomplete`, `disabled`, `attributes`, and `data_attributes`.
+  - This lets plugins render schedule fields without raw `<input type="datetime-local">` markup.
+
+- Add or document a schedule-row composition pattern.
+  - Target structure: section -> full-width/column option row -> 3-column field grid -> start datetime, end datetime, timezone select.
+  - Pair with a second standard option row for an auto-disable switch.
+  - The pattern should work with locked/pro controls through `MatterAdminUI::controlLockedAttrs()` or standard `disabled` args.
+  - Consider a small helper only if this pattern repeats across plugins; otherwise document the `option()` + `fieldGrid()` recipe.
+
+## v1.0.3 updates
+
+QR Factory is now on Admin UI v1.0.2. That update removed most of the low-level styling debt, but the plugin still needs too much hand-written PHP and JS for common admin workflows. v1.0.3 should focus on component composition, dynamic tables, Ajax-friendly forms, and app-shell helpers.
+
+### Highest value
+
+- Add a triggerless modal render option.
+  - Current `MatterAdminUI::modal()` always renders a trigger button before the modal.
+  - QR Factory campaign rows already use table action buttons as triggers, so the modal shell is still hand-written in `templates/admin/tabs/campaigns.php`.
+  - Suggested API: `render_trigger => false` or `trigger => false`.
+  - Keep existing trigger behavior as the default.
+  - Support all existing modal args: `fields`, `footer_actions`, slot classes, `attributes`, and `data_attributes`.
+  - This lets plugins render reusable edit modals while opening them from table actions, cards, menus, or custom JS.
+
+- Improve modal field and footer action customization.
+  - Modal fields need `data_attributes`, `attributes`, `readonly`, `required`, `placeholder`, `autocomplete`, `min`, `max`, `step`, `field_class`, and `layout` support consistently.
+  - Footer actions need `attributes`, `data_attributes`, `id`, loading/disabled state classes, and optional icon support.
+  - QR Factory campaign editing needs fields with `data-qrfactory-edit-*`, `data-mwp-field`, `readonly`, and Ajax save hooks.
+  - A structured modal form should be able to replace the whole campaign edit modal without losing plugin-specific hooks.
+
+- Add a richer `dataTable` / `paginatedTable` API for plugin-managed rows.
+  - Existing table helpers are useful for static rows, but QR Factory still hand-renders Library, Campaigns, Analytics, and Logs tables.
+  - Add row-level args: `row_id`, `row_key`, `row_attributes`, `row_data_attributes`, and `row_class`.
+  - Add column callbacks with access to the full row and column definition.
+  - Add column types for common cells: `text`, `title`, `link`, `external_link`, `code`, `image`, `badge`, `date`, `actions`.
+  - Add `empty_state`, `pagination`, `per_page`, `initial_page`, `empty_target`, and `table_class` in one component call.
+  - Support cell wrapping/truncation options, e.g. `wrap => true`, `min_width`, `max_width`, and `overflow => anywhere`.
+  - This would remove repeated table wrapper, header, tbody, pagination, and empty-state markup from QR Factory.
+
+- Add a JS row-rendering contract for dynamic tables.
+  - QR Factory duplicates the Campaign table row in PHP and in `src/Admin/Static/js/modules/management.js`.
+  - Provide a package helper for appending/updating/removing rows after Ajax without rebuilding the whole table by hand.
+  - Suggested browser API:
+    - `MatterAdminUI.table.appendRow(table, rowHtmlOrData, options)`
+    - `MatterAdminUI.table.updateRow(table, rowId, rowHtmlOrData)`
+    - `MatterAdminUI.table.removeRow(table, rowId)`
+    - `MatterAdminUI.table.refresh(table, { page: 'first' | 'last' | number })`
+  - Keep `mwp:table-refresh`, but make empty-state toggling and pagination refresh automatic.
+  - Ideally expose a PHP row partial pattern or serialized column definitions so PHP and JS do not diverge.
+
+- Add an Ajax action/form helper.
+  - QR Factory repeats fetch/FormData/nonce/error/disabled-button handling in generator, campaigns, library deletes, campaign update, and bulk generation.
+  - Suggested data API: `data-mwp-ajax-form`, `data-mwp-action`, `data-mwp-submit`, `data-mwp-result`, `data-mwp-loading`.
+  - Suggested JS helper: `MatterAdminUI.ajax.submit(formOrRoot, options)`.
+  - Include standard events: `mwp:ajax-before`, `mwp:ajax-success`, `mwp:ajax-error`, `mwp:ajax-complete`.
+  - Let plugins provide callbacks for rendering results, appending rows, or showing notices.
+  - This would make plugin JS smaller and more predictable.
+
+- Add a reusable result/preview card component.
+  - QR Factory has local `.qrfactory-result-card` CSS and duplicate result renderers in Generator and Campaigns.
+  - Suggested component: `MatterAdminUI::resultCard()` or `previewCard()`.
+  - Support image preview, title/meta rows, primary link, code/value rows, actions, `status`, `variant`, and responsive layout.
+  - Provide JS render support for Ajax responses.
+  - This is useful for generated files, exports, uploaded assets, API keys, reports, and other plugin workflows.
+
+- Add an Admin UI app shell helper.
+  - QR Factory still hand-renders `#mwp-settings`, header, navigation, version badge, settings form wrapper, save area, and tab panels.
+  - Suggested API: `MatterAdminUI::app( array( 'brand' => ..., 'version' => ..., 'tabs' => ..., 'form' => true ), $content )`.
+  - Include header slots, nav items, active tab persistence, theme toggle, version display, and full-width layout option.
+  - Let plugins pass SVG/logo markup safely, or an attachment/image URL.
+  - This reduces boilerplate in every new plugin and keeps tab behavior consistent.
+
+### QR Factory checkup notes
+
+- Campaigns tab is the biggest remaining complexity.
+  - Create form, edit modal, server table row, JS-created table row, Ajax create/update/delete, empty-state toggling, and pagination refresh are all managed separately.
+  - Admin UI can reduce this with triggerless modals, modal field metadata, data-table row definitions, and Ajax table helpers.
+
+- Library tab is mostly aligned with v1.0.2, but table rendering is still hand-written.
+  - It needs row data hooks for deletion, compact badge cells, image cells, external links, and actions.
+  - A typed `paginatedTable` with row attributes and action columns would remove most of the template body.
+
+- Generator and Recent QRs need reusable Ajax list handling.
+  - Recent logs use server-rendered PHP initially, then JS replaces the whole block with hand-written table markup.
+  - Package-level server/Ajax pagination would keep the markup consistent and avoid duplicate table code.
+
+- Logs and Analytics use table markup that repeats the same wrapper/header/body patterns.
+  - A data-table component with column type callbacks would make these easier to scan and safer to maintain.
+  - Analytics destination/referrer columns need long-text wrapping options built into table cells.
+
+- Design and Settings tabs are close to schema-driven, but still manually compose many rows.
+  - `schemaOption()` should support more schema metadata so rows can be generated from `Settings::getSchema()` with small overrides.
+  - Needed schema keys: `ui`, `component`, `option`, `control`, `layout`, `control_width`, `media`, `choices_display`, `step`, `placeholder`, `help`, `dependencies`, and `visible_if`.
+  - QR Factory fields like logo media, logo size, export size, color pickers, and storage choice should be renderable from schema plus concise overrides.
+
+- Automations and Tools both need better choice-grid primitives.
+  - Automations renders one option row per post type; Tools uses `switchGrid`.
+  - Add a schema-aware multi-switch option for `multi_select` fields so plugins can render post-type toggles from the schema directly.
+  - Support dense/list/card display modes and per-choice descriptions.
+
+- Bulk Generate still needs progress/action layout options.
+  - v1.0.2 `actionBar` helped, but progress sizing still needs local CSS: `.mwp-action-bar .mwp-progress`.
+  - Add `progress` args such as `max_width`, `grow`, `label`, `value`, `hidden`, and `data_attributes`.
+  - Add action-bar item sizing so a progress meter plus button does not need plugin CSS.
+
+- Theme and navigation JS should move closer to the package.
+  - QR Factory has local `navigation.js`, `theme-toggle.js`, and `theme-bootstrap.js`.
+  - Admin UI should own tab persistence, active indicator measurement, dark-mode storage/bootstrap, and header theme toggle.
+  - Plugins should only pass tab definitions and brand data.
+
+- Notices should be a package service, not plugin-specific JS.
+  - QR Factory still has a local `showNotice()` wrapper and notice container classes.
+  - Admin UI should expose `MatterAdminUI.notice(message, type, options)` and handle container creation, timing, stacking, and dark-mode styles.
+
+- Field markup should be easier to compose.
+  - Campaign create/edit forms still use raw `<label class="mwp-field">` blocks for simple text/url/select fields.
+  - Add `fieldGrid()` and `field()` args for `wide`, `columns`, `data_attributes`, and generated controls.
+  - Let `form()` accept `fields` and `actions`, not only a callback.
+
+- Action icons need one more pass.
+  - v1.0.2 added common named icons, but QR Factory still passes a custom X SVG for delete because the requested visual was specifically an X.
+  - Add `x`, `trash`, `external-link`, `image`, `play`, `pause`, and `refresh` named icons.
+  - Allow `icon => 'x'` with `variant => 'danger'` for destructive mini buttons.
+
+- URL display transformations should be component options.
+  - Library strips the current site URL using a local closure before rendering URL columns.
+  - Add a table/link/code cell option like `strip_site_url => true`, `display_callback`, or `format => 'relative_site_url'`.
+  - This keeps URL display logic reusable without hard-coding a site host in templates.
+
+- Long text/table overflow should be first-class.
+  - QR Factory still keeps `.qrfactory-data-table` and `.qrfactory-log-table` CSS for min widths and long URLs/paths.
+  - Add package classes or args for `min_width`, `vertical_align`, `wrap_code`, `wrap_links`, and `word_break`.
+  - Tables with URLs, paths, refs, and user agents should not need local CSS.
+
+- Add dependency/conditional UI support.
+  - QR Factory has logo fields that conceptually depend on `qrfactory_design_logo_enabled`.
+  - Future plugins will need fields that show/hide or disable based on switches, selects, or plan state.
+  - Suggested schema: `visible_if`, `disabled_if`, and `requires`.
+  - Package JS should update dependent rows without each plugin writing custom scripts.
+
+- Add safer page-level layout options.
+  - QR Factory still needs local CSS for WordPress admin chrome: full-height layout, hidden footer, zero `#wpcontent` padding, and dark page background.
+  - The app shell should expose `layout => 'fullscreen' | 'standard'`, `hide_wp_footer`, `content_padding`, and `body_class` guidance.
+
+### v1.0.3 success criteria
+
+- A plugin can define its header, tabs, sections, schema options, tables, modals, notices, and Ajax table mutations with mostly Admin UI helpers.
+- Dynamic table rows can be created, updated, deleted, paginated, and emptied without duplicating row markup between PHP and JS.
+- Modal forms can be rendered by the package and opened from any custom trigger, especially table action icons.
+- QR Factory local CSS should shrink to branding/theme variables and QR-specific result imagery only.
+- QR Factory local JS should focus on QR business behavior, not generic tabs, notices, Ajax boilerplate, modal plumbing, pagination, or table row state.
+
 ## v1.0.2 update
 
 v1.0.1 covered the highest-impact QR Factory needs: `borderless` and `table-only` section variants, divided option rows, table action buttons, static table pagination, `[hidden]` handling, and dynamic modal helpers. The next update should focus on smaller reusable variants and helpers that still force plugins to add local CSS or repetitive markup.
