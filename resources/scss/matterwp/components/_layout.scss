@@ -317,34 +317,39 @@
 			}
 		}
 
-		& > *:not(.mwp-premium-badge) {
-			position: relative;
-			z-index: 2;
-			border-inline: 1px solid var(--mwp-color-border);
-			background: var(--mwp-color-bg);
-		}
+	}
 
-		& > .mwp-premium-badge + * {
-			margin-top: -16px;
-			border-top: 1px solid var(--mwp-color-border);
-			border-top-left-radius: 8px;
-			border-top-right-radius: 8px;
-		}
+	&:not(.is-option-box-minimal):not(.is-borderless) {
+		.mwp-section-options {
+			& > *:not(.mwp-premium-badge) {
+				position: relative;
+				z-index: 2;
+				border-inline: 1px solid var(--mwp-color-border);
+				background: var(--mwp-color-bg);
+			}
 
-		& > *:not(.mwp-premium-badge):first-child {
-			border-top: 1px solid var(--mwp-color-border);
-			border-top-left-radius: 8px;
-			border-top-right-radius: 8px;
-		}
+			& > .mwp-premium-badge + * {
+				margin-top: -16px;
+				border-top: 1px solid var(--mwp-color-border);
+				border-top-left-radius: 8px;
+				border-top-right-radius: 8px;
+			}
 
-		& > *:not(.mwp-premium-badge, :last-child) {
-			border-bottom: 1px solid var(--mwp-color-border);
-		}
+			& > *:not(.mwp-premium-badge):first-child {
+				border-top: 1px solid var(--mwp-color-border);
+				border-top-left-radius: 8px;
+				border-top-right-radius: 8px;
+			}
 
-		& > *:last-child {
-			border-bottom: 1px solid var(--mwp-color-border);
-			border-bottom-right-radius: 8px;
-			border-bottom-left-radius: 8px;
+			& > *:not(.mwp-premium-badge, :last-child) {
+				border-bottom: 1px solid var(--mwp-color-border);
+			}
+
+			& > *:last-child {
+				border-bottom: 1px solid var(--mwp-color-border);
+				border-bottom-right-radius: 8px;
+				border-bottom-left-radius: 8px;
+			}
 		}
 	}
 
@@ -354,21 +359,10 @@
 			border-radius: 0 !important;
 			background: transparent !important;
 
-			& > *:not(.mwp-premium-badge) {
+			.mwp-option {
 				border: 0;
 				border-radius: 0;
 				background: transparent;
-			}
-
-			& > .mwp-premium-badge + *,
-			& > *:not(.mwp-premium-badge):first-child,
-			& > *:not(.mwp-premium-badge, :last-child),
-			& > *:last-child {
-				border: 0;
-				border-radius: 0;
-			}
-
-			.mwp-option {
 				padding: 0;
 			}
 		}
@@ -442,7 +436,7 @@
 }
 
 // Dark mode
-html[data-mwp-theme="dark"] .mwp-section-options {
+html[data-mwp-theme="dark"] .mwp-section-block:not(.is-option-box-minimal):not(.is-borderless) .mwp-section-options {
 	.mwp-premium-badge {
 		background-color: var(--mwp-premium-badge-bg, #{$color-gray-700});
 	}
@@ -468,7 +462,7 @@ html[data-mwp-theme="dark"] .mwp-section-block.is-borderless .mwp-section-option
 }
 
 html[data-mwp-theme="dark"] .mwp-section-block.is-option-box-minimal .mwp-section-options {
-	& > *:not(.mwp-premium-badge) {
+	& > .mwp-option {
 		border-color: transparent;
 		background: transparent;
 	}

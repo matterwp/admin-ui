@@ -309,7 +309,7 @@ class Overlays {
 					return;
 				}
 
-				$control_args['type'] = in_array( $type, array( 'number', 'url', 'email', 'password', 'search', 'color', 'tel' ), true ) ? $type : 'text';
+				$control_args['type'] = Controls::normalizeInputType( $type );
 				Controls::input( $control_args );
 			},
 			$field_args

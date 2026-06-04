@@ -414,7 +414,7 @@
 
 // Dark mode
 html[data-mwp-theme="dark"] #mwp-settings {
-	a {
+	a:not(.mwp-nav-item, .mwp-button, .mwp-table-link, .mwp-nav-link-upgrade, .mwp-nav-link-account) {
 		color: inherit;
 	}
 

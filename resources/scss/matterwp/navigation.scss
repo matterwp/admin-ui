@@ -55,12 +55,16 @@ $nav-item-radius: 8px;
 
 // Dark mode
 html[data-mwp-theme="dark"] {
-	.mwp-nav-item {
-		color: $color-gray-400;
+	.mwp-nav-items,
+	.mwp-nav-misc,
+	.mwp-nav-upgrade {
+		.mwp-nav-item {
+			color: $color-gray-300;
 
-		&:hover,
-		&.active {
-			color: $color-gray-50;
+			&:hover,
+			&.active {
+				color: $color-gray-50;
+			}
 		}
 	}
 

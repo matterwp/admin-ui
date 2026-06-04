@@ -160,7 +160,15 @@ class InputGroups {
 				'remove_text'     => __( 'Remove Image', 'matterwp-admin-ui' ),
 				'media_title'     => __( 'Select Image', 'matterwp-admin-ui' ),
 				'media_button'    => __( 'Use Image', 'matterwp-admin-ui' ),
+				'placeholder'     => __( 'No image selected', 'matterwp-admin-ui' ),
 				'class'           => '',
+				'preview_class'   => '',
+				'actions_class'   => '',
+				'input_class'     => '',
+				'choose_class'    => '',
+				'remove_class'    => '',
+				'choose_icon'     => 'image',
+				'remove_icon'     => 'trash',
 				'data_attributes' => array(),
 				'attributes'      => array(),
 				'slots'           => array(),
@@ -224,7 +232,7 @@ class InputGroups {
 			if ( is_callable( $preview ) ) {
 				self::renderSlot( $preview, $args, $uid, $image_url );
 			} else {
-				$preview_markup = self::getDefaultMediaPreview( $uid, $image_url );
+				$preview_markup = self::getDefaultMediaPreview( $args, $uid, $image_url );
 				echo apply_filters( 'matterwp_admin_ui_media_field_preview', $preview_markup, $args, $uid, $image_url ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
 			?>
@@ -232,8 +240,8 @@ class InputGroups {
 			if ( is_callable( $actions ) ) {
 				self::renderSlot( $actions, $args, $uid, $image_url );
 			} else {
-				$actions_markup = self::getDefaultMediaActions( $args, $uid, $attachment_id, (bool) $image_url );
-				echo apply_filters( 'matterwp_admin_ui_media_field_actions', $actions_markup, $args, $uid, $attachment_id, (bool) $image_url ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				$actions_markup = self::getDefaultMediaActions( $args, $uid, $attachment_id, $image_url );
+				echo apply_filters( 'matterwp_admin_ui_media_field_actions', $actions_markup, $args, $uid, $attachment_id, (bool) $image_url, $image_url ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
 			?>
 			<?php self::renderSlot( $after, $args, $uid, $image_url ); ?>
@@ -264,14 +272,16 @@ class InputGroups {
 	/**
 	 * Build the default media preview markup.
 	 *
+	 * @param array  $args Media field arguments.
 	 * @param string $uid Media field unique identifier.
 	 * @param string $image_url Current image URL.
 	 * @return string Preview markup.
 	 */
-	private static function getDefaultMediaPreview( string $uid, string $image_url ): string {
+	private static function getDefaultMediaPreview( array $args, string $uid, string $image_url ): string {
+		$classes = trim( 'mwp-media-field__preview ' . ( $image_url ? 'has-image ' : '' ) . $args['preview_class'] );
 		ob_start();
 		?>
-		<div class="<?php echo esc_attr( 'mwp-media-field__preview' . ( $image_url ? ' has-image' : '' ) ); ?>" data-media-preview="<?php echo esc_attr( $uid ); ?>">
+		<div class="<?php echo esc_attr( $classes ); ?>" data-media-preview="<?php echo esc_attr( $uid ); ?>">
 			<?php if ( $image_url ) : ?>
 				<img src="<?php echo esc_url( $image_url ); ?>" alt="">
 			<?php endif; ?>
@@ -286,19 +296,33 @@ class InputGroups {
 	 * @param array  $args Media field arguments.
 	 * @param string $uid Media field unique identifier.
 	 * @param int    $attachment_id Current attachment ID.
-	 * @param bool   $has_image Whether the field currently has an image.
+	 * @param string $image_url Current image URL.
 	 * @return string Action markup.
 	 */
-	private static function getDefaultMediaActions( array $args, string $uid, int $attachment_id, bool $has_image ): string {
+	private static function getDefaultMediaActions( array $args, string $uid, int $attachment_id, string $image_url ): string {
+		$has_image       = '' !== $image_url;
+		$actions_classes = trim( 'mwp-media-field__actions ' . $args['actions_class'] );
+		$input_classes   = trim( 'mwp-media-field__input ' . $args['input_class'] );
+		$choose_classes  = trim( 'mwp-button is-secondary mwp-media-field__choose ' . $args['choose_class'] );
+		$remove_classes  = trim( 'mwp-button is-danger mwp-media-field__remove ' . $args['remove_class'] );
+		$choose_icon     = Components::iconMarkup( (string) $args['choose_icon'] );
+		$remove_icon     = Components::iconMarkup( (string) $args['remove_icon'] );
 		ob_start();
 		?>
-		<div class="mwp-media-field__actions">
+		<div class="<?php echo esc_attr( $actions_classes ); ?>">
 			<input type="hidden" name="<?php echo esc_attr( $args['name'] ); ?>" value="<?php echo esc_attr( (string) $attachment_id ); ?>" data-media-input="<?php echo esc_attr( $uid ); ?>" data-autosave-hidden>
-			<button class="mwp-button is-secondary mwp-media-field__choose" type="button" data-media-target="<?php echo esc_attr( $uid ); ?>" data-media-library-type="<?php echo esc_attr( (string) $args['library_type'] ); ?>" data-media-preview-size="<?php echo esc_attr( (string) $args['preview_size'] ); ?>" data-media-title="<?php echo esc_attr( (string) $args['media_title'] ); ?>" data-media-button="<?php echo esc_attr( (string) $args['media_button'] ); ?>"<?php echo $has_image ? ' hidden' : ''; ?>>
-				<?php echo esc_html( $args['button_text'] ); ?>
+			<input class="<?php echo esc_attr( $input_classes ); ?>" type="url" value="<?php echo esc_url( $image_url ); ?>" placeholder="<?php echo esc_attr( $args['placeholder'] ); ?>" data-media-url-input="<?php echo esc_attr( $uid ); ?>" readonly>
+			<button class="<?php echo esc_attr( $choose_classes ); ?>" type="button" aria-label="<?php echo esc_attr( $args['button_text'] ); ?>" title="<?php echo esc_attr( $args['button_text'] ); ?>" data-media-target="<?php echo esc_attr( $uid ); ?>" data-media-library-type="<?php echo esc_attr( (string) $args['library_type'] ); ?>" data-media-preview-size="<?php echo esc_attr( (string) $args['preview_size'] ); ?>" data-media-title="<?php echo esc_attr( (string) $args['media_title'] ); ?>" data-media-button="<?php echo esc_attr( (string) $args['media_button'] ); ?>">
+				<?php if ( '' !== $choose_icon ) : ?>
+					<span class="mwp-button__icon" aria-hidden="true"><?php echo $choose_icon; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+				<?php endif; ?>
+				<span class="mwp-media-field__button-label"><?php echo esc_html( $args['button_text'] ); ?></span>
 			</button>
-			<button class="mwp-button is-danger mwp-media-field__remove" type="button" data-media-remove="<?php echo esc_attr( $uid ); ?>"<?php echo $has_image ? '' : ' hidden'; ?>>
-				<?php echo esc_html( $args['remove_text'] ); ?>
+			<button class="<?php echo esc_attr( $remove_classes ); ?>" type="button" aria-label="<?php echo esc_attr( $args['remove_text'] ); ?>" title="<?php echo esc_attr( $args['remove_text'] ); ?>" data-media-remove="<?php echo esc_attr( $uid ); ?>"<?php echo $has_image ? '' : ' hidden'; ?>>
+				<?php if ( '' !== $remove_icon ) : ?>
+					<span class="mwp-button__icon" aria-hidden="true"><?php echo $remove_icon; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+				<?php endif; ?>
+				<span class="mwp-media-field__button-label"><?php echo esc_html( $args['remove_text'] ); ?></span>
 			</button>
 		</div>
 		<?php

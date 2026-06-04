@@ -97,6 +97,23 @@ body.mwp-modal-open {
 	}
 }
 
+.mwp-modal__fields {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 20px;
+	width: 100%;
+	margin: 0;
+
+	.mwp-field {
+		min-width: 0;
+	}
+
+	.mwp-field-grid__wide,
+	.mwp-field.is-wide {
+		grid-column: 1 / -1;
+	}
+}
+
 .mwp-modal__footer {
 	display: flex;
 	align-items: center;
@@ -148,7 +165,7 @@ body.mwp-modal-open {
 		aspect-ratio: 6 / 2;
 		background-color: var(--mwp-color-bg-alt);
 		object-fit: contain;
-    padding: 14px 0;
+		padding: 14px 0;
 	}
 }
 
@@ -275,6 +292,10 @@ html[data-mwp-theme="dark"] {
 	.mwp-modal__content,
 	.mwp-modal__footer {
 		padding-inline: 16px;
+	}
+
+	.mwp-modal__fields {
+		grid-template-columns: 1fr;
 	}
 
 	.mwp-modal__footer,

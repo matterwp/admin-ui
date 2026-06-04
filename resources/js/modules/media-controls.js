@@ -1,16 +1,11 @@
 function initMediaControls() {
 	function setMediaFieldState(uid, hasImage) {
 		const field = document.querySelector(`[data-media-field="${uid}"]`);
-		const choose = field?.querySelector('[data-media-target]');
 		const remove = field?.querySelector('[data-media-remove]');
 
 		if (field) {
 			field.classList.toggle('has-image', hasImage);
 			field.classList.toggle('is-empty', !hasImage);
-		}
-
-		if (choose) {
-			choose.hidden = hasImage;
 		}
 
 		if (remove) {
@@ -41,6 +36,14 @@ function initMediaControls() {
 		}
 
 		return attachment.sizes?.thumbnail?.url || attachment.url;
+	}
+
+	function setMediaUrlInput(uid, value) {
+		const urlInput = document.querySelector(`[data-media-url-input="${uid}"]`);
+
+		if (urlInput) {
+			urlInput.value = value || '';
+		}
 	}
 
 	document.addEventListener('click', event => {
@@ -75,11 +78,13 @@ function initMediaControls() {
 			frame.on('select', () => {
 				const attachment = frame.state().get('selection').first().toJSON();
 				const previewSize = button.dataset.mediaPreviewSize || 'thumbnail';
+				const previewUrl = getAttachmentPreviewUrl(attachment, previewSize);
 				input.value = attachment.id;
+				setMediaUrlInput(button.dataset.mediaTarget, previewUrl);
 
 				if (preview) {
 					const img = preview.querySelector('img') || document.createElement('img');
-					img.src = getAttachmentPreviewUrl(attachment, previewSize);
+					img.src = previewUrl;
 					img.alt = attachment.alt || '';
 					preview.innerHTML = '';
 					preview.appendChild(img);
@@ -109,6 +114,7 @@ function initMediaControls() {
 			if (input) {
 				input.value = '';
 			}
+			setMediaUrlInput(removeBtn.dataset.mediaRemove, '');
 
 			if (preview) {
 				preview.innerHTML = '';
