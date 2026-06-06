@@ -1,7 +1,7 @@
 @use "./../variables" as *;
 
 .mwp-card {
-	padding: 16px;
+	padding: 20px;
 	border: 1px solid var(--mwp-color-border);
 	border-radius: var(--mwp-ui-radius, 8px);
 	background-color: var(--mwp-color-bg);
@@ -39,8 +39,8 @@
 .mwp-stat {
 	position: relative;
 	display: grid;
-	gap: 28px;
-	padding: 16px;
+	gap: 40px;
+	padding: 20px;
 	border: 1px solid var(--mwp-color-border);
 	border-radius: var(--mwp-ui-radius, 8px);
 	background: var(--mwp-color-bg);
@@ -66,6 +66,6 @@
 
 // Dark mode
 html[data-mwp-theme="dark"] .mwp-stat {
-	background: var(--mwp-color-bg-alt);
+	background: var(--mwp-color-bg);
 	box-shadow: 0 1px 0 rgb(255 255 255 / 0.04) inset;
 }

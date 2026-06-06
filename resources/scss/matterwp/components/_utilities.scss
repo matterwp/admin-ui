@@ -137,13 +137,13 @@
 	display: inline-grid;
 	grid-template-columns: 88px minmax(0, 1fr);
 	align-items: flex-start;
-	gap: 16px;
-	max-width: 720px;
-	padding: 16px;
+	gap: 20px;
+	padding: 20px;
 	border: 1px solid var(--mwp-color-border);
 	border-radius: var(--mwp-ui-radius, 8px);
 	background: var(--mwp-color-bg);
 	vertical-align: top;
+  width: 100%;
 }
 
 .mwp-result-card__preview {
@@ -179,6 +179,8 @@
 		color: var(--mwp-color-text-secondary);
 		font-size: 13px;
 		line-height: 1.55;
+    margin-top: -3px;
+    margin-bottom: 10px;
 	}
 }
 
@@ -203,7 +205,7 @@
 	flex-wrap: wrap;
 	gap: 8px 18px;
 	margin: 0;
-	padding-top: 10px;
+	padding-top: 12px;
 	border-top: 1px solid var(--mwp-color-border);
 
 	div {
@@ -229,6 +231,8 @@
 	align-items: center;
 	gap: 8px;
 	margin-top: 2px;
+  border-top: 1px solid var(--mwp-color-border);
+  padding-top: 12px;
 
 	.mwp-button {
 		min-height: 28px;
