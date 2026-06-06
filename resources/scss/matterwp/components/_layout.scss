@@ -150,9 +150,9 @@
 			.mwp-option-title {
 				display: inline-flex;
 				align-items: center;
-				margin-right: 8px;
+				margin-right: 4px;
 				font-weight: 600;
-				font-size: 15px;
+				font-size: 14px;
 				color: var(--mwp-color-text);
 
 				.cs-badge {
@@ -166,7 +166,7 @@
 			}
 
 			.mwp-badge {
-				vertical-align: 2px;
+				vertical-align: 1px;
 			}
 
 			.mwp-option-description {
@@ -244,9 +244,9 @@
 		position: relative;
 
 		h3 {
-			font-size: 16px;
+			font-size: 15px;
 			font-weight: 600;
-			margin: 0 0 5px 0;
+			margin: 0 0 4px 0;
 			color: var(--mwp-color-text);
 		}
 

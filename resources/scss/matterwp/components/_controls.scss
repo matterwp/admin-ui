@@ -209,6 +209,11 @@
 		box-shadow: none;
 		cursor: pointer;
 
+    &:focus {
+      outline: none!important;
+      box-shadow: none!important;
+    }
+
 		&::-webkit-color-swatch-wrapper {
 			padding: 0;
 			border-radius: calc(var(--mwp-ui-radius, 8px) - 3px);

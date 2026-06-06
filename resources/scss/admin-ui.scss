@@ -16,4 +16,8 @@
 
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
+
+  .code, code {
+    font-family: monospace !important;
+  }
 }
