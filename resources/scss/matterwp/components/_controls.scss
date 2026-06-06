@@ -185,11 +185,16 @@
 
 .mwp-color-picker,
 .mwp-input-button {
+	box-sizing: border-box;
 	display: flex;
 	align-items: center;
 	gap: 8px;
-	width: auto;
-	max-width: 420px;
+	width: 220px;
+	max-width: 220px;
+
+	* {
+		box-sizing: border-box;
+	}
 
 	&.is-full-width {
 		width: 100%;
@@ -199,6 +204,7 @@
 
 .mwp-color-picker {
 	.mwp-color-picker__swatch {
+		box-sizing: border-box;
 		width: 38px;
 		height: 38px;
 		flex: 0 0 38px;
@@ -231,7 +237,9 @@
 	}
 
 	.mwp-color-picker__input {
+		box-sizing: border-box;
 		min-width: 0;
+		flex: 1 1 0;
 		font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
 		text-transform: uppercase;
 	}
@@ -239,22 +247,25 @@
 
 .mwp-input-button {
 	input {
+		box-sizing: border-box;
 		min-width: 0;
+		flex: 1 1 0;
 	}
 
 	.mwp-button {
+		box-sizing: border-box;
 		flex: 0 0 auto;
 	}
 }
 
 .mwp-options .mwp-option .mwp-option-input:not(.mwp-option-input-wide):has(.mwp-input-button),
 .mwp-options .mwp-option .mwp-option-input:not(.mwp-option-input-wide):has(.mwp-color-picker),
-.mwp-options .mwp-option .mwp-option-input:not(.mwp-option-input-wide):has(.mwp-progress) {
-	max-width: 420px;
+.mwp-options .mwp-option .mwp-option-input:not(.mwp-option-input-wide):has(.mwp-media-field) {
+	max-width: 220px;
 }
 
-.mwp-options .mwp-option .mwp-option-input:not(.mwp-option-input-wide):has(.mwp-media-field) {
-	max-width: 520px;
+.mwp-options .mwp-option .mwp-option-input:not(.mwp-option-input-wide):has(.mwp-progress) {
+	max-width: 420px;
 }
 
 html[data-mwp-theme="dark"] {
@@ -280,7 +291,7 @@ html[data-mwp-theme="dark"] {
 	margin-bottom: 7px;
 	color: var(--mwp-color-text);
 	font-size: 12px;
-	font-weight: 700;
+	font-weight: 600;
 	line-height: 1.2;
 
 	strong {
@@ -302,14 +313,21 @@ html[data-mwp-theme="dark"] {
 }
 
 .mwp-media-field {
-	--mwp-media-control-width: 520px;
+	--mwp-media-control-width: 220px;
 	--mwp-media-preview-size: 38px;
 
+	box-sizing: border-box;
 	display: flex;
 	align-items: center;
+	justify-content: flex-end;
 	gap: 8px;
-	width: 100%;
+	width: var(--mwp-media-control-width);
 	max-width: var(--mwp-media-control-width);
+	margin-left: auto;
+
+	* {
+		box-sizing: border-box;
+	}
 
 	[hidden] {
 		display: none !important;
@@ -345,18 +363,18 @@ html[data-mwp-theme="dark"] {
 	.mwp-media-field__actions {
 		display: flex;
 		align-items: center;
+		justify-content: flex-end;
 		gap: 8px;
-		flex: 1 1 auto;
+		flex: 1 1 0;
 		min-width: 0;
 		width: 100%;
 
 		.mwp-button {
-			width: var(--mwp-media-preview-size);
-			min-width: var(--mwp-media-preview-size);
 			height: var(--mwp-media-preview-size);
 			min-height: var(--mwp-media-preview-size);
-			padding: 0;
-			flex: 0 0 var(--mwp-media-preview-size);
+			min-width: 0;
+			padding: 0 10px;
+			flex: 1 1 auto;
 		}
 
 		.mwp-button__icon {
@@ -364,22 +382,41 @@ html[data-mwp-theme="dark"] {
 		}
 	}
 
+	.mwp-media-field__choose {
+		display: inline-flex;
+		flex-direction: row-reverse;
+		gap: 8px;
+		justify-content: center;
+		width: auto;
+	}
+
 	.mwp-media-field__input {
-		min-width: 0;
-		flex: 1 1 auto;
+		display: none;
 	}
 
 	.mwp-media-field__button-label {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		margin: -1px;
+		min-width: 0;
 		overflow: hidden;
-		clip: rect(0, 0, 0, 0);
+		text-overflow: ellipsis;
 		white-space: nowrap;
 	}
 
 	.mwp-media-field__remove {
+		width: var(--mwp-media-preview-size);
+		min-width: var(--mwp-media-preview-size);
+		padding: 0;
+		flex: 0 0 var(--mwp-media-preview-size);
+
+		.mwp-media-field__button-label {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			margin: -1px;
+			overflow: hidden;
+			clip: rect(0, 0, 0, 0);
+			white-space: nowrap;
+		}
+
 		&:hover {
 			border-color: var(--mwp-color-danger-border, #fecaca);
 			background-color: var(--mwp-color-danger-bg, #fef2f2);
@@ -387,7 +424,7 @@ html[data-mwp-theme="dark"] {
 	}
 
 	&.is-logo {
-		--mwp-media-control-width: 360px;
+		--mwp-media-control-width: 220px;
 	}
 
 	&.is-wide {
@@ -409,11 +446,7 @@ html[data-mwp-theme="dark"] {
 		align-items: flex-start;
 
 		.mwp-media-field__actions {
-			flex-wrap: wrap;
-		}
-
-		.mwp-media-field__input {
-			flex-basis: calc(100% - var(--mwp-media-preview-size) - 8px);
+			flex-wrap: nowrap;
 		}
 	}
 }

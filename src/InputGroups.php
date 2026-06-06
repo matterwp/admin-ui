@@ -156,7 +156,7 @@ class InputGroups {
 				'preview_height'  => '',
 				'preview_ratio'   => '',
 				'library_type'    => 'image',
-				'button_text'     => __( 'Choose Image', 'matterwp-admin-ui' ),
+				'button_text'     => __( 'Select Image', 'matterwp-admin-ui' ),
 				'remove_text'     => __( 'Remove Image', 'matterwp-admin-ui' ),
 				'media_title'     => __( 'Select Image', 'matterwp-admin-ui' ),
 				'media_button'    => __( 'Use Image', 'matterwp-admin-ui' ),
@@ -311,7 +311,6 @@ class InputGroups {
 		?>
 		<div class="<?php echo esc_attr( $actions_classes ); ?>">
 			<input type="hidden" name="<?php echo esc_attr( $args['name'] ); ?>" value="<?php echo esc_attr( (string) $attachment_id ); ?>" data-media-input="<?php echo esc_attr( $uid ); ?>" data-autosave-hidden>
-			<input class="<?php echo esc_attr( $input_classes ); ?>" type="url" value="<?php echo esc_url( $image_url ); ?>" placeholder="<?php echo esc_attr( $args['placeholder'] ); ?>" data-media-url-input="<?php echo esc_attr( $uid ); ?>" readonly>
 			<button class="<?php echo esc_attr( $choose_classes ); ?>" type="button" aria-label="<?php echo esc_attr( $args['button_text'] ); ?>" title="<?php echo esc_attr( $args['button_text'] ); ?>" data-media-target="<?php echo esc_attr( $uid ); ?>" data-media-library-type="<?php echo esc_attr( (string) $args['library_type'] ); ?>" data-media-preview-size="<?php echo esc_attr( (string) $args['preview_size'] ); ?>" data-media-title="<?php echo esc_attr( (string) $args['media_title'] ); ?>" data-media-button="<?php echo esc_attr( (string) $args['media_button'] ); ?>">
 				<?php if ( '' !== $choose_icon ) : ?>
 					<span class="mwp-button__icon" aria-hidden="true"><?php echo $choose_icon; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>

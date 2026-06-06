@@ -29,7 +29,6 @@ class Overlays {
 			array(
 				'id'              => '',
 				'title'           => '',
-				'description'     => '',
 				'trigger'         => 'Open Modal',
 				'render_trigger'  => true,
 				'trigger_variant' => 'primary',
@@ -51,7 +50,6 @@ class Overlays {
 
 		$id                           = '' !== $args['id'] ? $args['id'] : 'mwp-modal-' . wp_unique_id();
 		$title_id                     = $id . '-title';
-		$description_id               = $id . '-description';
 		$classes                      = trim( 'mwp-modal ' . $args['class'] );
 		$attributes                   = Attrs::merge( is_array( $args['attributes'] ) ? $args['attributes'] : array(), $classes, is_array( $args['data_attributes'] ) ? $args['data_attributes'] : array() );
 		$attributes['id']             = $id;
@@ -66,13 +64,10 @@ class Overlays {
 		?>
 		<div <?php echo Attrs::render( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<div class="mwp-modal__overlay" data-mwp-modal-close></div>
-			<div class="<?php echo esc_attr( trim( 'mwp-modal__dialog ' . $args['dialog_class'] ) ); ?>" role="dialog" aria-modal="true" aria-labelledby="<?php echo esc_attr( $title_id ); ?>"<?php echo '' !== $args['description'] ? ' aria-describedby="' . esc_attr( $description_id ) . '"' : ''; ?> tabindex="-1">
+			<div class="<?php echo esc_attr( trim( 'mwp-modal__dialog ' . $args['dialog_class'] ) ); ?>" role="dialog" aria-modal="true" aria-labelledby="<?php echo esc_attr( $title_id ); ?>" tabindex="-1">
 				<div class="<?php echo esc_attr( trim( 'mwp-modal__header ' . $args['header_class'] ) ); ?>">
 					<div class="mwp-modal__heading">
 						<h4 id="<?php echo esc_attr( $title_id ); ?>"><?php echo esc_html( $args['title'] ); ?></h4>
-						<?php if ( '' !== $args['description'] ) : ?>
-							<p id="<?php echo esc_attr( $description_id ); ?>"><?php echo esc_html( $args['description'] ); ?></p>
-						<?php endif; ?>
 					</div>
 					<button class="mwp-icon-button mwp-modal__close" type="button" aria-label="Close" data-mwp-modal-close><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
 				</div>
@@ -116,7 +111,6 @@ class Overlays {
 			array(
 				'id'              => '',
 				'title'           => '',
-				'description'     => '',
 				'trigger'         => __( 'Delete', 'matterwp-admin-ui' ),
 				'render_trigger'  => true,
 				'trigger_variant' => 'danger',
@@ -133,7 +127,6 @@ class Overlays {
 
 		$id              = '' !== $args['id'] ? $args['id'] : 'mwp-confirm-' . wp_unique_id();
 		$title_id        = $id . '-title';
-		$description_id  = $id . '-description';
 		$trigger_variant = in_array( $args['trigger_variant'], array( 'primary', 'secondary', 'ghost', 'danger' ), true ) ? $args['trigger_variant'] : 'danger';
 		$confirm_variant = in_array( $args['confirm_variant'], array( 'primary', 'secondary', 'ghost', 'danger' ), true ) ? $args['confirm_variant'] : 'danger';
 		$classes         = trim( 'mwp-modal is-danger ' . $args['class'] );
@@ -144,13 +137,10 @@ class Overlays {
 		?>
 		<div class="<?php echo esc_attr( $classes ); ?>" id="<?php echo esc_attr( $id ); ?>" data-mwp-modal aria-hidden="true" hidden>
 			<div class="mwp-modal__overlay" data-mwp-modal-close></div>
-			<div class="<?php echo esc_attr( trim( 'mwp-modal__dialog ' . $args['dialog_class'] ) ); ?>" role="alertdialog" aria-modal="true" aria-labelledby="<?php echo esc_attr( $title_id ); ?>"<?php echo '' !== $args['description'] ? ' aria-describedby="' . esc_attr( $description_id ) . '"' : ''; ?> tabindex="-1">
+			<div class="<?php echo esc_attr( trim( 'mwp-modal__dialog ' . $args['dialog_class'] ) ); ?>" role="alertdialog" aria-modal="true" aria-labelledby="<?php echo esc_attr( $title_id ); ?>" tabindex="-1">
 				<div class="<?php echo esc_attr( trim( 'mwp-modal__header ' . $args['header_class'] ) ); ?>">
 					<div class="mwp-modal__heading">
 						<h4 id="<?php echo esc_attr( $title_id ); ?>"><?php echo esc_html( $args['title'] ); ?></h4>
-						<?php if ( '' !== $args['description'] ) : ?>
-							<p id="<?php echo esc_attr( $description_id ); ?>"><?php echo esc_html( $args['description'] ); ?></p>
-						<?php endif; ?>
 					</div>
 					<button class="mwp-icon-button mwp-modal__close" type="button" aria-label="Close" data-mwp-modal-close><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
 				</div>

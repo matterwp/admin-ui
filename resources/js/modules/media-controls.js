@@ -38,14 +38,6 @@ function initMediaControls() {
 		return attachment.sizes?.thumbnail?.url || attachment.url;
 	}
 
-	function setMediaUrlInput(uid, value) {
-		const urlInput = document.querySelector(`[data-media-url-input="${uid}"]`);
-
-		if (urlInput) {
-			urlInput.value = value || '';
-		}
-	}
-
 	document.addEventListener('click', event => {
 		const button = event.target.closest('[data-media-target]');
 
@@ -80,7 +72,6 @@ function initMediaControls() {
 				const previewSize = button.dataset.mediaPreviewSize || 'thumbnail';
 				const previewUrl = getAttachmentPreviewUrl(attachment, previewSize);
 				input.value = attachment.id;
-				setMediaUrlInput(button.dataset.mediaTarget, previewUrl);
 
 				if (preview) {
 					const img = preview.querySelector('img') || document.createElement('img');
@@ -114,7 +105,6 @@ function initMediaControls() {
 			if (input) {
 				input.value = '';
 			}
-			setMediaUrlInput(removeBtn.dataset.mediaRemove, '');
 
 			if (preview) {
 				preview.innerHTML = '';
