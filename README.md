@@ -216,7 +216,7 @@ Badges support `size => 'compact'`.
 MatterAdminUI::app(
 	array(
 		'brand'      => __( 'Plugin Name', 'plugin' ),
-		'version'    => '1.0.4',
+		'version'    => '1.0.3',
 		'tabs'       => array(
 			'general' => __( 'General', 'plugin' ),
 			'logs'    => __( 'Logs', 'plugin' ),
