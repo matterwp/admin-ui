@@ -966,6 +966,7 @@ Important CSS variables:
 
 - Renamed section layout args: `variant` became `section_variant`, and `option_box` became `option_variant`.
 - Replaced section `borderless` and `table-only` variants with `section_variant => 'minimal'`; direct table, stat, card, empty-state, and result-card layouts now use one minimal section model.
+- Tightened `option_variant => 'minimal'` so `.mwp-option-info`, `.mwp-option-input`, and nested `.mwp-result-card` roots also render with zero padding.
 - Removed legacy `option()` args `wide`, `align_start`, `divider`, and `style`; use `layout`, `align`, `label_width`, and `control_width`.
 - Removed legacy option/section style classes from generated markup and SCSS: `is-style-*`, `is-divided`, `is-borderless`, `is-table-only`, and `is-option-box-*`.
 - Added `icon_position => 'before'|'after'` to `button()` and modal footer actions, with matching button classes and SCSS.

@@ -372,6 +372,15 @@
 				border-radius: 0;
 				background: transparent;
 				padding: 0;
+
+				.mwp-option-info,
+				.mwp-option-input {
+					padding: 0;
+				}
+
+				.mwp-result-card {
+					padding: 0;
+				}
 			}
 		}
 	}

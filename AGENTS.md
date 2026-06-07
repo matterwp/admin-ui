@@ -2,6 +2,7 @@
 
 ## Documentation
 
+- Package rules and philosophy live in `RULES.md`. Read and follow that file before changing component APIs, markup, styles, JavaScript services, or boilerplate examples.
 - Component API docs live in `COMPONENTS.md`. Update that file whenever public component args, style variants, JavaScript data attributes, or boilerplate usage examples change.
 - Keep the changelog in `COMPONENTS.md` aligned with this file.
 
@@ -9,6 +10,7 @@
 
 - Renamed `section()` args: `variant` is now `section_variant`, and `option_box` is now `option_variant`.
 - Replaced section `borderless` / `table-only` variants with `section_variant => 'minimal'`; direct table-only, stat-card-only, card, empty-state, and result-card layouts should use the same minimal section variant.
+- Tightened `option_variant => 'minimal'` so option rows, `.mwp-option-info`, `.mwp-option-input`, and nested `.mwp-result-card` roots are all padding-free.
 - Removed legacy `option()` args `wide`, `align_start`, `divider`, and `style`; use `layout`, `align`, `label_width`, and `control_width`.
 - Removed legacy generated CSS hooks for option/section layouts: `is-style-*`, `is-divided`, `is-borderless`, `is-table-only`, and `is-option-box-*`.
 - Added `icon_position => 'before'|'after'` to `button()` and modal footer actions, with matching SCSS.
