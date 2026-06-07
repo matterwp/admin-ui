@@ -65,7 +65,8 @@ Every option should describe intent, not implementation trivia. Good options are
 
 9. Backward compatibility is deliberate, not accidental.
    - Removing or renaming public args requires a clear migration path and docs update.
-   - Prefer one clean API over keeping many aliases forever.
+   - Preserve deprecated aliases within the current major version when removing them would silently change consumer output.
+   - Prefer one clean documented API; compatibility aliases exist for migration and should not appear in new examples.
    - Historical changelog entries may mention old names, but active guidance should point to current names.
 
 10. Verification is required for meaningful UI changes.

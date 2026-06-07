@@ -6,12 +6,12 @@
 - Component API docs live in `COMPONENTS.md`. Update that file whenever public component args, style variants, JavaScript data attributes, or boilerplate usage examples change.
 - Keep the changelog in `COMPONENTS.md` aligned with this file.
 
-## Unreleased changes
+## v1.0.4 release
 
-- Renamed `section()` args: `variant` is now `section_variant`, and `option_box` is now `option_variant`.
+- Added preferred `section()` args `section_variant` and `option_variant`; deprecated `variant` and `option_box` remain supported throughout the `1.x` line.
 - Replaced section `borderless` / `table-only` variants with `section_variant => 'minimal'`; direct table-only, stat-card-only, card, empty-state, and result-card layouts should use the same minimal section variant.
 - Tightened `option_variant => 'minimal'` so option rows, `.mwp-option-info`, `.mwp-option-input`, and nested `.mwp-result-card` roots are all padding-free.
-- Removed legacy `option()` args `wide`, `align_start`, `divider`, and `style`; use `layout`, `align`, `label_width`, and `control_width`.
+- Added preferred `option()` args `layout`, `align`, `label_width`, and `control_width`; deprecated `wide`, `align_start`, `divider`, and `style` remain supported throughout the `1.x` line.
 - Removed legacy generated CSS hooks for option/section layouts: `is-style-*`, `is-divided`, `is-borderless`, `is-table-only`, and `is-option-box-*`.
 - Added `icon_position => 'before'|'after'` to `button()` and modal footer actions, with matching SCSS.
 - Added enter/exit animation and collapsing stack behavior for package-managed notices.
@@ -25,7 +25,7 @@ Maintainer's Activation Schedule option shows a common scheduling row pattern: s
 
 ### Highest value
 
-- Use `section_variant => 'wrapped'` for table-only sections.
+- Use `section_variant => 'minimal'` for table-only sections.
 
   - QR Factory exposed a border consistency issue in the Generator tab when a `.mwp-table-wrap` was nested inside an Ajax refresh host.
   - Problem structure:

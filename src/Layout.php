@@ -116,6 +116,9 @@ class Layout {
 	 * @return void
 	 */
 	public static function section( array $args, callable $content ): void {
+		$has_section_variant = array_key_exists( 'section_variant', $args );
+		$has_option_variant  = array_key_exists( 'option_variant', $args );
+
 		$args = wp_parse_args(
 			$args,
 			array(
@@ -124,6 +127,8 @@ class Layout {
 				'badge'           => null,
 				'section_variant' => 'wrapped',
 				'option_variant'  => 'standard',
+				'variant'         => '',
+				'option_box'      => 'standard',
 				'class'           => '',
 				'title_class'     => '',
 				'options_class'   => '',
@@ -132,6 +137,14 @@ class Layout {
 				'data_attributes' => array(),
 			)
 		);
+
+		if ( ! $has_section_variant && in_array( $args['variant'], array( 'borderless', 'table-only' ), true ) ) {
+			$args['section_variant'] = 'minimal';
+		}
+
+		if ( ! $has_option_variant && in_array( $args['option_box'], array( 'minimal', 'standard' ), true ) ) {
+			$args['option_variant'] = $args['option_box'];
+		}
 
 		$section_variant = in_array( $args['section_variant'], array( 'wrapped', 'minimal' ), true ) ? $args['section_variant'] : 'wrapped';
 		$option_variant  = in_array( $args['option_variant'], array( 'minimal', 'standard' ), true ) ? $args['option_variant'] : 'standard';
@@ -171,6 +184,9 @@ class Layout {
 	 * @return void
 	 */
 	public static function option( array $args, callable $control ): void {
+		$has_layout = array_key_exists( 'layout', $args ) && '' !== $args['layout'];
+		$has_align  = array_key_exists( 'align', $args ) && '' !== $args['align'];
+
 		$args = wp_parse_args(
 			$args,
 			array(
@@ -178,10 +194,14 @@ class Layout {
 				'description'       => '',
 				'count'             => null,
 				'class'             => '',
+				'wide'              => false,
+				'align_start'       => false,
+				'divider'           => false,
 				'input_label'       => true,
 				'input_id'          => '',
 				'label_width'       => 'standard',
 				'layout'            => 'row',
+				'style'             => 'row',
 				'control_width'     => 'standard',
 				'align'             => '',
 				'badge'             => null,
@@ -200,10 +220,18 @@ class Layout {
 			)
 		);
 
-		$layout              = in_array( $args['layout'], array( 'divided', 'row', 'column' ), true ) ? $args['layout'] : 'row';
+		$layout = $has_layout ? $args['layout'] : $args['style'];
+		if ( $args['divider'] ) {
+			$layout = 'divided';
+		} elseif ( $args['wide'] ) {
+			$layout = 'column';
+		}
+
+		$layout              = in_array( $layout, array( 'divided', 'row', 'column' ), true ) ? $layout : 'row';
 		$label_width         = in_array( $args['label_width'], array( 'standard', 'full' ), true ) ? $args['label_width'] : 'standard';
 		$control_width       = in_array( $args['control_width'], array( 'narrow', 'standard', 'wide', 'full' ), true ) ? $args['control_width'] : 'standard';
-		$align               = in_array( $args['align'], array( 'center', 'start', 'stretch' ), true ) ? $args['align'] : 'center';
+		$align               = $has_align ? $args['align'] : ( $args['align_start'] ? 'start' : 'center' );
+		$align               = in_array( $align, array( 'center', 'start', 'stretch' ), true ) ? $align : 'center';
 		$input_label         = wp_validate_boolean( $args['input_label'] );
 		$title               = self::isFalseFlag( $args['title'] ) ? '' : (string) $args['title'];
 		$description         = self::isFalseFlag( $args['description'] ) ? '' : (string) $args['description'];

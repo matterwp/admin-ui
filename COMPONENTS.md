@@ -1,6 +1,6 @@
 # MatterWP Admin UI Component Reference
 
-Version: `1.0.3`
+Version: `1.0.4`
 
 This document maps the public `MatterWP\AdminUI\MatterAdminUI` API, accepted options, style variants, JavaScript hooks, and current boilerplate usage.
 
@@ -81,6 +81,8 @@ Groups option rows or direct content.
 | `badge` | `null` | Args for `premiumBadge()`. |
 | `section_variant` | `wrapped` | `wrapped`, `minimal`. Use `minimal` for direct table/card/stat/result layouts. |
 | `option_variant` | `standard` | `standard`, `minimal`. Use `minimal` for option rows without row chrome or padding. |
+| `variant` | empty | Deprecated alias. `borderless` and `table-only` map to `section_variant => minimal`. |
+| `option_box` | `standard` | Deprecated alias for `option_variant`. |
 | `class` | empty | Root class. |
 | `title_class` | empty | Title wrapper class. |
 | `options_class` | empty | Options wrapper class. |
@@ -108,8 +110,12 @@ Renders one setting row.
 | `input_id` | empty | If set, title renders as `<label for="...">`. |
 | `label_width` | `standard` | `standard`, `full`. |
 | `layout` | `row` | `row`, `column`, `divided`. |
+| `style` | `row` | Deprecated alias for `layout`. |
+| `wide` | `false` | Deprecated alias for `layout => column`. |
+| `divider` | `false` | Deprecated alias for `layout => divided`. |
 | `control_width` | `standard` | `narrow`, `standard`, `wide`, `full`. |
 | `align` | empty | `center`, `start`, `stretch`. |
+| `align_start` | `false` | Deprecated alias for `align => start`. |
 | `badge` | `null` | String label or badge args. Defaults to compact size. |
 | `help` | empty | Help text below control, supports safe HTML. |
 | `actions` | `array()` | Inline action buttons, each using `button()` args. |
@@ -962,12 +968,14 @@ Important CSS variables:
 
 ## Changelog
 
-### Unreleased
+### `1.0.4`
 
-- Renamed section layout args: `variant` became `section_variant`, and `option_box` became `option_variant`.
+- Added preferred section layout args `section_variant` and `option_variant`.
+- Preserved deprecated `variant` and `option_box` aliases for `1.x` consumers.
 - Replaced section `borderless` and `table-only` variants with `section_variant => 'minimal'`; direct table, stat, card, empty-state, and result-card layouts now use one minimal section model.
 - Tightened `option_variant => 'minimal'` so `.mwp-option-info`, `.mwp-option-input`, and nested `.mwp-result-card` roots also render with zero padding.
-- Removed legacy `option()` args `wide`, `align_start`, `divider`, and `style`; use `layout`, `align`, `label_width`, and `control_width`.
+- Added preferred option layout args `layout`, `align`, `label_width`, and `control_width`.
+- Preserved deprecated `wide`, `align_start`, `divider`, and `style` aliases for `1.x` consumers.
 - Removed legacy option/section style classes from generated markup and SCSS: `is-style-*`, `is-divided`, `is-borderless`, `is-table-only`, and `is-option-box-*`.
 - Added `icon_position => 'before'|'after'` to `button()` and modal footer actions, with matching button classes and SCSS.
 - Added enter/exit animation and collapsing stack behavior for package-managed notices.

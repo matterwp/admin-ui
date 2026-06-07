@@ -71,6 +71,8 @@ Sections support:
 - `section_variant`: `wrapped` for normal grouped section chrome, or `minimal` for direct card, stat, table, or result layouts.
 - `option_variant`: `standard` for normal option rows, or `minimal` for option rows without row chrome or padding.
 
+Deprecated `variant` and `option_box` aliases remain supported for `1.x` consumers.
+
 Use `section_variant => 'minimal'` for direct content such as tables, stat grids, cards, and result blocks:
 
 ```php
@@ -94,6 +96,8 @@ Options support:
 - `control_width`: `narrow`, `standard`, `wide`, or `full`.
 - `align`: `center`, `start`, or `stretch`.
 - `badge`, `help`, and `actions` for option metadata and inline commands.
+
+Deprecated `style`, `wide`, `divider`, and `align_start` aliases remain supported for `1.x` consumers.
 
 ```php
 MatterAdminUI::option(
@@ -218,7 +222,7 @@ Buttons support named/custom SVG icons with `icon` and `icon_position => 'before
 MatterAdminUI::app(
 	array(
 		'brand'      => __( 'Plugin Name', 'plugin' ),
-		'version'    => '1.0.3',
+		'version'    => '1.0.4',
 		'tabs'       => array(
 			'general' => __( 'General', 'plugin' ),
 			'logs'    => __( 'Logs', 'plugin' ),
