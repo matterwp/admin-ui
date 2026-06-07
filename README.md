@@ -68,16 +68,16 @@ Most helpers accept `class`, `attributes`, and `data_attributes` for the compone
 Sections support:
 
 - `title` and `description`: string content, or `false` to hide.
-- `option_box`: `standard` for normal grouped option chrome, or `minimal` for no option-box borders, radius, background, or option padding.
-- `variant`: specialized compatibility variants such as `borderless` and `table-only`.
+- `section_variant`: `wrapped` for normal grouped section chrome, or `minimal` for direct card, stat, table, or result layouts.
+- `option_variant`: `standard` for normal option rows, or `minimal` for option rows without row chrome or padding.
 
-Use `option_box => 'minimal'` for direct content such as stat grids:
+Use `section_variant => 'minimal'` for direct content such as tables, stat grids, cards, and result blocks:
 
 ```php
 MatterAdminUI::section(
 	array(
-		'title'      => __( 'Stats', 'plugin' ),
-		'option_box' => 'minimal',
+		'title'           => __( 'Stats', 'plugin' ),
+		'section_variant' => 'minimal',
 	),
 	static function (): void {
 		// Render stat cards, grids, or other direct content.
@@ -90,7 +90,7 @@ Options support:
 - `title` and `description`: string content, or `false` to hide.
 - `input_label`: show or hide the option label/info block. When true and `input_id` is provided, the title renders as a `<label>`.
 - `label_width`: `standard` or `full`.
-- `layout`: `row`, `column`, or `divided`. Legacy `style`, `wide`, and `divider` aliases still map here.
+- `layout`: `row`, `column`, or `divided`.
 - `control_width`: `narrow`, `standard`, `wide`, or `full`.
 - `align`: `center`, `start`, or `stretch`.
 - `badge`, `help`, and `actions` for option metadata and inline commands.
@@ -100,7 +100,7 @@ MatterAdminUI::option(
 	array(
 		'title'       => __( 'Status', 'plugin' ),
 		'description' => __( 'Full-width label with a divided control area.', 'plugin' ),
-		'style'       => 'divided',
+		'layout'      => 'divided',
 		'label_width' => 'full',
 		'input_label' => true,
 		'input_id'    => 'plugin-status',
@@ -120,13 +120,13 @@ MatterAdminUI::option(
 );
 ```
 
-Use `variant => 'table-only'` for a table rendered directly in a section:
+Use `section_variant => 'minimal'` for a table rendered directly in a section:
 
 ```php
 MatterAdminUI::section(
 	array(
-		'title'   => __( 'Entries', 'plugin' ),
-		'variant' => 'table-only',
+		'title'           => __( 'Entries', 'plugin' ),
+		'section_variant' => 'minimal',
 	),
 	static function (): void {
 		MatterAdminUI::paginatedTable(
@@ -210,6 +210,8 @@ MatterAdminUI::option(
 
 Badges support `size => 'compact'`.
 
+Buttons support named/custom SVG icons with `icon` and `icon_position => 'before'|'after'`.
+
 `MatterAdminUI::app()` renders the common admin shell:
 
 ```php
@@ -281,7 +283,7 @@ Modals can be rendered without a trigger by passing `render_trigger => false` or
 
 Ajax forms can use `data-mwp-ajax-form`, `data-mwp-action`, `data-mwp-submit`, and `data-mwp-loading`. The package exposes `MatterAdminUI.ajax.submit(formOrRoot, options)` and dispatches `mwp:ajax-before`, `mwp:ajax-success`, `mwp:ajax-error`, and `mwp:ajax-complete`.
 
-Use `MatterAdminUI.notice(message, type, options)` for package-managed notices. Use `MatterAdminUI::resultCard()` for generated previews, exported files, uploaded assets, API keys, reports, or other Ajax results.
+Use `MatterAdminUI.notice(message, type, options)` for stacked, animated package-managed notices. Use `MatterAdminUI::resultCard()` for generated previews, exported files, uploaded assets, API keys, reports, or other Ajax results.
 
 Use `MatterAdminUI::emptyState()` for neutral dashed empty blocks. Pair with paginated tables via `empty_target` or `empty_selector`.
 

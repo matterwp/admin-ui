@@ -122,8 +122,8 @@ class Layout {
 				'title'           => '',
 				'description'     => '',
 				'badge'           => null,
-				'variant'         => '',
-				'option_box'      => 'standard',
+				'section_variant' => 'wrapped',
+				'option_variant'  => 'standard',
 				'class'           => '',
 				'title_class'     => '',
 				'options_class'   => '',
@@ -133,10 +133,9 @@ class Layout {
 			)
 		);
 
-		$variant         = in_array( $args['variant'], array( 'borderless', 'table-only' ), true ) ? $args['variant'] : '';
-		$option_box      = in_array( $args['option_box'], array( 'minimal', 'standard' ), true ) ? $args['option_box'] : 'standard';
-		$variant_class   = '' !== $variant ? ' is-' . $variant : '';
-		$classes         = trim( 'mwp-section-block' . $variant_class . ' is-option-box-' . $option_box . ' ' . $args['class'] );
+		$section_variant = in_array( $args['section_variant'], array( 'wrapped', 'minimal' ), true ) ? $args['section_variant'] : 'wrapped';
+		$option_variant  = in_array( $args['option_variant'], array( 'minimal', 'standard' ), true ) ? $args['option_variant'] : 'standard';
+		$classes         = trim( 'mwp-section-block is-section-' . $section_variant . ' is-option-variant-' . $option_variant . ' ' . $args['class'] );
 		$title_classes   = trim( 'mwp-section-title ' . Attrs::slotClass( $args, 'title', 'title_class' ) );
 		$options_classes = trim( 'mwp-section-options ' . Attrs::slotClass( $args, 'options', 'options_class' ) );
 		$title           = self::isFalseFlag( $args['title'] ) ? '' : (string) $args['title'];
@@ -179,14 +178,10 @@ class Layout {
 				'description'       => '',
 				'count'             => null,
 				'class'             => '',
-				'wide'              => false,
-				'align_start'       => false,
-				'divider'           => false,
 				'input_label'       => true,
 				'input_id'          => '',
 				'label_width'       => 'standard',
-				'layout'            => '',
-				'style'             => 'row',
+				'layout'            => 'row',
 				'control_width'     => 'standard',
 				'align'             => '',
 				'badge'             => null,
@@ -205,22 +200,15 @@ class Layout {
 			)
 		);
 
-		$layout = '' !== $args['layout'] ? $args['layout'] : $args['style'];
-		$style  = in_array( $layout, array( 'divided', 'row', 'column' ), true ) ? $layout : 'row';
-		if ( $args['divider'] ) {
-			$style = 'divided';
-		} elseif ( $args['wide'] ) {
-			$style = 'column';
-		}
-
+		$layout              = in_array( $args['layout'], array( 'divided', 'row', 'column' ), true ) ? $args['layout'] : 'row';
 		$label_width         = in_array( $args['label_width'], array( 'standard', 'full' ), true ) ? $args['label_width'] : 'standard';
 		$control_width       = in_array( $args['control_width'], array( 'narrow', 'standard', 'wide', 'full' ), true ) ? $args['control_width'] : 'standard';
-		$align               = in_array( $args['align'], array( 'center', 'start', 'stretch' ), true ) ? $args['align'] : ( $args['align_start'] ? 'start' : 'center' );
+		$align               = in_array( $args['align'], array( 'center', 'start', 'stretch' ), true ) ? $args['align'] : 'center';
 		$input_label         = wp_validate_boolean( $args['input_label'] );
 		$title               = self::isFalseFlag( $args['title'] ) ? '' : (string) $args['title'];
 		$description         = self::isFalseFlag( $args['description'] ) ? '' : (string) $args['description'];
 		$has_info            = $input_label && ( '' !== $title || '' !== $description || null !== $args['count'] || null !== $args['badge'] );
-		$classes             = trim( 'mwp-option is-style-' . $style . ' is-layout-' . $style . ' is-label-width-' . $label_width . ' is-control-width-' . $control_width . ' is-align-' . $align . ' ' . ( $input_label ? 'has-input-label ' : 'has-no-input-label ' ) . $args['class'] );
+		$classes             = trim( 'mwp-option is-layout-' . $layout . ' is-label-width-' . $label_width . ' is-control-width-' . $control_width . ' is-align-' . $align . ' ' . ( $input_label ? 'has-input-label ' : 'has-no-input-label ' ) . $args['class'] );
 		$info_classes        = trim( 'mwp-option-info ' . Attrs::slotClass( $args, 'info', 'info_class' ) );
 		$title_classes       = trim( 'mwp-option-title ' . Attrs::slotClass( $args, 'title', 'title_class' ) );
 		$description_classes = trim( 'mwp-option-description ' . Attrs::slotClass( $args, 'description', 'description_class' ) );

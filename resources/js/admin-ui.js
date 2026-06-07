@@ -144,6 +144,17 @@ function ensureNoticeContainer(options = {}) {
 	return container;
 }
 
+function removeNotice(notice) {
+	if (!notice || notice.dataset.mwpRemoving === 'true') {
+		return;
+	}
+
+	notice.dataset.mwpRemoving = 'true';
+	notice.classList.remove('is-visible');
+	notice.classList.add('is-removing');
+	window.setTimeout(() => notice.remove(), 240);
+}
+
 function showNotice(message, type = 'success', options = {}) {
 	const container = ensureNoticeContainer(options);
 	const notice = document.createElement('div');
@@ -153,9 +164,13 @@ function showNotice(message, type = 'success', options = {}) {
 	notice.setAttribute('role', type === 'error' ? 'alert' : 'status');
 	notice.innerHTML = `<span class="notice-text">${String(message || '')}</span>`;
 	container.appendChild(notice);
+	notice.style.setProperty('--mwp-notice-height', `${notice.scrollHeight + 18}px`);
+	window.requestAnimationFrame(() => {
+		notice.classList.add('is-visible');
+	});
 
 	if (duration > 0) {
-		window.setTimeout(() => notice.remove(), duration);
+		window.setTimeout(() => removeNotice(notice), duration);
 	}
 
 	return notice;

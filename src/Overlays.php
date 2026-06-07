@@ -207,6 +207,7 @@ class Overlays {
 				'variant'         => 'secondary',
 				'size'            => 'standard',
 				'icon'            => '',
+				'icon_position'   => 'before',
 				'class'           => '',
 				'disabled'        => false,
 				'loading'         => false,
@@ -219,20 +220,24 @@ class Overlays {
 		$type                             = in_array( $args['type'], array( 'button', 'submit', 'reset' ), true ) ? $args['type'] : 'button';
 		$variant                          = in_array( $args['variant'], array( 'primary', 'secondary', 'ghost', 'danger' ), true ) ? $args['variant'] : 'secondary';
 		$size                             = in_array( $args['size'], array( 'standard', 'compact' ), true ) ? $args['size'] : 'standard';
-		$classes                          = trim( 'mwp-button is-' . $variant . ' ' . ( 'compact' === $size ? 'is-compact ' : '' ) . ( $args['loading'] ? 'is-loading ' : '' ) . $args['class'] );
+		$icon_position                    = in_array( $args['icon_position'], array( 'before', 'after' ), true ) ? $args['icon_position'] : 'before';
+		$icon                             = Components::iconMarkup( (string) $args['icon'] );
+		$classes                          = trim( 'mwp-button is-' . $variant . ' ' . ( '' !== $icon ? 'has-icon is-icon-' . $icon_position . ' ' : '' ) . ( 'compact' === $size ? 'is-compact ' : '' ) . ( $args['loading'] ? 'is-loading ' : '' ) . $args['class'] );
 		$attributes                       = Attrs::merge( is_array( $args['attributes'] ) ? $args['attributes'] : array(), $classes, is_array( $args['data_attributes'] ) ? $args['data_attributes'] : array() );
 		$attributes['id']                 = '' !== $args['id'] ? $args['id'] : null;
 		$attributes['type']               = $type;
 		$attributes['disabled']           = wp_validate_boolean( $args['disabled'] ) || wp_validate_boolean( $args['loading'] );
 		$attributes['data-mwp-autofocus'] = $args['autofocus'] ? '' : null;
 		$attributes['data-mwp-loading']   = $args['loading'] ? 'true' : null;
-		$icon                             = Components::iconMarkup( (string) $args['icon'] );
 		?>
 		<button <?php echo Attrs::render( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-			<?php if ( '' !== $icon ) : ?>
-				<span class="mwp-button__icon" aria-hidden="true"><?php echo Components::iconMarkup( (string) $args['icon'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+			<?php if ( '' !== $icon && 'before' === $icon_position ) : ?>
+				<span class="mwp-button__icon" aria-hidden="true"><?php echo $icon; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 			<?php endif; ?>
 			<?php echo esc_html( $args['label'] ); ?>
+			<?php if ( '' !== $icon && 'after' === $icon_position ) : ?>
+				<span class="mwp-button__icon" aria-hidden="true"><?php echo $icon; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+			<?php endif; ?>
 		</button>
 		<?php
 	}
