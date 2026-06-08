@@ -162,10 +162,15 @@ class Controls {
 		$input_attrs['max']          = $input_attrs['max'] ?? ( null !== $args['max'] ? (string) $args['max'] : null );
 		$input_attrs['step']         = $input_attrs['step'] ?? (string) $args['step'];
 		$input_attrs['disabled']     = $input_attrs['disabled'] ?? ( $disabled ? true : null );
+		$unit_label                  = sprintf(
+			/* translators: %s: CSS unit label, such as px, em, or %. */
+			__( 'Unit: %s', 'matterwp-admin-ui' ),
+			(string) $args['unit']
+		);
 		?>
 		<div class="<?php echo esc_attr( $classes ); ?>">
 			<input <?php echo Attrs::render( $input_attrs ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-			<span class="mwp-unit-input__badge" aria-label="<?php echo esc_attr( sprintf( __( 'Unit: %s', 'matterwp-admin-ui' ), (string) $args['unit'] ) ); ?>"><?php echo esc_html( (string) $args['unit'] ); ?></span>
+			<span class="mwp-unit-input__badge" aria-label="<?php echo esc_attr( $unit_label ); ?>"><?php echo esc_html( (string) $args['unit'] ); ?></span>
 			<?php if ( '' !== $unit_name ) : ?>
 				<input type="hidden" name="<?php echo esc_attr( $unit_name ); ?>" value="<?php echo esc_attr( (string) $args['unit'] ); ?>" <?php disabled( $disabled ); ?>>
 			<?php endif; ?>

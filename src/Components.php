@@ -125,12 +125,18 @@ class Components {
 		$data_attributes                        = is_array( $args['data_attributes'] ) ? $args['data_attributes'] : array();
 		$data_attributes['mwp-paginated-table'] = '';
 		$data_attributes['per-page']            = max( 1, absint( $args['per_page'] ) );
-		$data_attributes['current-page']        = $current_page;
-		$data_attributes['initial-page']        = '' !== $args['initial_page'] ? $args['initial_page'] : $current_page;
-		$data_attributes['empty-selector']      = '' !== $args['empty_selector'] ? $args['empty_selector'] : null;
-		$data_attributes['empty-target']        = '' !== $args['empty_target'] ? $args['empty_target'] : null;
-		$attributes                             = Attrs::merge( is_array( $args['attributes'] ) ? $args['attributes'] : array(), $classes, $data_attributes );
-		$table_attributes                       = Attrs::merge( is_array( $args['table_attributes'] ) ? $args['table_attributes'] : array(), $table_classes );
+			$data_attributes['current-page']        = $current_page;
+			$data_attributes['initial-page']        = '' !== $args['initial_page'] ? $args['initial_page'] : $current_page;
+			$data_attributes['empty-selector']      = '' !== $args['empty_selector'] ? $args['empty_selector'] : null;
+			$data_attributes['empty-target']        = '' !== $args['empty_target'] ? $args['empty_target'] : null;
+			$attributes                             = Attrs::merge( is_array( $args['attributes'] ) ? $args['attributes'] : array(), $classes, $data_attributes );
+			$table_attributes                       = Attrs::merge( is_array( $args['table_attributes'] ) ? $args['table_attributes'] : array(), $table_classes );
+			$page_label                             = sprintf(
+				/* translators: 1: current page number, 2: total pages. */
+				__( 'Page %1$d of %2$d', 'matterwp-admin-ui' ),
+				$current_page,
+				$total_pages
+			);
 		?>
 		<div <?php echo Attrs::render( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<table <?php echo Attrs::render( $table_attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
@@ -146,13 +152,13 @@ class Components {
 						<?php echo self::renderRow( is_array( $row ) ? $row : array(), $columns, $args ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					<?php endforeach; ?>
 				</tbody>
-			</table>
-			<?php if ( wp_validate_boolean( $args['pagination'] ) ) : ?>
-				<div class="<?php echo esc_attr( $pagination_classes ); ?>" data-mwp-pagination>
-					<button class="<?php echo esc_attr( $prev_classes ); ?>" type="button" data-mwp-page="prev" <?php disabled( $current_page <= 1 ); ?>><?php esc_html_e( 'Previous', 'matterwp-admin-ui' ); ?></button>
-					<span class="<?php echo esc_attr( $info_classes ); ?>"><?php echo esc_html( sprintf( __( 'Page %1$d of %2$d', 'matterwp-admin-ui' ), $current_page, $total_pages ) ); ?></span>
-					<button class="<?php echo esc_attr( $next_classes ); ?>" type="button" data-mwp-page="next" <?php disabled( $current_page >= $total_pages ); ?>><?php esc_html_e( 'Next', 'matterwp-admin-ui' ); ?></button>
-				</div>
+				</table>
+				<?php if ( wp_validate_boolean( $args['pagination'] ) ) : ?>
+					<div class="<?php echo esc_attr( $pagination_classes ); ?>" data-mwp-pagination>
+						<button class="<?php echo esc_attr( $prev_classes ); ?>" type="button" data-mwp-page="prev" <?php disabled( $current_page <= 1 ); ?>><?php esc_html_e( 'Previous', 'matterwp-admin-ui' ); ?></button>
+						<span class="<?php echo esc_attr( $info_classes ); ?>"><?php echo esc_html( $page_label ); ?></span>
+						<button class="<?php echo esc_attr( $next_classes ); ?>" type="button" data-mwp-page="next" <?php disabled( $current_page >= $total_pages ); ?>><?php esc_html_e( 'Next', 'matterwp-admin-ui' ); ?></button>
+					</div>
 			<?php endif; ?>
 			<?php if ( is_array( $args['empty_state'] ) ) : ?>
 				<?php
@@ -256,7 +262,10 @@ class Components {
 		if ( is_array( $args['data_attributes'] ) ) {
 			foreach ( $args['data_attributes'] as $key => $value ) {
 				$key = (string) $key;
-				$attributes[ 0 === strpos( $key, 'data-' ) ? $key : 'data-' . ltrim( $key, '-' ) ] = $value;
+				if ( 'data-' !== substr( $key, 0, 5 ) ) {
+					$key = 'data-' . ltrim( $key, '-' );
+				}
+				$attributes[ $key ] = $value;
 			}
 		}
 
@@ -266,12 +275,12 @@ class Components {
 		} else {
 			$attributes['type']     = in_array( $args['type'], array( 'button', 'submit', 'reset' ), true ) ? $args['type'] : 'button';
 			$attributes['disabled'] = (bool) $args['disabled'];
-		}
-		?>
-		<<?php echo tag_escape( $tag ); ?> <?php echo Attrs::render( $attributes ); ?>>
-			<?php echo self::ksesCell( $icon ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-		</<?php echo tag_escape( $tag ); ?>>
-		<?php
+			}
+			?>
+			<<?php echo tag_escape( $tag ); ?> <?php echo Attrs::render( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+				<?php echo self::ksesCell( $icon ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			</<?php echo tag_escape( $tag ); ?>>
+			<?php
 	}
 
 	/**
@@ -733,9 +742,9 @@ class Components {
 	/**
 	 * Render a typed table row.
 	 *
-	 * @param array<string, mixed> $row Row data.
+	 * @param array<string, mixed>             $row Row data.
 	 * @param array<int, array<string, mixed>> $columns Columns.
-	 * @param array<string, mixed> $args Table args.
+	 * @param array<string, mixed>             $args Table args.
 	 * @return string
 	 */
 	private static function renderRow( array $row, array $columns, array $args ): string {
@@ -816,7 +825,7 @@ class Components {
 	/**
 	 * Format display text for common table/link cells.
 	 *
-	 * @param string $value Raw value.
+	 * @param string               $value Raw value.
 	 * @param array<string, mixed> $args Cell args.
 	 * @return string
 	 */
@@ -838,7 +847,7 @@ class Components {
 	/**
 	 * Render keyed meta rows.
 	 *
-	 * @param string $class Wrapper class.
+	 * @param string $wrapper_class Wrapper class.
 	 * @param mixed  $rows Rows.
 	 * @return void
 	 */

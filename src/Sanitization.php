@@ -35,7 +35,7 @@ class Sanitization {
 	/**
 	 * Sanitize and clamp an integer value.
 	 *
-	 * @param mixed   $value The value to sanitize.
+	 * @param mixed    $value The value to sanitize.
 	 * @param int|null $min   Optional minimum value.
 	 * @param int|null $max   Optional maximum value.
 	 * @return int Sanitized integer within bounds.
@@ -54,7 +54,7 @@ class Sanitization {
 	/**
 	 * Sanitize and clamp a float value.
 	 *
-	 * @param mixed     $value The value to sanitize.
+	 * @param mixed      $value The value to sanitize.
 	 * @param float|null $min   Optional minimum value.
 	 * @param float|null $max   Optional maximum value.
 	 * @return float Sanitized float within bounds.

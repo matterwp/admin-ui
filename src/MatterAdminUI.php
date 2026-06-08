@@ -101,6 +101,7 @@ class MatterAdminUI {
 	 *
 	 * @param string   $label Field label.
 	 * @param callable $control Control callback.
+	 * @param array    $args Field arguments.
 	 * @return void
 	 */
 	public static function field( string $label, callable $control, array $args = array() ): void {

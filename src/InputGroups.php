@@ -222,11 +222,14 @@ class InputGroups {
 		if ( is_array( $args['data_attributes'] ) ) {
 			foreach ( $args['data_attributes'] as $key => $value ) {
 				$key = (string) $key;
-				$attributes[ 0 === strpos( $key, 'data-' ) ? $key : 'data-' . ltrim( $key, '-' ) ] = $value;
+				if ( 'data-' !== substr( $key, 0, 5 ) ) {
+					$key = 'data-' . ltrim( $key, '-' );
+				}
+				$attributes[ $key ] = $value;
 			}
 		}
 		?>
-		<div <?php echo Attrs::render( $attributes ); ?>>
+		<div <?php echo Attrs::render( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<?php self::renderSlot( $before, $args, $uid, $image_url ); ?>
 			<?php
 			if ( is_callable( $preview ) ) {

@@ -122,7 +122,7 @@ class Tabs {
 	 * Resolve active tab.
 	 *
 	 * @param array<int, array<string, mixed>> $items Tab items.
-	 * @param string                          $active Requested active tab.
+	 * @param string                           $active Requested active tab.
 	 * @return string
 	 */
 	private static function resolveActive( array $items, string $active ): string {
@@ -151,9 +151,9 @@ class Tabs {
 	 * Render one tab item.
 	 *
 	 * @param array<string, mixed> $item Tab item.
-	 * @param string              $active Active tab ID.
-	 * @param string              $set_id Tab set ID.
-	 * @param bool                $has_panels Whether panels exist.
+	 * @param string               $active Active tab ID.
+	 * @param string               $set_id Tab set ID.
+	 * @param bool                 $has_panels Whether panels exist.
 	 * @return void
 	 */
 	private static function renderItem( array $item, string $active, string $set_id, bool $has_panels ): void {
@@ -186,8 +186,8 @@ class Tabs {
 	 * Render one tab panel.
 	 *
 	 * @param array<string, mixed> $item Tab item.
-	 * @param string              $active Active tab ID.
-	 * @param string              $set_id Tab set ID.
+	 * @param string               $active Active tab ID.
+	 * @param string               $set_id Tab set ID.
 	 * @return void
 	 */
 	private static function renderPanel( array $item, string $active, string $set_id ): void {

@@ -69,7 +69,7 @@ class Attrs {
 	 * Merge base attributes with component class and data attribute arguments.
 	 *
 	 * @param array<string, mixed> $attributes Base attribute map.
-	 * @param string              $classes Root class string.
+	 * @param string               $classes Root class string.
 	 * @param array<string, mixed> $data_attributes Data attribute map.
 	 * @return array<string, mixed>
 	 */
@@ -93,8 +93,8 @@ class Attrs {
 	 * Get a scoped class value from a classes map with a legacy fallback key.
 	 *
 	 * @param array<string, mixed> $args Args containing optional classes map.
-	 * @param string              $slot Slot name.
-	 * @param string              $fallback_key Legacy class arg key.
+	 * @param string               $slot Slot name.
+	 * @param string               $fallback_key Legacy class arg key.
 	 * @return string
 	 */
 	public static function slotClass( array $args, string $slot, string $fallback_key = '' ): string {

@@ -11,6 +11,7 @@ Primary source files:
 - `src/Controls.php`: primitive controls.
 - `src/InputGroups.php`: compound input controls.
 - `src/Components.php`: tables, data display, action groups, utility components.
+- `src/Tabs.php`: segmented tabs and tab panels.
 - `src/Overlays.php`: modals and confirmation dialogs.
 - `src/Premium.php`: premium badge and locked-control helpers.
 - `resources/scss/matterwp/`: component styles.
@@ -173,7 +174,7 @@ Override keys:
 | `option` | Merge into option args last. |
 | `control` | Merge into control args last. |
 
-Current use: primitives tab uses a saved switch and text field.
+Current use: components tab uses saved switch/text schema options.
 
 ### `card( array $args, callable $content )`
 
@@ -185,7 +186,7 @@ Current use: primitives tab uses a saved switch and text field.
 | `header_class` | empty | Header wrapper class. |
 | `content_class` | empty | Content wrapper class. |
 
-Current use: cards tab renders content cards. This component does not currently support `attributes` or `data_attributes`.
+Current use: components tab renders content cards. This component does not currently support `attributes` or `data_attributes`.
 
 ### `form( array $args, callable $content )`
 
@@ -207,7 +208,7 @@ Current use: cards tab renders content cards. This component does not currently 
 
 Generated field types: `textarea`, `select`, `choice`, `switch`, `boolean`, `bool`, `color_picker`, `colorPicker`, `media`, `media_field`, `mediaField`, and all `input()` types.
 
-Current use: compound tab renders a generated multi-field notification form with ghost and primary actions.
+Current use: components tab renders multiple generated form layouts with different grid and action arrangements.
 
 ### `field( string $label, callable $control, array $args = array() )`
 
@@ -234,6 +235,46 @@ Current use: schedule and field-grid examples.
 
 Current use: schedule row uses `columns => 3`, `density => compact`.
 
+### `tabs( array $args )`
+
+Renders a segmented tab control. If any item includes content, it also renders matching tab panels and the package JavaScript switches panel content.
+
+| Option | Default | Accepted values / notes |
+| --- | --- | --- |
+| `items` | `array()` | Tab items. String values become labels. Array items are documented below. |
+| `active` | empty | Active tab id. Falls back to the first non-disabled item or an item with `active => true`. |
+| `label` | `Sections` | Accessible tablist label. |
+| `variant` | `segmented` | `segmented`, `plain`. |
+| `size` | `normal` | `compact`, `normal`, `large`. |
+| `grow` | `false` | Adds `is-grow` so tabs distribute across the available width. |
+| `class` | empty | Root tablist class. |
+| `attributes` | `array()` | Tablist attributes. |
+| `data_attributes` | `array()` | Tablist data attributes. |
+
+Item keys:
+
+| Key | Purpose |
+| --- | --- |
+| `id` | Stable tab id. Defaults from array key or sanitized label. |
+| `label` | Visible tab label. |
+| `badge` | Optional small badge beside label. |
+| `active` | Marks the item active when `active` arg is empty. |
+| `disabled` | Prevents activation and adds `aria-disabled`. |
+| `class` | Extra class on the button. |
+| `attributes` | Button attributes. |
+| `content` | Safe panel HTML rendered through `wp_kses_post()`. |
+| `content_callback` | Callable receives the item and renders panel content. |
+| `panel_class` | Extra class on the generated panel. |
+
+Markup and behavior:
+
+- Root tabset with panels uses `.mwp-tabs-set[data-mwp-tabs]`.
+- Tab buttons use `[data-mwp-tab]`, `role="tab"`, `aria-selected`, and roving `tabindex`.
+- Panels use `[data-mwp-panel]`, `role="tabpanel"`, and `hidden` for inactive panels.
+- JS dispatches `mwp:tabs-change` on activation with `detail.id` and `detail.tab`.
+
+Current use: components tab demonstrates segmented, compact, grow, disabled, badged, and panel-switching tab sets.
+
 ## Form Controls
 
 ### `switch( array $args )`
@@ -244,7 +285,7 @@ Current use: schedule row uses `columns => 3`, `density => compact`.
 | `name` | empty | Input name. |
 | `value` | `null` | Checkbox value. Omitted when null. |
 | `checked` | `false` | Checked state. |
-| `disabled` | `false` | Disabled state. |
+| `disabled` | `false` | Disabled state. Disabled switches always render unchecked. |
 | `class` | empty | Root label class. |
 | `input_class` | empty | Input class. |
 | `slider_class` | empty | Slider span class. |
@@ -277,6 +318,26 @@ Current use: via `schemaOption()` and locked premium raw markup.
 Supported types: `text`, `number`, `url`, `email`, `password`, `search`, `color`, `tel`, `hidden`, `date`, `time`, `datetime-local`, `month`, `week`.
 
 Current use: text, number, url, email, datetime-local, search, disabled text.
+
+### `unitInput( array $args )`
+
+Renders a numeric input with a static unit badge. The badge is not selectable; it exists to clarify the unit displayed beside the number.
+
+| Option | Default | Notes |
+| --- | --- | --- |
+| `name` | empty | Number input name. |
+| `value` | empty | Number input value. |
+| `unit_name` | empty | Hidden unit input name. Defaults to `{name}_unit` when `name` exists. |
+| `unit` | `px` | Static unit badge and hidden unit value. Common values: `px`, `em`, `rem`, `%`. |
+| `placeholder` | empty | Number input placeholder. |
+| `min` | `null` | Number input min. |
+| `max` | `null` | Number input max. |
+| `step` | `1` | Number input step. |
+| `disabled` | `false` | Disables the visible input and hidden unit input. |
+| `class` | empty | Root class. |
+| `input_attrs` | `array()` | Attributes merged into the inner input. |
+
+Current use: components tab shows pixel, percent, and disabled unit inputs inside wrapped option rows.
 
 ### `textarea( array $args )`
 
@@ -328,11 +389,12 @@ Current use: schedule timezone, status selects, option class customization.
 | `class` | empty | Button class. |
 | `disabled` | `false` | Disabled state. |
 | `loading` | `false` | Adds `is-loading`, disables button, and sets `data-mwp-loading`. |
+| `full_width` | `false` | Adds `is-full-width` so the button fills its container. |
 | `key` | empty | Rendered as a `key` attribute when present. |
 | `attributes` | `array()` | Button attributes. |
 | `data_attributes` | `array()` | Button data attributes. |
 
-Current use: all variants, compact size, disabled state, icons `play`, `edit`, `copy`, and `icon_position => after`.
+Current use: all variants, compact size, disabled state, full-width notification triggers, icons `play`, `edit`, `copy`, and `icon_position => after`.
 
 ### `badge( array $args )`
 
@@ -357,7 +419,7 @@ Current use: all variants and compact size.
 | `attributes` | `array()` | Root attributes. |
 | `data_attributes` | `array()` | Root data attributes. |
 
-Current use: all variants.
+Current use: all variants as inline notices. Package-managed toast notifications use the JavaScript `MatterAdminUI.notice()` API.
 
 ## Compound Input Components
 
@@ -374,7 +436,7 @@ Current use: all variants.
 | `input_class` | empty | Text input class. |
 | `disabled` | `false` | Disables both inputs. |
 
-Current use: compound tab with default value.
+Current use: components tab color picker example.
 
 ### `inputButton( array $args )`
 
@@ -385,7 +447,7 @@ Current use: compound tab with default value.
 | `class` | empty | Root class. |
 | `wide` | `false` | Adds full-width class. |
 
-Current use: url test button and full-width search pattern.
+Current use: components tab URL test button and full-width search pattern.
 
 ### `radioGroup( array $args )`
 
@@ -401,7 +463,7 @@ Current use: url test button and full-width search pattern.
 
 If no `name` is supplied, a generated name is used and inputs get `data-mwp-ignore-autosave="true"`.
 
-Current use: interactive tab mode selector.
+Current use: components tab mode selector.
 
 ### `buttonGroup( array $args )`
 
@@ -412,7 +474,7 @@ Current use: interactive tab mode selector.
 
 Each button is passed to `button()`.
 
-Current use: interactive tab segmented day/week/month buttons.
+Current use: components tab segmented day/week/month buttons.
 
 ### `mediaField( array $args )`
 
@@ -543,7 +605,7 @@ Current use: delete confirmation example.
 | `row_attributes` | `array()` | Attrs on every row. |
 | `row_data_attributes` | `array()` | Data attrs on every row. |
 
-Current use: simple compound table.
+Current use: components tab simple table.
 
 ### `paginatedTable( array $args )`
 
@@ -591,7 +653,7 @@ Column definitions:
 
 Row definitions may include `row_class`, `row_attributes`, and `row_data_attributes`.
 
-Current use: data tab uses typed title, code, external link, badge, date, and actions columns, `row_key`, `per_page`, empty state, max width, `overflow => anywhere`, `strip_site_url`, and `format => relative_site_url`.
+Current use: Data tab uses typed title, code, external link, badge, date, and actions columns, `row_key`, `per_page`, empty state, max width, `overflow => anywhere`, `strip_site_url`, and `format => relative_site_url`.
 
 ### `actionGroup( array $args )`
 
@@ -630,7 +692,7 @@ Current use: generated by `actionsCell()` in data table, with edit and danger de
 | `attributes` | `array()` |
 | `data_attributes` | `array()` |
 
-Current use: primitives tab and data table empty state.
+Current use: components tab empty-state example and Data tab table empty state.
 
 ### `resultCard( array $args )`
 
@@ -661,7 +723,7 @@ Current use: generated asset preview with image, status, meta, values, primary l
 | `attributes` | `array()` |
 | `data_attributes` | `array()` |
 
-Current use: primitive badged row details.
+Current use: components tab badged row details.
 
 ### `actionBar( array $args )`
 
@@ -674,7 +736,7 @@ Current use: primitive badged row details.
 | `attributes` | `array()` | Root attrs. |
 | `data_attributes` | `array()` | Root data attrs. |
 
-Current use: not used in boilerplate templates, but documented and styled.
+Current use: components tab action-bar example with separated actions.
 
 ### `switchGrid( array $args )`
 
@@ -685,9 +747,9 @@ Current use: not used in boilerplate templates, but documented and styled.
 | `attributes` | `array()` |
 | `data_attributes` | `array()` |
 
-Each item supports `title`, `description`, and either `switch` args or direct `switch()` args.
+Each item supports `title`, `description`, and either `switch` args or direct `switch()` args. The whole `.mwp-switch-grid__item` is clickable and keyboard-toggleable with Enter or Space, except when the click starts directly on the switch.
 
-Current use: not used in boilerplate templates.
+Current use: components tab switch-grid example.
 
 ### `choiceGrid( array $args )`
 
@@ -710,7 +772,7 @@ Current use: indirectly available through `schemaOption()` for `multi_select` or
 | `items` | `array()` | Each item supports `title`, `content`, `open`. |
 | `class` | empty | Root class. |
 
-Current use: interactive tab with one open item.
+Current use: components tab accordion example with one open item.
 
 ### `progress( array $args )`
 
@@ -725,7 +787,7 @@ Current use: interactive tab with one open item.
 | `attributes` | `array()` |
 | `data_attributes` | `array()` |
 
-Current use: interactive tab with label, value 68, grow, max width.
+Current use: components tab progress examples with default and growing layouts.
 
 ### `statCard( array $args )`
 
@@ -735,7 +797,7 @@ Current use: interactive tab with label, value 68, grow, max width.
 | `value` | empty |
 | `class` | empty |
 
-Current use: cards/stats tab dashboard stats. This component does not currently support `attributes` or `data_attributes`.
+Current use: components tab dashboard stats. This component does not currently support `attributes` or `data_attributes`.
 
 ### `lightbox( array $args )`
 
@@ -746,7 +808,7 @@ Current use: cards/stats tab dashboard stats. This component does not currently 
 | `caption` | empty |
 | `class` | empty |
 
-Current use: interactive tab image preview. This component does not currently support `attributes` or `data_attributes`.
+Current use: components tab image preview. This component does not currently support `attributes` or `data_attributes`.
 
 ## Cell Helpers And Utilities
 
@@ -815,6 +877,7 @@ Important CSS variables:
 | `.mwp-button.is-danger` | Danger button. |
 | `.mwp-button.is-compact` | Compact button. |
 | `.mwp-button.is-loading` | Loading button. |
+| `.mwp-button.is-full-width` | Full-width button. |
 | `.mwp-button.has-icon.is-icon-before` | Button with icon before label. |
 | `.mwp-button.has-icon.is-icon-after` | Button with icon after label. |
 | `.mwp-badge.is-primary` | Primary badge. |
@@ -826,8 +889,13 @@ Important CSS variables:
 | `.mwp-inline-notice.is-warning` | Warning inline notice. |
 | `.mwp-inline-notice.is-error` | Error inline notice. |
 | `.mwp-switch` | Switch root. |
+| `.mwp-unit-input`, `.mwp-unit-input__badge` | Numeric input with static unit badge. |
 | `.mwp-color-picker` | Color picker root. |
 | `.mwp-input-button.is-full-width` | Full-width input-button. |
+| `.mwp-tabs`, `.mwp-tabs-set`, `.mwp-tabs__item`, `.mwp-tabs__panel`, `.mwp-tabs__badge` | Component tab set and panels. |
+| `.mwp-tabs.is-segmented`, `.mwp-tabs.is-plain` | Tab variants. |
+| `.mwp-tabs.is-size-compact`, `.is-size-normal`, `.is-size-large` | Tab sizes. |
+| `.mwp-tabs.is-grow` | Evenly distributed tabs. |
 
 ### Form And Grid Styles
 
@@ -876,6 +944,7 @@ Important CSS variables:
 | `.mwp-result-card.is-standard`, `.is-success`, `.is-warning`, `.is-danger` | Result card variants. |
 | `.mwp-action-bar.is-align-left`, `.is-align-right`, `.is-align-between` | Action bar alignment. |
 | `.mwp-action-bar.has-item-auto`, `.has-item-grow` | Action bar item sizing. |
+| `.mwp-switch-grid`, `.mwp-switch-grid__item`, `.mwp-switch-grid__text` | Clickable switch card grid. |
 | `.mwp-choice-grid.is-radio`, `.is-checkbox` | Choice grid types. |
 | `.mwp-progress.is-grow` | Grow progress. |
 | `.mwp-modal.is-danger` | Danger modal from confirm dialog. |
@@ -891,7 +960,7 @@ Important CSS variables:
 | `MatterAdminUI.openModal(idOrElement, values, trigger)` | Opens a package modal and optionally populates fields. |
 | `MatterAdminUI.closeModal(idOrElement)` | Closes a modal. |
 | `MatterAdminUI.populateModal(idOrElement, values)` | Populates fields by `name` or `data-mwp-field`. |
-| `MatterAdminUI.notice(message, type, options)` | Shows package-managed notice with stacked enter/exit animation. |
+| `MatterAdminUI.notice(message, type, options)` | Shows package-managed notice with stacked enter/exit animation. `type` supports `success`, `error`, `warning`, `info`; `options.duration` controls auto-dismiss milliseconds, and `options.container` selects the notice container. |
 | `MatterAdminUI.ajax.submit(formOrRoot, options)` | Submits Ajax form/root. |
 | `MatterAdminUI.table.appendRow(table, rowHtmlOrData, options)` | Appends a table row. |
 | `MatterAdminUI.table.updateRow(table, rowId, rowHtmlOrData)` | Replaces a table row. |
@@ -903,6 +972,7 @@ Important CSS variables:
 | Attribute | Purpose |
 | --- | --- |
 | `data-ui-tab`, `data-ui-panel` | Tab trigger and panel. |
+| `data-mwp-tabs`, `data-mwp-tabs-active`, `data-mwp-tab`, `data-mwp-panel` | Component tab set and panels. |
 | `data-mwp-theme-toggle` | Theme toggle. |
 | `data-mwp-visible-if`, `data-mwp-disabled-if`, `data-mwp-requires` | Dependency behavior. |
 | `data-mwp-color-picker`, `data-mwp-color-swatch`, `data-mwp-color-input` | Color picker sync. |
@@ -924,6 +994,7 @@ Important CSS variables:
 | `mwp:ajax-error` | Ajax error. |
 | `mwp:ajax-complete` | Ajax complete. |
 | `mwp:table-refresh` | Manual table refresh. |
+| `mwp:tabs-change` | Component tab change; `detail.id` contains active tab id. |
 | `mwp:media-selected` | Media item selected. |
 | `mwp:media-removed` | Media item removed. |
 
@@ -935,28 +1006,30 @@ Important CSS variables:
 | `panel()` | All admin tabs. |
 | `section()` | Wrapped sections plus `section_variant => minimal` for cards, stats, result cards, empty states, and tables. |
 | `option()` | Most rows; uses row, column, divided, full label, control widths, badges, help, actions. |
-| `schemaOption()` | Saved switch and text option in primitives tab. |
-| `card()` | Cards tab. |
-| `form()` | Compound tab generated form. |
+| `schemaOption()` | Saved switch and text option in Components tab. |
+| `card()` | Components tab card example. |
+| `form()` | Components tab generated form variants. |
 | `field()` | Field-grid examples. |
 | `fieldGrid()` | Schedule and form layout examples. |
 | `switch()` | Via schema and locked markup. |
 | `input()` | Text, number, URL, email, datetime-local, search, disabled examples. |
+| `unitInput()` | Pixel, percent, and disabled unit examples through `Controls::unitInput()` when available, with fallback markup in boilerplate for older loaded package versions. |
 | `textarea()` | Long content and notes examples. |
 | `select()` | Status, role, interval, timezone examples. |
-| `button()` | Primary, secondary, ghost, danger, compact, disabled, icon-before, and icon-after buttons. |
+| `button()` | Primary, secondary, ghost, danger, compact, disabled, full-width, icon-before, and icon-after buttons. |
 | `badge()` | Neutral, primary, warning, success, compact badges. |
 | `notice()` | Success, info, warning, error notices. |
-| `modal()` | Standard modal and triggerless edit modals. |
+| `modal()` | Components tab standard modal and Data tab triggerless edit modal. |
 | `confirmDialog()` | Delete confirmation example. |
 | `lightbox()` | Icon preview. |
-| `accordion()` | Interactive FAQ example. |
+| `tabs()` / `Tabs::render()` | Component tab variants with content switching. |
+| `accordion()` | Components tab FAQ example. |
 | `table()` | Simple component table. |
 | `dataTable()` | Paginated typed table with actions and empty state. |
 | `resultCard()` | Generated asset preview. |
-| `keyValueList()` | Primitive metadata row. |
-| `emptyState()` | Primitive empty block and table empty state. |
-| `progress()` | Migration progress example. |
+| `keyValueList()` | Components tab metadata row. |
+| `emptyState()` | Components tab empty block and Data tab table empty state. |
+| `progress()` | Components tab progress examples. |
 | `statCard()` | Four dashboard stat cards. |
 | `colorPicker()` | Color field example. |
 | `inputButton()` | URL/action and full-width search examples. |
@@ -964,7 +1037,9 @@ Important CSS variables:
 | `buttonGroup()` | Segmented command set. |
 | `mediaField()` | Compact media picker. |
 | `controlLockedAttrs()` | Locked premium raw controls. |
-| `actionBar()`, `switchGrid()`, `choiceGrid()` | Available but not directly used in current templates. |
+| `actionBar()` | Separated action row example. |
+| `switchGrid()` | Clickable switch-card grid example. |
+| `choiceGrid()` | Available through `schemaOption()` or direct calls, but not directly used in current boilerplate templates. |
 
 ## Changelog
 
@@ -978,8 +1053,12 @@ Important CSS variables:
 - Preserved deprecated `wide`, `align_start`, `divider`, and `style` aliases for `1.x` consumers.
 - Removed legacy option/section style classes from generated markup and SCSS: `is-style-*`, `is-divided`, `is-borderless`, `is-table-only`, and `is-option-box-*`.
 - Added `icon_position => 'before'|'after'` to `button()` and modal footer actions, with matching button classes and SCSS.
+- Added `full_width => true` to `button()` for container-filling action buttons.
+- Added `unitInput()` to `Controls` and the `MatterAdminUI` facade for static unit-badge inputs.
+- Added `tabs()` / `Tabs::render()` for segmented tab controls with optional panel content switching.
+- Added clickable and keyboard-toggleable `.mwp-switch-grid__item` behavior.
 - Added enter/exit animation and collapsing stack behavior for package-managed notices.
-- Updated boilerplate templates to use the new API and added a visible icon-after button example.
+- Updated boilerplate templates to use the new API and added visible icon-after, full-width notification, unit-input, tab, switch-grid, and action-bar examples.
 
 ### `1.0.3`
 
@@ -1013,6 +1092,8 @@ Important CSS variables:
 
 ## Known API Gaps
 
+- `tabs()` item-level `data_attributes` are not supported yet; use `attributes` for item button attributes.
+- `unitInput()` supports root `class` and inner `input_attrs`, but not root `attributes` or `data_attributes` yet.
 - `card()`, `statCard()`, `lightbox()`, `accordion()`, `buttonGroup()`, `radioGroup()`, `inputButton()`, and `colorPicker()` do not fully support the shared `attributes` and `data_attributes` contract yet.
 - `modal()` accepts `classes`, but current implementation uses legacy slot class keys instead of the slot map.
 - `colorPicker()` accepts `label`, but does not render it.

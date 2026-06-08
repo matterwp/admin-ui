@@ -179,6 +179,7 @@ class Overlays {
 	 * @param string $modal_id Target modal ID.
 	 * @param string $label Trigger label.
 	 * @param string $variant Button variant.
+	 * @param string $trigger_class Trigger class.
 	 * @return void
 	 */
 	private static function modalTrigger( string $modal_id, string $label, string $variant, string $trigger_class = '' ): void {
