@@ -152,19 +152,19 @@ function removeNotice(notice) {
 	notice.dataset.mwpRemoving = 'true';
 	notice.classList.remove('is-visible');
 	notice.classList.add('is-removing');
-	window.setTimeout(() => notice.remove(), 240);
+	window.setTimeout(() => notice.remove(), 300);
 }
 
 function showNotice(message, type = 'success', options = {}) {
 	const container = ensureNoticeContainer(options);
 	const notice = document.createElement('div');
-	const duration = Number(options.duration ?? 4000);
+	const duration = Number(options.duration ?? 3000);
 
 	notice.className = `mwp-notice ${type}`;
-	notice.setAttribute('role', type === 'error' ? 'alert' : 'status');
+	notice.setAttribute('role', 'alert');
+	notice.setAttribute('aria-live', 'polite');
 	notice.innerHTML = `<span class="notice-text">${String(message || '')}</span>`;
 	container.appendChild(notice);
-	notice.style.setProperty('--mwp-notice-height', `${notice.scrollHeight + 18}px`);
 	window.requestAnimationFrame(() => {
 		notice.classList.add('is-visible');
 	});
@@ -572,8 +572,13 @@ function ensureLightbox() {
 	lightbox.innerHTML = `
 		<div class="mwp-lightbox__overlay" data-mwp-lightbox-close></div>
 		<div class="mwp-lightbox__dialog" role="dialog" aria-modal="true">
-			<button class="mwp-icon-button mwp-lightbox__close" type="button" aria-label="Close" data-mwp-lightbox-close><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
-			<img class="mwp-lightbox__image" alt="">
+			<div class="mwp-lightbox__header">
+				<div class="mwp-lightbox__heading"><h4></h4></div>
+				<button class="mwp-icon-button mwp-lightbox__close" type="button" aria-label="Close" data-mwp-lightbox-close><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+			</div>
+			<div class="mwp-lightbox__content">
+				<img class="mwp-lightbox__image" alt="">
+			</div>
 			<div class="mwp-lightbox__caption"></div>
 		</div>
 	`;
@@ -594,8 +599,11 @@ function initLightbox() {
 
 		const lightbox = ensureLightbox();
 		const image = lightbox.querySelector('.mwp-lightbox__image');
+		const title = lightbox.querySelector('.mwp-lightbox__heading h4');
 		const caption = lightbox.querySelector('.mwp-lightbox__caption');
 
+		title.textContent = trigger.dataset.mwpLightboxTitle || trigger.dataset.mwpLightboxAlt || '';
+		title.closest('.mwp-lightbox__header').hidden = !title.textContent;
 		image.src = trigger.dataset.mwpLightboxSrc || '';
 		image.alt = trigger.dataset.mwpLightboxAlt || '';
 		caption.textContent = trigger.dataset.mwpLightboxCaption || '';
@@ -698,6 +706,159 @@ function initConfirmActions() {
 			event.preventDefault();
 			event.stopPropagation();
 		}
+	});
+}
+
+function initComponentTabs() {
+	if (document.documentElement.dataset.mwpComponentTabsReady === 'true') {
+		return;
+	}
+
+	document.documentElement.dataset.mwpComponentTabsReady = 'true';
+
+	function getTabSet(element) {
+		return element.closest('[data-mwp-tabs]');
+	}
+
+	function getTabs(root) {
+		return Array.from(root.querySelectorAll('[data-mwp-tab]')).filter(tab => tab.closest('[data-mwp-tabs]') === root);
+	}
+
+	function getPanels(root) {
+		return Array.from(root.querySelectorAll('[data-mwp-panel]')).filter(panel => panel.closest('[data-mwp-tabs]') === root);
+	}
+
+	function activate(root, tab, focus = false) {
+		if (!root || !tab || tab.getAttribute('aria-disabled') === 'true') {
+			return;
+		}
+
+		const id = tab.dataset.mwpTab;
+
+		getTabs(root).forEach(item => {
+			const active = item === tab;
+			item.classList.toggle('is-active', active);
+			item.setAttribute('aria-selected', active ? 'true' : 'false');
+			item.tabIndex = active ? 0 : -1;
+		});
+
+		getPanels(root).forEach(panel => {
+			const active = panel.dataset.mwpPanel === id;
+			panel.hidden = !active;
+			panel.classList.toggle('is-active', active);
+		});
+
+		root.dataset.mwpTabsActive = id;
+		root.dispatchEvent(new CustomEvent('mwp:tabs-change', { bubbles: true, detail: { id, tab } }));
+
+		if (focus) {
+			tab.focus({ preventScroll: true });
+		}
+	}
+
+	document.querySelectorAll('[data-mwp-tabs]').forEach(root => {
+		const tabs = getTabs(root);
+		const initial = tabs.find(tab => tab.dataset.mwpTab === root.dataset.mwpTabsActive) || tabs.find(tab => tab.classList.contains('is-active')) || tabs[0];
+
+		if (initial) {
+			activate(root, initial);
+		}
+	});
+
+	document.addEventListener('click', event => {
+		const tab = event.target.closest('[data-mwp-tab]');
+
+		if (!tab) {
+			return;
+		}
+
+		const root = getTabSet(tab);
+
+		if (!root) {
+			return;
+		}
+
+		const panel = getPanels(root).find(item => item.dataset.mwpPanel === tab.dataset.mwpTab);
+
+		if (!panel) {
+			return;
+		}
+
+		event.preventDefault();
+		activate(root, tab);
+	});
+
+	document.addEventListener('keydown', event => {
+		const tab = event.target.closest('[data-mwp-tab]');
+		const root = tab ? getTabSet(tab) : null;
+
+		if (!tab || !root) {
+			return;
+		}
+
+		if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) {
+			return;
+		}
+
+		const tabs = getTabs(root).filter(item => item.getAttribute('aria-disabled') !== 'true');
+		const currentIndex = tabs.indexOf(tab);
+		let nextIndex = currentIndex;
+
+		if (event.key === 'Home') {
+			nextIndex = 0;
+		} else if (event.key === 'End') {
+			nextIndex = tabs.length - 1;
+		} else if (event.key === 'ArrowLeft') {
+			nextIndex = currentIndex <= 0 ? tabs.length - 1 : currentIndex - 1;
+		} else if (event.key === 'ArrowRight') {
+			nextIndex = currentIndex >= tabs.length - 1 ? 0 : currentIndex + 1;
+		}
+
+		if (tabs[nextIndex]) {
+			event.preventDefault();
+			activate(root, tabs[nextIndex], true);
+		}
+	});
+}
+
+function initSwitchGrid() {
+	if (document.documentElement.dataset.mwpSwitchGridReady === 'true') {
+		return;
+	}
+
+	document.documentElement.dataset.mwpSwitchGridReady = 'true';
+
+	function toggleItem(item) {
+		const input = item?.querySelector('.mwp-switch input[type="checkbox"]');
+
+		if (!input || input.disabled) {
+			return;
+		}
+
+		input.checked = !input.checked;
+		input.dispatchEvent(new Event('input', { bubbles: true }));
+		input.dispatchEvent(new Event('change', { bubbles: true }));
+	}
+
+	document.addEventListener('click', event => {
+		const item = event.target.closest('.mwp-switch-grid__item');
+
+		if (!item || event.target.closest('.mwp-switch')) {
+			return;
+		}
+
+		toggleItem(item);
+	});
+
+	document.addEventListener('keydown', event => {
+		const item = event.target.closest('.mwp-switch-grid__item');
+
+		if (!item || !['Enter', ' '].includes(event.key)) {
+			return;
+		}
+
+		event.preventDefault();
+		toggleItem(item);
 	});
 }
 
@@ -892,6 +1053,8 @@ export function initAdminUI() {
 
 	const initializers = [
 		['[data-ui-tab]', initTabs],
+		['[data-mwp-tabs]', initComponentTabs],
+		['.mwp-switch-grid__item', initSwitchGrid],
 		['[data-mwp-visible-if], [data-mwp-disabled-if], [data-mwp-requires]', initDependencies],
 		['[data-mwp-color-picker]', initColorPickers],
 		['[data-mwp-modal]', initModals],

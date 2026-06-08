@@ -85,6 +85,12 @@
 	--mwp-toast-error-bg: #fef2f2;
 	--mwp-toast-error-border: #fee2e2;
 	--mwp-toast-error-text: #7c2d12;
+	--mwp-toast-warning-bg: #fffbeb;
+	--mwp-toast-warning-border: #fde68a;
+	--mwp-toast-warning-text: #78350f;
+	--mwp-toast-info-bg: #eff6ff;
+	--mwp-toast-info-border: #bfdbfe;
+	--mwp-toast-info-text: #1e3a8a;
 }
 
 // Dark mode
@@ -151,4 +157,10 @@ html[data-mwp-theme="dark"] .mwp-lightbox {
 	--mwp-toast-error-bg: #7f1d1d;
 	--mwp-toast-error-border: rgb(127 29 29 / 0.44);
 	--mwp-toast-error-text: #fecaca;
+	--mwp-toast-warning-bg: #78350f;
+	--mwp-toast-warning-border: rgb(120 53 15 / 0.5);
+	--mwp-toast-warning-text: #fde68a;
+	--mwp-toast-info-bg: #1e3a8a;
+	--mwp-toast-info-border: rgb(30 58 138 / 0.52);
+	--mwp-toast-info-text: #bfdbfe;
 }

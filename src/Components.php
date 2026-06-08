@@ -573,7 +573,7 @@ class Components {
 		<div <?php echo Attrs::render( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<?php foreach ( $args['items'] as $item ) : ?>
 				<?php $item = is_array( $item ) ? $item : array(); ?>
-				<div class="mwp-switch-grid__item">
+				<div class="mwp-switch-grid__item" role="button" tabindex="0">
 					<span class="mwp-switch-grid__text">
 						<strong><?php echo esc_html( $item['title'] ?? '' ); ?></strong>
 						<?php if ( ! empty( $item['description'] ) ) : ?>
@@ -1073,6 +1073,7 @@ class Components {
 		$args = wp_parse_args(
 			$args,
 			array(
+				'title'   => '',
 				'src'     => '',
 				'alt'     => '',
 				'caption' => '',
@@ -1082,7 +1083,7 @@ class Components {
 
 		$classes = trim( 'mwp-lightbox-trigger ' . $args['class'] );
 		?>
-		<button class="<?php echo esc_attr( $classes ); ?>" type="button" data-mwp-lightbox-trigger data-mwp-lightbox-src="<?php echo esc_url( $args['src'] ); ?>" data-mwp-lightbox-alt="<?php echo esc_attr( $args['alt'] ); ?>" data-mwp-lightbox-caption="<?php echo esc_attr( $args['caption'] ); ?>">
+		<button class="<?php echo esc_attr( $classes ); ?>" type="button" data-mwp-lightbox-trigger data-mwp-lightbox-title="<?php echo esc_attr( $args['title'] ); ?>" data-mwp-lightbox-src="<?php echo esc_url( $args['src'] ); ?>" data-mwp-lightbox-alt="<?php echo esc_attr( $args['alt'] ); ?>" data-mwp-lightbox-caption="<?php echo esc_attr( $args['caption'] ); ?>">
 			<img src="<?php echo esc_url( $args['src'] ); ?>" alt="<?php echo esc_attr( $args['alt'] ); ?>">
 		</button>
 		<?php

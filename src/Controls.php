@@ -67,8 +67,9 @@ class Controls {
 		$input_attrs['name']     = '' !== $args['name'] ? $args['name'] : null;
 		$input_attrs['type']     = 'checkbox';
 		$input_attrs['value']    = null !== $args['value'] ? $args['value'] : null;
-		$input_attrs['checked']  = wp_validate_boolean( $args['checked'] );
-		$input_attrs['disabled'] = wp_validate_boolean( $args['disabled'] );
+		$disabled                = wp_validate_boolean( $args['disabled'] );
+		$input_attrs['checked']  = $disabled ? false : wp_validate_boolean( $args['checked'] );
+		$input_attrs['disabled'] = $disabled;
 		?>
 		<label <?php echo Attrs::render( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<input <?php echo Attrs::render( $input_attrs ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
@@ -219,6 +220,7 @@ class Controls {
 				'class'           => '',
 				'disabled'        => false,
 				'loading'         => false,
+				'full_width'      => false,
 				'attributes'      => array(),
 				'data_attributes' => array(),
 			)
@@ -229,7 +231,7 @@ class Controls {
 		$size                           = in_array( $args['size'], array( 'standard', 'compact' ), true ) ? $args['size'] : 'standard';
 		$icon_position                  = in_array( $args['icon_position'], array( 'before', 'after' ), true ) ? $args['icon_position'] : 'before';
 		$icon                           = Components::iconMarkup( (string) $args['icon'] );
-		$classes                        = trim( 'mwp-button is-' . $variant . ' ' . ( '' !== $icon ? 'has-icon is-icon-' . $icon_position . ' ' : '' ) . ( 'compact' === $size ? 'is-compact ' : '' ) . ( $args['loading'] ? 'is-loading ' : '' ) . $args['class'] );
+		$classes                        = trim( 'mwp-button is-' . $variant . ' ' . ( '' !== $icon ? 'has-icon is-icon-' . $icon_position . ' ' : '' ) . ( 'compact' === $size ? 'is-compact ' : '' ) . ( wp_validate_boolean( $args['full_width'] ) ? 'is-full-width ' : '' ) . ( $args['loading'] ? 'is-loading ' : '' ) . $args['class'] );
 		$attributes                     = Attrs::merge( is_array( $args['attributes'] ) ? $args['attributes'] : array(), $classes, is_array( $args['data_attributes'] ) ? $args['data_attributes'] : array() );
 		$attributes['type']             = $type;
 		$attributes['disabled']         = wp_validate_boolean( $args['disabled'] ) || wp_validate_boolean( $args['loading'] );

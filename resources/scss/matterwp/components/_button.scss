@@ -32,6 +32,10 @@
 		cursor: wait;
 	}
 
+	&.is-full-width {
+		width: 100%;
+	}
+
 	.mwp-button__icon {
 		display: inline-flex;
 		align-items: center;
