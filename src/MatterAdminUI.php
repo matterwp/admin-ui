@@ -310,6 +310,26 @@ class MatterAdminUI {
 	}
 
 	/**
+	 * Render a segmented tab control.
+	 *
+	 * @param array $args Tabs arguments.
+	 * @return void
+	 */
+	public static function tabs( array $args ): void {
+		Tabs::render( $args );
+	}
+
+	/**
+	 * Render a unit input control.
+	 *
+	 * @param array $args Unit input arguments.
+	 * @return void
+	 */
+	public static function unitInput( array $args ): void {
+		Controls::unitInput( $args );
+	}
+
+	/**
 	 * Render a key/value list.
 	 *
 	 * @param array $args Key/value list arguments.

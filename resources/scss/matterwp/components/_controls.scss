@@ -1,10 +1,15 @@
 @use "./../variables" as *;
 
 @mixin field-control($padding: 0 12px, $height: 38px) {
+	appearance: none;
+	-webkit-appearance: none;
 	box-sizing: border-box;
+	display: block;
 	width: 100%;
+	max-width: 100%;
 	height: $height;
 	min-height: $height;
+	margin: 0;
 	padding: $padding;
 	border: 1px solid var(--mwp-color-border);
 	border-radius: var(--mwp-ui-radius, 8px);
@@ -12,11 +17,65 @@
 	color: var(--mwp-color-text);
 	font-size: 13px;
 	font-weight: 500;
-	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+	line-height: normal;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+	outline: 0;
+	transition: background-color 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease, color 0.16s ease;
+}
+
+@mixin field-control-states {
+	&,
+	&:hover,
+	&:active {
+		border-color: var(--mwp-color-border);
+		background-color: var(--mwp-color-bg);
+		color: var(--mwp-color-text);
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+		outline: 0;
+	}
+
+	&:focus,
+	&:focus-visible,
+	&:focus-within {
+		border-color: transparent !important;
+		background-color: var(--mwp-color-bg);
+		color: var(--mwp-color-text);
+		box-shadow: none !important;
+		outline: 2px solid var(--mwp-focus-ring-color, var(--mwp-ui-primary, #{$color-primary})) !important;
+		outline-offset: 0 !important;
+	}
+
+	&:disabled,
+	&[disabled],
+	&[aria-disabled="true"] {
+		border-color: var(--mwp-color-border);
+		background-color: var(--mwp-color-bg);
+		color: var(--mwp-color-text);
+		-webkit-text-fill-color: var(--mwp-color-text);
+		box-shadow: none !important;
+		outline: 0;
+		cursor: not-allowed;
+		opacity: 0.6;
+	}
+
+	&[readonly],
+	&:read-only:not(select) {
+		border-color: var(--mwp-color-border);
+		background-color: var(--mwp-color-bg-alt);
+		color: var(--mwp-color-text-secondary);
+		box-shadow: none !important;
+	}
+
+	&:invalid,
+	&[aria-invalid="true"] {
+		border-color: var(--mwp-color-danger-border);
+		box-shadow: none !important;
+	}
 }
 
 @mixin select-arrow($stroke: "%2371717b") {
-	appearance: none;
+	appearance: none !important;
+	-webkit-appearance: none !important;
 	padding-right: 38px;
 	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='#{$stroke}' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
 	background-position: right 12px center;
@@ -25,6 +84,7 @@
 }
 
 .mwp-option-input {
+	input:not([type]),
 	input[type="text"],
 	input[type="number"],
 	input[type="url"],
@@ -38,24 +98,13 @@
 	input[type="month"],
 	input[type="week"] {
 		@include field-control;
+		@include field-control-states;
 	}
 
 	select {
 		@include field-control;
 		@include select-arrow;
-
-		&:hover {
-			color: var(--mwp-color-text);
-			background-color: var(--mwp-color-bg);
-			border: 1px solid var(--mwp-color-border);
-		}
-
-		&:disabled {
-			border-color: var(--mwp-color-border);
-			background-color: var(--mwp-color-bg);
-			color: var(--mwp-color-text);
-			-webkit-text-fill-color: var(--mwp-color-text);
-		}
+		@include field-control-states;
 
 		&.multiple {
 			height: auto;
@@ -66,31 +115,8 @@
 
 	textarea {
 		@include field-control(8px 12px, auto);
-	}
-
-	input[type="text"]:focus,
-	input[type="number"]:focus,
-	input[type="url"]:focus,
-	input[type="email"]:focus,
-	input[type="password"]:focus,
-	input[type="search"]:focus,
-	input[type="tel"]:focus,
-	input[type="date"]:focus,
-	input[type="time"]:focus,
-	input[type="datetime-local"]:focus,
-	input[type="month"]:focus,
-	input[type="week"]:focus,
-	select:focus,
-	textarea:focus {
-		border-color: transparent;
-		outline: 2px solid var(--mwp-focus-ring-color, var(--mwp-ui-primary, #{$color-primary}));
-	}
-
-	input:disabled,
-	select:disabled,
-	textarea:disabled {
-		cursor: not-allowed;
-		opacity: 0.6;
+		@include field-control-states;
+		resize: vertical;
 	}
 
 	.switch,
@@ -144,6 +170,7 @@
 }
 
 .mwp-field {
+	input:not([type]),
 	input[type="text"],
 	input[type="number"],
 	input[type="url"],
@@ -157,19 +184,13 @@
 	input[type="month"],
 	input[type="week"] {
 		@include field-control;
+		@include field-control-states;
 	}
 
 	select {
 		@include field-control;
 		@include select-arrow;
-
-		&:disabled {
-			border-color: var(--mwp-color-border);
-			background-color: var(--mwp-color-bg);
-			color: var(--mwp-color-text);
-			-webkit-text-fill-color: var(--mwp-color-text);
-			opacity: 0.6;
-		}
+		@include field-control-states;
 
 		&.multiple {
 			height: auto;
@@ -180,6 +201,8 @@
 
 	textarea {
 		@include field-control(8px 12px, auto);
+		@include field-control-states;
+		resize: vertical;
 	}
 }
 
@@ -218,6 +241,7 @@
 	&:focus-within {
 		border-color: transparent;
 		outline: 2px solid var(--mwp-focus-ring-color, var(--mwp-ui-primary, #{$color-primary}));
+		box-shadow: none !important;
 	}
 
 	&.is-disabled {
@@ -227,6 +251,8 @@
 
 	input[type="number"],
 	input[type="text"] {
+		appearance: none;
+		-webkit-appearance: none;
 		width: 100%;
 		min-width: 0;
 		height: 100%;
@@ -235,14 +261,17 @@
 		border: 0;
 		border-radius: 0;
 		background: transparent;
-		box-shadow: none;
+		box-shadow: none !important;
+		outline: 0;
 		font-size: 16px;
 		font-weight: 500;
 
+		&:hover,
+		&:active,
 		&:focus {
 			border-color: transparent;
 			outline: 0;
-			box-shadow: none;
+			box-shadow: none !important;
 		}
 	}
 

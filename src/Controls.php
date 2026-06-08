@@ -126,6 +126,54 @@ class Controls {
 	}
 
 	/**
+	 * Render a numeric input with a static unit badge.
+	 *
+	 * @param array $args Unit input arguments.
+	 * @return void
+	 */
+	public static function unitInput( array $args ): void {
+		$args = wp_parse_args(
+			$args,
+			array(
+				'name'        => '',
+				'value'       => '',
+				'unit_name'   => '',
+				'unit'        => 'px',
+				'placeholder' => '',
+				'min'         => null,
+				'max'         => null,
+				'step'        => '1',
+				'disabled'    => false,
+				'class'       => '',
+				'input_attrs' => array(),
+			)
+		);
+
+		$unit_name = '' !== (string) $args['unit_name'] ? (string) $args['unit_name'] : ( '' !== (string) $args['name'] ? (string) $args['name'] . '_unit' : '' );
+		$disabled  = wp_validate_boolean( $args['disabled'] );
+		$classes   = trim( 'mwp-unit-input ' . ( $disabled ? 'is-disabled ' : '' ) . (string) $args['class'] );
+
+		$input_attrs                 = is_array( $args['input_attrs'] ) ? $args['input_attrs'] : array();
+		$input_attrs['type']         = $input_attrs['type'] ?? 'number';
+		$input_attrs['name']         = $input_attrs['name'] ?? ( '' !== (string) $args['name'] ? (string) $args['name'] : null );
+		$input_attrs['value']        = $input_attrs['value'] ?? (string) $args['value'];
+		$input_attrs['placeholder']  = $input_attrs['placeholder'] ?? ( '' !== (string) $args['placeholder'] ? (string) $args['placeholder'] : null );
+		$input_attrs['min']          = $input_attrs['min'] ?? ( null !== $args['min'] ? (string) $args['min'] : null );
+		$input_attrs['max']          = $input_attrs['max'] ?? ( null !== $args['max'] ? (string) $args['max'] : null );
+		$input_attrs['step']         = $input_attrs['step'] ?? (string) $args['step'];
+		$input_attrs['disabled']     = $input_attrs['disabled'] ?? ( $disabled ? true : null );
+		?>
+		<div class="<?php echo esc_attr( $classes ); ?>">
+			<input <?php echo Attrs::render( $input_attrs ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+			<span class="mwp-unit-input__badge" aria-label="<?php echo esc_attr( sprintf( __( 'Unit: %s', 'matterwp-admin-ui' ), (string) $args['unit'] ) ); ?>"><?php echo esc_html( (string) $args['unit'] ); ?></span>
+			<?php if ( '' !== $unit_name ) : ?>
+				<input type="hidden" name="<?php echo esc_attr( $unit_name ); ?>" value="<?php echo esc_attr( (string) $args['unit'] ); ?>" <?php disabled( $disabled ); ?>>
+			<?php endif; ?>
+		</div>
+		<?php
+	}
+
+	/**
 	 * Render a textarea control.
 	 *
 	 * @param array $args Textarea arguments.
