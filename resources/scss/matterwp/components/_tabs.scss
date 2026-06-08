@@ -42,24 +42,24 @@
 	}
 
 	&.is-size-compact {
-		border-radius: 12px;
+		border-radius: 8px;
 
 		.mwp-tabs__item {
 			min-height: 30px;
 			padding: 5px 10px;
-			border-radius: 8px;
+			border-radius: 6px;
 			font-size: 12px;
 		}
 	}
 
 	&.is-size-large {
-		border-radius: 17px;
+		border-radius: 12px;
 
 		.mwp-tabs__item {
 			min-height: 38px;
 			padding: 8px 16px;
-			border-radius: 12px;
-			font-size: 16px;
+			border-radius: 10px;
+			font-size: 15px;
 		}
 	}
 }

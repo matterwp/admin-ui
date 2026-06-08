@@ -263,7 +263,6 @@
 		background: transparent;
 		box-shadow: none !important;
 		outline: 0;
-		font-size: 16px;
 		font-weight: 500;
 
 		&:hover,
@@ -277,17 +276,17 @@
 
 	.mwp-unit-input__badge {
 		flex: 0 0 auto;
-		min-width: 58px;
-		height: 30px;
+		min-width: 18px;
+		height: 24px;
 		margin-right: 4px;
-		padding: 0 10px;
+		padding: 0 6px;
 		border: 1px solid var(--mwp-color-border);
 		border-radius: calc(var(--mwp-ui-radius, 8px) - 2px);
 		background: var(--mwp-color-bg-hover);
 		color: var(--mwp-color-text-secondary);
 		box-shadow: none;
-		font-size: 14px;
-		font-weight: 700;
+		font-size: 12px;
+		font-weight: 600;
 		line-height: 1;
 		display: inline-flex;
 		align-items: center;
