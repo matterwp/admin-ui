@@ -6,6 +6,14 @@
 	border: 1px solid var(--mwp-color-border);
 	border-radius: var(--mwp-ui-radius, 8px);
 	background-color: var(--mwp-color-bg);
+
+	&.is-loading {
+		cursor: progress;
+
+		.mwp-table {
+			opacity: 0.65;
+		}
+	}
 }
 
 .mwp-table {

@@ -79,9 +79,16 @@ class Components {
 			array(
 				'columns'             => array(),
 				'rows'                => array(),
+				'pagination_mode'     => 'client',
 				'per_page'            => 10,
 				'current_page'        => 1,
 				'total'               => 0,
+				'total_pages'         => 0,
+				'endpoint'            => '',
+				'action'              => '',
+				'nonce'               => '',
+				'filters'             => array(),
+				'search'              => '',
 				'class'               => '',
 				'table_class'         => '',
 				'pagination_class'    => '',
@@ -106,8 +113,11 @@ class Components {
 		);
 
 		$columns            = self::normalizeColumns( $args['columns'] );
+		$pagination_mode    = 'server' === $args['pagination_mode'] ? 'server' : 'client';
+		$per_page           = max( 1, absint( $args['per_page'] ) );
 		$total              = $args['total'] ? absint( $args['total'] ) : count( $args['rows'] );
-		$total_pages        = max( 1, (int) ceil( $total / max( 1, absint( $args['per_page'] ) ) ) );
+		$total_pages        = $args['total_pages'] ? absint( $args['total_pages'] ) : (int) ceil( $total / $per_page );
+		$total_pages        = max( 1, $total_pages );
 		$current_page       = self::resolveInitialPage( $args['initial_page'], $args['current_page'], $total_pages );
 		$classes            = trim( 'mwp-table-wrap ' . $args['class'] );
 		$table_classes      = trim( 'mwp-table ' . Attrs::slotClass( $args, 'table', 'table_class' ) );
@@ -124,19 +134,27 @@ class Components {
 
 		$data_attributes                        = is_array( $args['data_attributes'] ) ? $args['data_attributes'] : array();
 		$data_attributes['mwp-paginated-table'] = '';
-		$data_attributes['per-page']            = max( 1, absint( $args['per_page'] ) );
-			$data_attributes['current-page']        = $current_page;
-			$data_attributes['initial-page']        = '' !== $args['initial_page'] ? $args['initial_page'] : $current_page;
-			$data_attributes['empty-selector']      = '' !== $args['empty_selector'] ? $args['empty_selector'] : null;
-			$data_attributes['empty-target']        = '' !== $args['empty_target'] ? $args['empty_target'] : null;
-			$attributes                             = Attrs::merge( is_array( $args['attributes'] ) ? $args['attributes'] : array(), $classes, $data_attributes );
-			$table_attributes                       = Attrs::merge( is_array( $args['table_attributes'] ) ? $args['table_attributes'] : array(), $table_classes );
-			$page_label                             = sprintf(
-				/* translators: 1: current page number, 2: total pages. */
-				__( 'Page %1$d of %2$d', 'matterwp-admin-ui' ),
-				$current_page,
-				$total_pages
-			);
+		$data_attributes['pagination-mode']     = $pagination_mode;
+		$data_attributes['per-page']            = $per_page;
+		$data_attributes['current-page']        = $current_page;
+		$data_attributes['total']               = $total;
+		$data_attributes['total-pages']         = $total_pages;
+		$data_attributes['initial-page']        = '' !== $args['initial_page'] ? $args['initial_page'] : $current_page;
+		$data_attributes['empty-selector']      = '' !== $args['empty_selector'] ? $args['empty_selector'] : null;
+		$data_attributes['empty-target']        = '' !== $args['empty_target'] ? $args['empty_target'] : null;
+		$data_attributes['mwp-endpoint']        = '' !== $args['endpoint'] ? $args['endpoint'] : null;
+		$data_attributes['mwp-action']          = '' !== $args['action'] ? $args['action'] : null;
+		$data_attributes['mwp-nonce']           = '' !== $args['nonce'] ? $args['nonce'] : null;
+		$data_attributes['mwp-search']          = '' !== $args['search'] ? $args['search'] : null;
+		$data_attributes['mwp-filters']         = ! empty( $args['filters'] ) ? wp_json_encode( $args['filters'] ) : null;
+		$attributes                             = Attrs::merge( is_array( $args['attributes'] ) ? $args['attributes'] : array(), $classes, $data_attributes );
+		$table_attributes                       = Attrs::merge( is_array( $args['table_attributes'] ) ? $args['table_attributes'] : array(), $table_classes );
+		$page_label                             = sprintf(
+			/* translators: 1: current page number, 2: total pages. */
+			__( 'Page %1$d of %2$d', 'matterwp-admin-ui' ),
+			$current_page,
+			$total_pages
+		);
 		?>
 		<div <?php echo Attrs::render( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<table <?php echo Attrs::render( $table_attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
@@ -148,17 +166,15 @@ class Components {
 					</tr>
 				</thead>
 				<tbody>
-					<?php foreach ( $args['rows'] as $row ) : ?>
-						<?php echo self::renderRow( is_array( $row ) ? $row : array(), $columns, $args ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-					<?php endforeach; ?>
+					<?php echo self::dataTableRows( $args ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</tbody>
-				</table>
-				<?php if ( wp_validate_boolean( $args['pagination'] ) ) : ?>
-					<div class="<?php echo esc_attr( $pagination_classes ); ?>" data-mwp-pagination>
-						<button class="<?php echo esc_attr( $prev_classes ); ?>" type="button" data-mwp-page="prev" <?php disabled( $current_page <= 1 ); ?>><?php esc_html_e( 'Previous', 'matterwp-admin-ui' ); ?></button>
-						<span class="<?php echo esc_attr( $info_classes ); ?>"><?php echo esc_html( $page_label ); ?></span>
-						<button class="<?php echo esc_attr( $next_classes ); ?>" type="button" data-mwp-page="next" <?php disabled( $current_page >= $total_pages ); ?>><?php esc_html_e( 'Next', 'matterwp-admin-ui' ); ?></button>
-					</div>
+			</table>
+			<?php if ( wp_validate_boolean( $args['pagination'] ) ) : ?>
+				<div class="<?php echo esc_attr( $pagination_classes ); ?>" data-mwp-pagination>
+					<button class="<?php echo esc_attr( $prev_classes ); ?>" type="button" data-mwp-page="prev" <?php disabled( $current_page <= 1 ); ?>><?php esc_html_e( 'Previous', 'matterwp-admin-ui' ); ?></button>
+					<span class="<?php echo esc_attr( $info_classes ); ?>"><?php echo esc_html( $page_label ); ?></span>
+					<button class="<?php echo esc_attr( $next_classes ); ?>" type="button" data-mwp-page="next" <?php disabled( $current_page >= $total_pages ); ?>><?php esc_html_e( 'Next', 'matterwp-admin-ui' ); ?></button>
+				</div>
 			<?php endif; ?>
 			<?php if ( is_array( $args['empty_state'] ) ) : ?>
 				<?php
@@ -191,6 +207,48 @@ class Components {
 		}
 
 		self::table( $args );
+	}
+
+	/**
+	 * Render typed data table rows as HTML.
+	 *
+	 * @param array $args Data table row arguments.
+	 * @return string
+	 */
+	public static function dataTableRows( array $args ): string {
+		$args = wp_parse_args(
+			$args,
+			array(
+				'columns'             => array(),
+				'rows'                => array(),
+				'row_id'              => '',
+				'row_key'             => '',
+				'row_class'           => '',
+				'row_attributes'      => array(),
+				'row_data_attributes' => array(),
+			)
+		);
+
+		$columns = self::normalizeColumns( $args['columns'] );
+		$output  = '';
+
+		foreach ( $args['rows'] as $row ) {
+			$output .= self::renderRow( is_array( $row ) ? $row : array(), $columns, $args );
+		}
+
+		return $output;
+	}
+
+	/**
+	 * Render one typed data table row as HTML.
+	 *
+	 * @param array<string, mixed>             $row Row data.
+	 * @param array<int, array<string, mixed>> $columns Columns.
+	 * @param array<string, mixed>             $args Table args.
+	 * @return string
+	 */
+	public static function dataTableRow( array $row, array $columns, array $args = array() ): string {
+		return self::renderRow( $row, self::normalizeColumns( $columns ), $args );
 	}
 
 	/**

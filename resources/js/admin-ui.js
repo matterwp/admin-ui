@@ -1,6 +1,6 @@
 import { initClipboard } from './modules/clipboard';
 import { initMediaControls } from './modules/media-controls';
-import { initLogViewer, initPaginatedTables } from './modules/log-viewer';
+import { initLogViewer, initPaginatedTables, loadTablePage, replaceTableRows } from './modules/log-viewer';
 
 function hasElement(selector) {
 	return Boolean(document.querySelector(selector));
@@ -123,8 +123,18 @@ function initTableApi() {
 
 				table.dispatchEvent(new CustomEvent('mwp:table-refresh', {
 					bubbles: true,
-					detail: { page: options.page }
+					detail: {
+						page: options.page,
+						rowsHtml: options.rowsHtml,
+						meta: options.meta
+					}
 				}));
+			},
+			loadPage(tableOrRoot, page, options = {}) {
+				return loadTablePage(tableOrRoot, page, options);
+			},
+			replaceRows(tableOrRoot, rowsHtml, meta = {}) {
+				return replaceTableRows(tableOrRoot, rowsHtml, meta);
 			}
 		}
 	});

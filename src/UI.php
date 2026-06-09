@@ -292,6 +292,28 @@ class UI {
 	}
 
 	/**
+	 * Return typed data table rows as HTML.
+	 *
+	 * @param array $args Data table row arguments.
+	 * @return string
+	 */
+	public static function dataTableRows( array $args ): string {
+		return Components::dataTableRows( $args );
+	}
+
+	/**
+	 * Return one typed data table row as HTML.
+	 *
+	 * @param array<string, mixed>             $row Row data.
+	 * @param array<int, array<string, mixed>> $columns Columns.
+	 * @param array<string, mixed>             $args Table args.
+	 * @return string
+	 */
+	public static function dataTableRow( array $row, array $columns, array $args = array() ): string {
+		return Components::dataTableRow( $row, $columns, $args );
+	}
+
+	/**
 	 * Render compact action buttons for table action columns.
 	 *
 	 * @param array $args Action group arguments.
