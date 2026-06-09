@@ -292,6 +292,16 @@ class UI {
 	}
 
 	/**
+	 * Render DataTable filter buttons and search input.
+	 *
+	 * @param array $args Filter toolbar arguments.
+	 * @return void
+	 */
+	public static function tableFilters( array $args ): void {
+		Components::tableFilters( $args );
+	}
+
+	/**
 	 * Return typed data table rows as HTML.
 	 *
 	 * @param array $args Data table row arguments.
@@ -311,6 +321,16 @@ class UI {
 	 */
 	public static function dataTableRow( array $row, array $columns, array $args = array() ): string {
 		return Components::dataTableRow( $row, $columns, $args );
+	}
+
+	/**
+	 * Build the supported DataTable AJAX response payload.
+	 *
+	 * @param array $args Response arguments.
+	 * @return array<string, mixed>
+	 */
+	public static function dataTableResponse( array $args ): array {
+		return Components::dataTableResponse( $args );
 	}
 
 	/**

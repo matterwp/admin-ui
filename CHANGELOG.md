@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.1
+
+- Added server-side DataTable pagination with shared `dataTableRows()`, `dataTableRow()`, and `dataTableResponse()` helpers.
+- Added package-rendered table filters/search with automatic client/server request wiring.
+- Added sortable columns, server `orderby`/`order` parameters, and client row sorting.
+- Added loading, error, and empty-state handling for asynchronous tables.
+- Added `MatterAdminUI.table.loadPage()` and `replaceRows()` plus table lifecycle/filter/sort events.
+- Rebuilt bundled `dist/` CSS and JavaScript assets.
+
 ## 1.1.0
 
 - Moved PHP classes to the release-line namespace `MTWP\ADMIN\V110`.

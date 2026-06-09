@@ -69,6 +69,105 @@ function getEmptyTarget(table) {
 	return null;
 }
 
+function getTableComponent(table) {
+	return table.closest('[data-mwp-data-table]') || table.parentElement;
+}
+
+function getTableControls(table) {
+	return getTableComponent(table)?.querySelector('[data-mwp-table-filters]') || null;
+}
+
+function getControlParams(table) {
+	const controls = getTableControls(table);
+	const params = {};
+
+	controls?.querySelectorAll('[data-mwp-table-filter].active').forEach(button => {
+		const name = button.dataset.mwpTableFilter;
+		const value = button.dataset.mwpFilterValue;
+
+		if (name && value && button.dataset.mwpFilterEmpty !== 'true') {
+			params[name] = value;
+		}
+	});
+
+	const search = controls?.querySelector('[data-mwp-table-search]');
+	if (search?.value.trim()) {
+		params.search = search.value.trim();
+	}
+
+	return params;
+}
+
+function updateSortHeaders(table) {
+	const orderby = table.dataset.mwpOrderby || '';
+	const order = table.dataset.mwpOrder === 'desc' ? 'desc' : 'asc';
+
+	table.querySelectorAll('[data-mwp-table-sort]').forEach(button => {
+		const th = button.closest('th');
+		const active = button.dataset.mwpTableSort === orderby;
+		button.dataset.mwpSortOrder = active ? order : 'asc';
+		button.classList.toggle('is-active', active);
+
+		if (th) {
+			if (active) {
+				th.setAttribute('aria-sort', order === 'desc' ? 'descending' : 'ascending');
+			} else {
+				th.removeAttribute('aria-sort');
+			}
+		}
+	});
+}
+
+function rowMatchesControls(row, params) {
+	return Object.entries(params).every(([name, value]) => {
+		if (name === 'search') {
+			return row.textContent.toLowerCase().includes(String(value).toLowerCase());
+		}
+
+		return String(row.getAttribute(`data-mwp-filter-${name}`) || '') === String(value);
+	});
+}
+
+function sortClientRows(rows, table) {
+	const orderby = table.dataset.mwpOrderby || '';
+	const direction = table.dataset.mwpOrder === 'desc' ? -1 : 1;
+
+	if (!orderby) {
+		return rows;
+	}
+
+	return [...rows].sort((left, right) => {
+		const leftValue = left.querySelector(`[data-mwp-column="${orderby}"]`)?.dataset.mwpSortValue || '';
+		const rightValue = right.querySelector(`[data-mwp-column="${orderby}"]`)?.dataset.mwpSortValue || '';
+		const leftNumber = Number(leftValue);
+		const rightNumber = Number(rightValue);
+
+		if (leftValue !== '' && rightValue !== '' && Number.isFinite(leftNumber) && Number.isFinite(rightNumber)) {
+			return (leftNumber - rightNumber) * direction;
+		}
+
+		return leftValue.localeCompare(rightValue, undefined, { numeric: true, sensitivity: 'base' }) * direction;
+	});
+}
+
+function getTableStatus(table, type) {
+	return table.querySelector(`[data-mwp-table-${type}]`);
+}
+
+function setTableError(table, error = null) {
+	const status = getTableStatus(table, 'error');
+	if (!status) {
+		return;
+	}
+
+	const message = status.querySelector('span');
+	if (message && error?.message) {
+		message.textContent = error.message;
+	}
+
+	status.hidden = !error;
+}
+
 function updatePaginationState(table, meta = {}) {
 	const pagination = table.querySelector('[data-mwp-pagination], .mwp-pagination');
 	const prevBtn = table.querySelector('[data-mwp-page="prev"]');
@@ -103,8 +202,10 @@ function updatePaginationState(table, meta = {}) {
 
 function setTableLoading(table, loading) {
 	const buttons = table.querySelectorAll('[data-mwp-page]');
+	const status = getTableStatus(table, 'loading');
 	table.classList.toggle('is-loading', loading);
 	table.dataset.mwpLoading = loading ? 'true' : 'false';
+	if (status) status.hidden = !loading;
 	buttons.forEach(button => {
 		button.disabled = loading ? true : button.disabled;
 		button.classList.toggle('is-loading', loading);
@@ -123,9 +224,19 @@ function replaceTableRows(tableOrRoot, rowsHtml = '', meta = {}) {
 
 	const emptyTarget = getEmptyTarget(table);
 	if (emptyTarget && meta.empty_html) {
-		emptyTarget.outerHTML = String(meta.empty_html);
+		const template = document.createElement('template');
+		template.innerHTML = String(meta.empty_html).trim();
+		const replacement = template.content.firstElementChild;
+
+		if (replacement) {
+			if (emptyTarget.id && !replacement.id) {
+				replacement.id = emptyTarget.id;
+			}
+			emptyTarget.replaceWith(replacement);
+		}
 	}
 
+	setTableError(table);
 	updatePaginationState(table, meta);
 	return tbody;
 }
@@ -159,9 +270,10 @@ async function loadTablePage(tableOrRoot, page, options = {}) {
 	const formData = new FormData();
 	const params = {
 		...parseJsonData(table.dataset.mwpFilters, {}),
+		...getControlParams(table),
 		...(options.params || {})
 	};
-	const search = options.search ?? table.dataset.mwpSearch;
+	const search = options.search ?? params.search ?? table.dataset.mwpSearch;
 
 	formData.set('action', action);
 	formData.set('page', String(targetPage));
@@ -173,12 +285,19 @@ async function loadTablePage(tableOrRoot, page, options = {}) {
 
 	if (search) {
 		formData.set('search', search);
+		delete params.search;
+	}
+
+	if (table.dataset.mwpOrderby) {
+		formData.set('orderby', table.dataset.mwpOrderby);
+		formData.set('order', table.dataset.mwpOrder === 'desc' ? 'desc' : 'asc');
 	}
 
 	Object.entries(params).forEach(([key, value]) => {
 		formData.set(key, value);
 	});
 
+	setTableError(table);
 	setTableLoading(table, true);
 	let didReplaceRows = false;
 
@@ -208,6 +327,7 @@ async function loadTablePage(tableOrRoot, page, options = {}) {
 			bubbles: true,
 			detail: { error }
 		}));
+		setTableError(table, error);
 		throw error;
 	} finally {
 		setTableLoading(table, false);
@@ -217,6 +337,82 @@ async function loadTablePage(tableOrRoot, page, options = {}) {
 	}
 }
 
+function initTableControls(table) {
+	const controls = getTableControls(table);
+	let searchTimer = null;
+
+	if (controls && controls.dataset.mwpTableFiltersReady !== 'true') {
+		controls.dataset.mwpTableFiltersReady = 'true';
+
+		controls.addEventListener('click', event => {
+			const button = event.target.closest('[data-mwp-table-filter]');
+			if (!button) {
+				return;
+			}
+
+			const name = button.dataset.mwpTableFilter;
+			controls.querySelectorAll(`[data-mwp-table-filter="${name}"]`).forEach(filterButton => {
+				const active = filterButton === button;
+				filterButton.classList.toggle('active', active);
+				filterButton.setAttribute('aria-pressed', active ? 'true' : 'false');
+			});
+
+			table.dataset.mwpFilters = JSON.stringify(getControlParams(table));
+			table.dispatchEvent(new CustomEvent('mwp:table-filter', {
+				bubbles: true,
+				detail: { filters: getControlParams(table) }
+			}));
+			table.dispatchEvent(new CustomEvent('mwp:table-refresh', {
+				bubbles: true,
+				detail: { page: 1 }
+			}));
+		});
+
+		controls.querySelector('[data-mwp-table-search]')?.addEventListener('input', () => {
+			window.clearTimeout(searchTimer);
+			searchTimer = window.setTimeout(() => {
+				const params = getControlParams(table);
+				table.dataset.mwpFilters = JSON.stringify(params);
+				table.dataset.mwpSearch = params.search || '';
+				table.dispatchEvent(new CustomEvent('mwp:table-filter', {
+					bubbles: true,
+					detail: { filters: params }
+				}));
+				table.dispatchEvent(new CustomEvent('mwp:table-refresh', {
+					bubbles: true,
+					detail: { page: 1 }
+				}));
+			}, 250);
+		});
+	}
+
+	table.addEventListener('click', event => {
+		const button = event.target.closest('[data-mwp-table-sort]');
+		if (!button) {
+			return;
+		}
+
+		const sortKey = button.dataset.mwpTableSort;
+		const currentKey = table.dataset.mwpOrderby || '';
+		const currentOrder = table.dataset.mwpOrder === 'desc' ? 'desc' : 'asc';
+		const nextOrder = currentKey === sortKey && currentOrder === 'asc' ? 'desc' : 'asc';
+
+		table.dataset.mwpOrderby = sortKey;
+		table.dataset.mwpOrder = nextOrder;
+		updateSortHeaders(table);
+		table.dispatchEvent(new CustomEvent('mwp:table-sort', {
+			bubbles: true,
+			detail: { orderby: sortKey, order: nextOrder }
+		}));
+		table.dispatchEvent(new CustomEvent('mwp:table-refresh', {
+			bubbles: true,
+			detail: { page: 1 }
+		}));
+	});
+
+	updateSortHeaders(table);
+}
+
 function initPaginatedTables() {
 	document.querySelectorAll('[data-mwp-paginated-table]').forEach(table => {
 		if (table.dataset.mwpPaginationReady === 'true') {
@@ -224,6 +420,7 @@ function initPaginatedTables() {
 		}
 
 		table.dataset.mwpPaginationReady = 'true';
+		initTableControls(table);
 		const tbody = table.querySelector('tbody');
 		const pagination = table.querySelector('[data-mwp-pagination], .mwp-pagination');
 		const perPage = parseInt(table.dataset.perPage, 10) || 10;
@@ -275,20 +472,35 @@ function initPaginatedTables() {
 		}
 
 		function getTotalPages(rows) {
+			if (!pagination) {
+				return 1;
+			}
+
 			return Math.max(1, Math.ceil(rows.length / perPage));
 		}
 
 		function showPage(page = currentPage) {
 			const rows = getRows();
-			const totalPages = getTotalPages(rows);
+			const params = getControlParams(table);
+			const filteredRows = sortClientRows(rows.filter(row => rowMatchesControls(row, params)), table);
+			const totalPages = getTotalPages(filteredRows);
 			const targetPage = page === 'last' ? totalPages : page;
 			currentPage = Math.max(1, Math.min(targetPage, totalPages));
-			const start = (currentPage - 1) * perPage;
-			const end = start + perPage;
+			const pageSize = pagination ? perPage : Math.max(1, filteredRows.length);
+			const start = (currentPage - 1) * pageSize;
+			const end = start + pageSize;
 			const emptyTarget = getEmptyTarget(table);
-			const hasRows = rows.length > 0;
+			const hasRows = filteredRows.length > 0;
+			const filteredSet = new Set(filteredRows);
+			const desiredOrder = [...filteredRows, ...rows.filter(row => !filteredSet.has(row))];
+			const orderChanged = desiredOrder.some((row, index) => rows[index] !== row);
 
-			rows.forEach((row, index) => {
+			if (orderChanged) {
+				desiredOrder.forEach(row => tbody?.appendChild(row));
+			}
+
+			rows.forEach(row => row.classList.add('is-hidden'));
+			filteredRows.forEach((row, index) => {
 				row.classList.toggle('is-hidden', index < start || index >= end);
 			});
 
@@ -305,7 +517,7 @@ function initPaginatedTables() {
 			table.dataset.currentPage = String(currentPage);
 			table.dispatchEvent(new CustomEvent('mwp:table-page', {
 				bubbles: true,
-				detail: { currentPage, totalPages, perPage, total: rows.length }
+				detail: { currentPage, totalPages, perPage: pageSize, total: filteredRows.length }
 			}));
 		}
 

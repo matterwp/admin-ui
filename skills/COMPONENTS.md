@@ -1,6 +1,6 @@
 # MatterWP Admin UI Component Reference
 
-Version: `1.1.0`
+Version: `1.1.1`
 
 This document maps the public `MTWP\ADMIN\V110\UI` API, accepted options, style variants, JavaScript hooks, and current boilerplate usage.
 
@@ -665,6 +665,17 @@ Includes all `table()` args plus:
 | `per_page` | `10` | Client-side page size. |
 | `current_page` | `1` | Current page. |
 | `total` | `0` | Defaults to row count. |
+| `total_pages` | `0` | Derived from total and page size when omitted. |
+| `pagination_mode` | `client` | `client` hides existing rows; `server` requests each page. |
+| `filter_mode` | pagination mode | `client` filters existing rows; `server` sends filter/search params. |
+| `endpoint` | empty | Server request URL. Falls back to `window.ajaxurl`. |
+| `action` | empty | WordPress Ajax action. |
+| `nonce` | empty | Sent as `security`. |
+| `filter_params` | `array()` | Initial raw server request params. |
+| `orderby` | empty | Initial sortable column key. |
+| `order` | `asc` | `asc` or `desc`. |
+| `loading_label` | `Loading rows...` | Package loading-state text. |
+| `error_label` | `Unable to load table rows.` | Default package error-state text. |
 | `pagination_class` | empty | Pagination wrapper class. |
 | `prev_class`, `next_class`, `info_class` | empty | Pagination slot classes. |
 | `empty_selector` | empty | External empty-state selector. |
@@ -677,7 +688,22 @@ Current use: through `dataTable()`.
 
 ### `dataTable( array $args )`
 
-Wrapper. If `pagination` is omitted or truthy, calls `paginatedTable()`. If `pagination => false`, calls `table()`.
+Wrapper. If `pagination` is omitted or truthy, calls `paginatedTable()`. If `pagination => false`, calls `table()`. Structured `filters` and `search` render `tableFilters()` automatically. Legacy scalar `filters` maps remain supported as request params; new code should use `filter_params`.
+
+Server example pattern: set `pagination_mode => 'server'`, `filter_mode => 'server'`, `endpoint`, `action`, and `nonce`; add structured `filters` and `search`; then read those request params in the AJAX handler and return `UI::dataTableResponse()`. Boilerplate's Blocks tab shows this with a type filter and search input. If another active plugin loads an older `MTWP\ADMIN\V110` package first, that older PHP class wins; update that plugin's admin-ui copy or add compatibility markup for the demo controls.
+
+Filter definitions:
+
+| Key | Default | Notes |
+| --- | --- | --- |
+| `name` | filter array key | Request parameter and row data key. |
+| `label` | generated from name | Accessible button-group label. |
+| `options` | required | Value/label map rendered as filter buttons. |
+| `value` | first option | Initially active option. |
+| `row_key` | filter name | Row key used to generate `data-mwp-filter-{name}` for client filtering. |
+| `all_value` | `all` | Option value omitted from requests and treated as no filter. |
+
+`search` accepts `true`, an initial string value, or an array with `name`, `label`, `placeholder`, and `value`.
 
 Column definitions:
 
@@ -699,10 +725,33 @@ Column definitions:
 | `format` | empty | `relative_site_url` supported. |
 | `strip_site_url` | false | Strip current site URL from display text. |
 | `display_callback` | none | Callable receives `( $value, $args )`. |
+| `sortable` | `false` | Render package sort control and enable client/server sorting. |
+| `sort_key` | column key | Row value and server `orderby` key. |
+| `sort_callback` | none | Callable receives `( $value, $row, $column )` for client sort metadata. |
 
 Row definitions may include `row_class`, `row_attributes`, and `row_data_attributes`.
 
-Current use: Data tab uses typed title, code, external link, badge, date, and actions columns, `row_key`, `per_page`, empty state, max width, `overflow => anywhere`, `strip_site_url`, and `format => relative_site_url`.
+Current use: Data tab uses a client table. Blocks tab uses a server table with package-rendered filters/search, sortable columns, loading/error states, and `UI::dataTableResponse()`.
+
+### `tableFilters( array $args )`
+
+Renders reusable `.mwp-table-filters` controls. Usually called automatically by `dataTable()`.
+
+| Option | Default | Notes |
+| --- | --- | --- |
+| `filters` | `array()` | Structured filter definitions documented above. |
+| `search` | `false` | Boolean, string, or search configuration array. |
+| `class` | empty | Root class. |
+| `attributes` | `array()` | Root attrs. |
+| `data_attributes` | `array()` | Root data attrs. |
+
+### `dataTableRows( array $args )`, `dataTableRow( array $row, array $columns, array $args = array() )`
+
+Return package-rendered `<tr>` markup using the same typed column and row contracts as `dataTable()`.
+
+### `dataTableResponse( array $args )`
+
+Returns the supported server response payload: `rows_html`, `page`, `per_page`, `total`, `total_pages`, and optional `empty_html`. Accepts the row-rendering args plus pagination metadata and optional `empty_state`.
 
 ### `actionGroup( array $args )`
 
@@ -976,6 +1025,9 @@ App navigation classes:
 | --- | --- |
 | `.mwp-table-wrap`, `.mwp-table` | Table wrappers. |
 | `.mwp-pagination`, `.mwp-pagination__info` | Client pagination. |
+| `.mwp-data-table`, `.mwp-table-filters`, `.mwp-table-filters__toolbar`, `.mwp-table-filters__groups`, `.mwp-table-filters__buttons`, `.mwp-table-filters__search` | Filter/search composition. |
+| `.mwp-table-sort`, `.mwp-table-sort__indicator` | Sortable header control. |
+| `.mwp-table-status.is-loading`, `.mwp-table-status.is-error` | Async table states. |
 | `.mwp-table-actions` | Table action group. |
 | `.mwp-table-action.is-normal`, `.mwp-table-action.is-danger` | Table action variants. |
 | `.mwp-table-cell.is-type-text`, `.is-type-title`, `.is-type-link`, `.is-type-external_link`, `.is-type-code`, `.is-type-image`, `.is-type-date`, `.is-type-actions`, `.is-type-badge` | Type cell classes. |
@@ -1027,6 +1079,8 @@ App navigation classes:
 | `MatterAdminUI.table.updateRow(table, rowId, rowHtmlOrData)` | Replaces a table row. |
 | `MatterAdminUI.table.removeRow(table, rowId)` | Removes a table row. |
 | `MatterAdminUI.table.refresh(table, options)` | Refreshes pagination and empty states. |
+| `MatterAdminUI.table.loadPage(table, page, options)` | Loads a server page. Options support `endpoint`, `action`, `method`, `perPage`, `params`, and `search`. |
+| `MatterAdminUI.table.replaceRows(table, rowsHtml, meta)` | Replaces `<tbody>` and updates page/total/empty metadata. |
 
 ### Data Attributes
 
@@ -1042,7 +1096,10 @@ App navigation classes:
 | `data-mwp-accordion`, `data-mwp-accordion-trigger`, `data-mwp-accordion-content` | Accordion behavior. |
 | `data-mwp-confirm` | Browser confirm behavior for actions. |
 | `data-mwp-ajax-form`, `data-mwp-action`, `data-mwp-submit`, `data-mwp-loading` | Ajax forms. |
-| `data-mwp-paginated-table`, `data-mwp-pagination`, `data-mwp-page`, `data-mwp-row-id`, `data-row-key` | Table pagination and row mutation. |
+| `data-mwp-data-table`, `data-mwp-table-filters`, `data-mwp-table-filter`, `data-mwp-filter-value`, `data-mwp-filter-empty`, `data-mwp-table-search` | Table filter/search composition. |
+| `data-mwp-paginated-table`, `data-pagination-mode`, `data-filter-mode`, `data-mwp-pagination`, `data-mwp-page`, `data-mwp-row-id`, `data-row-key` | Table pagination and row mutation. |
+| `data-mwp-table-sort`, `data-mwp-sort-order`, `data-mwp-column`, `data-mwp-sort-value` | Sort controls and client sort metadata. |
+| `data-mwp-table-loading`, `data-mwp-table-error` | Async status targets. |
 | `data-media-field`, `data-media-target`, `data-media-input`, `data-media-preview`, `data-media-remove` | Media field behavior. |
 | `data-log-viewer`, `data-log-filter`, `data-log-search`, `data-log-level` | Log viewer behavior. |
 
@@ -1055,6 +1112,12 @@ App navigation classes:
 | `mwp:ajax-error` | Ajax error. |
 | `mwp:ajax-complete` | Ajax complete. |
 | `mwp:table-refresh` | Manual table refresh. |
+| `mwp:table-before-load` | Before a server request; cancelable. |
+| `mwp:table-load-success` | Server request succeeded. |
+| `mwp:table-load-error` | Server request failed. |
+| `mwp:table-page` | Page metadata changed. |
+| `mwp:table-filter` | Filter/search values changed. |
+| `mwp:table-sort` | Sort key/order changed. |
 | `mwp:tabs-change` | Component tab change; `detail.id` contains active tab id. |
 | `mwp:media-selected` | Media item selected. |
 | `mwp:media-removed` | Media item removed. |
@@ -1106,6 +1169,14 @@ App navigation classes:
 | `choiceGrid()` | Available through `schemaOption()` or direct calls, but not directly used in current boilerplate templates. |
 
 ## Changelog
+
+### `1.1.1`
+
+- Added server-side DataTable pagination with shared PHP row rendering and supported Ajax response payloads.
+- Added first-class `tableFilters()`, DataTable `filters`/`search`, and automatic client/server filter wiring.
+- Added sortable columns with client sorting and server `orderby`/`order` parameters.
+- Added package loading, error, and empty-state handling for async tables.
+- Added `MatterAdminUI.table.loadPage()` and `replaceRows()` plus table lifecycle/filter/sort events.
 
 ### `1.1.0`
 

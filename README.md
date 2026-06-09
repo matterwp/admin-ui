@@ -243,7 +243,7 @@ Buttons support named/custom SVG icons with `icon` and `icon_position => 'before
 UI::app(
 	array(
 		'brand'         => __( 'Plugin Name', 'plugin' ),
-		'version'       => '1.1.0',
+		'version'       => '1.1.1',
 		'changelog_url' => 'https://example.com/changelog',
 		'navigation'    => array(
 			'groups' => array(
@@ -280,9 +280,66 @@ Schema rows now understand richer metadata: `ui`, `component`, `option`, `contro
 
 Admin tables use `.mwp-table-wrap` and `.mwp-table`. Columns can be strings or typed arrays with `label`, `type`, and optional `callback`. Supported cell types include `badge`, `link`, `code`, `image`, `date`, and `actions`.
 
-`UI::paginatedTable()` provides static client-side pagination with previous/next buttons, a page label, default `per_page` of 10, mutation re-rendering, `empty_selector`/`empty_target`, `initial_page => 'first'|'last'|1`, and an `mwp:table-refresh` event for manual refreshes.
+`UI::paginatedTable()` supports `pagination_mode => 'client'|'server'`, previous/next buttons, a page label, default `per_page` of 10, empty states, loading/error states, and server metadata through `endpoint`, `action`, `nonce`, `current_page`, `total`, and `total_pages`.
 
-`UI::dataTable()` adds row-level and typed-column arguments for plugin-managed tables: `row_id`, `row_key`, `row_attributes`, `row_data_attributes`, `row_class`, `empty_state`, `pagination`, `table_class`, `wrap`, `min_width`, `max_width`, `overflow`, `vertical_align`, `strip_site_url`, `display_callback`, and `format => 'relative_site_url'`. Column types include `text`, `title`, `link`, `external_link`, `code`, `image`, `badge`, `date`, and `actions`.
+`UI::dataTable()` adds row-level and typed-column arguments for plugin-managed tables: `row_id`, `row_key`, `row_attributes`, `row_data_attributes`, `row_class`, `empty_state`, `pagination`, `table_class`, `wrap`, `min_width`, `max_width`, `overflow`, `vertical_align`, `strip_site_url`, `display_callback`, and `format => 'relative_site_url'`. Column types include `text`, `title`, `link`, `external_link`, `code`, `image`, `badge`, `date`, and `actions`. Columns support `sortable => true`, optional `sort_key`, and `sort_callback`.
+
+Filters and search are first-class. Structured `filters` render package-owned button groups, `search` renders the search field, and `filter_mode` defaults to the pagination mode. Client tables filter and sort existing rows; server tables send filter, search, `orderby`, and `order` parameters to the configured endpoint.
+
+```php
+UI::dataTable(
+	array(
+		'pagination_mode' => 'server',
+		'filter_mode'     => 'server',
+		'endpoint'        => admin_url( 'admin-ajax.php' ),
+		'action'          => 'plugin_load_rows',
+		'nonce'           => wp_create_nonce( 'plugin_admin' ),
+		'columns'         => array(
+			'title' => array(
+				'label'    => __( 'Title', 'plugin' ),
+				'type'     => 'title',
+				'sortable' => true,
+			),
+		),
+		'filters'         => array(
+			'type' => array(
+				'label'   => __( 'Filter by type', 'plugin' ),
+				'row_key' => 'type_key',
+				'options' => array(
+					'all'  => __( 'All', 'plugin' ),
+					'post' => __( 'Posts', 'plugin' ),
+					'page' => __( 'Pages', 'plugin' ),
+				),
+			),
+		),
+		'search'          => array(
+			'label'       => __( 'Search entries', 'plugin' ),
+			'placeholder' => __( 'Search...', 'plugin' ),
+		),
+		'rows'            => $rows,
+	)
+);
+```
+
+The Boilerplate Blocks tab includes a server DataTable example with a type filter and search input. The package owns the filter/search markup and sends the active values to the AJAX handler; plugin code only reads request params and returns `UI::dataTableResponse()`. During local development, if another active plugin loads an older `MTWP\ADMIN\V110` package first, update that plugin's admin-ui copy or add a compatibility render path for the demo controls.
+
+AJAX handlers should use the same column schema and return `UI::dataTableResponse()`:
+
+```php
+wp_send_json_success(
+	UI::dataTableResponse(
+		array(
+			'columns'     => $columns,
+			'rows'        => $page_rows,
+			'page'        => $page,
+			'per_page'    => $per_page,
+			'total'       => $total,
+			'total_pages' => $total_pages,
+			'empty_state' => array( 'title' => __( 'No entries found', 'plugin' ) ),
+		)
+	)
+);
+```
 
 The JavaScript table API is available as:
 
@@ -291,6 +348,8 @@ MatterAdminUI.table.appendRow(table, rowHtml, { page: 'last' });
 MatterAdminUI.table.updateRow(table, rowId, rowHtml);
 MatterAdminUI.table.removeRow(table, rowId);
 MatterAdminUI.table.refresh(table, { page: 'first' });
+MatterAdminUI.table.loadPage(table, 2, { params: { type: 'post' } });
+MatterAdminUI.table.replaceRows(table, rowsHtml, meta);
 ```
 
 For compact table action columns, use `UI::actionGroup()` with named or custom SVG icons:

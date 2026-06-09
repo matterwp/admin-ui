@@ -28,6 +28,14 @@ class Components {
 			array(
 				'columns'             => array(),
 				'rows'                => array(),
+				'filters'             => array(),
+				'filter_mode'         => 'client',
+				'search'              => false,
+				'orderby'             => '',
+				'order'               => 'asc',
+				'empty_selector'      => '',
+				'empty_target'        => '',
+				'empty_state'         => null,
 				'class'               => '',
 				'table_class'         => '',
 				'classes'             => array(),
@@ -42,10 +50,36 @@ class Components {
 			)
 		);
 
-		$columns          = self::normalizeColumns( $args['columns'] );
-		$classes          = trim( 'mwp-table-wrap ' . $args['class'] );
-		$table_classes    = trim( 'mwp-table ' . Attrs::slotClass( $args, 'table', 'table_class' ) );
-		$attributes       = Attrs::merge( is_array( $args['attributes'] ) ? $args['attributes'] : array(), $classes, is_array( $args['data_attributes'] ) ? $args['data_attributes'] : array() );
+		$columns            = self::normalizeColumns( $args['columns'] );
+		$filter_definitions = self::normalizeTableFilters( is_array( $args['filters'] ) ? $args['filters'] : array() );
+		$has_search         = ! empty( self::normalizeTableSearch( $args['search'] ) );
+		$has_sorting        = ! empty( array_filter( $columns, static fn( array $column ): bool => ! empty( $column['sortable'] ) ) );
+		$has_behavior       = ! empty( $filter_definitions ) || $has_search || $has_sorting;
+		$classes            = trim( 'mwp-table-wrap ' . $args['class'] );
+		$table_classes      = trim( 'mwp-table ' . Attrs::slotClass( $args, 'table', 'table_class' ) );
+		$empty_id           = '';
+		$data_attributes    = is_array( $args['data_attributes'] ) ? $args['data_attributes'] : array();
+
+		if ( is_array( $args['empty_state'] ) && '' === $args['empty_target'] && '' === $args['empty_selector'] ) {
+			$empty_id             = 'mwp-empty-' . wp_unique_id();
+			$args['empty_target'] = $empty_id;
+		}
+
+		if ( $has_behavior ) {
+			$data_attributes['mwp-paginated-table'] = '';
+			$data_attributes['pagination-mode']     = 'client';
+			$data_attributes['filter-mode']         = 'client';
+			$data_attributes['per-page']            = max( 1, count( $args['rows'] ) );
+			$data_attributes['current-page']        = 1;
+			$data_attributes['total']               = count( $args['rows'] );
+			$data_attributes['total-pages']         = 1;
+			$data_attributes['empty-selector']      = '' !== $args['empty_selector'] ? $args['empty_selector'] : null;
+			$data_attributes['empty-target']        = '' !== $args['empty_target'] ? $args['empty_target'] : null;
+			$data_attributes['mwp-orderby']         = '' !== $args['orderby'] ? sanitize_key( (string) $args['orderby'] ) : null;
+			$data_attributes['mwp-order']           = 'desc' === strtolower( (string) $args['order'] ) ? 'desc' : 'asc';
+		}
+
+		$attributes       = Attrs::merge( is_array( $args['attributes'] ) ? $args['attributes'] : array(), $classes, $data_attributes );
 		$table_attributes = Attrs::merge( is_array( $args['table_attributes'] ) ? $args['table_attributes'] : array(), $table_classes );
 		?>
 		<div <?php echo Attrs::render( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
@@ -53,16 +87,26 @@ class Components {
 				<thead>
 					<tr>
 						<?php foreach ( $columns as $column ) : ?>
-							<th scope="col"><?php echo esc_html( $column['label'] ); ?></th>
+							<?php echo self::renderHeaderCell( $column, $args ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 						<?php endforeach; ?>
 					</tr>
 				</thead>
 				<tbody>
-					<?php foreach ( $args['rows'] as $row ) : ?>
-						<?php echo self::renderRow( is_array( $row ) ? $row : array(), $columns, $args ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-					<?php endforeach; ?>
+					<?php echo self::dataTableRows( $args ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</tbody>
 			</table>
+			<?php if ( is_array( $args['empty_state'] ) ) : ?>
+				<?php
+				$empty_state = $args['empty_state'];
+				if ( '' !== $empty_id ) {
+					$empty_state['attributes']       = is_array( $empty_state['attributes'] ?? null ) ? $empty_state['attributes'] : array();
+					$empty_state['attributes']['id'] = $empty_id;
+				}
+				$empty_state['attributes']           = is_array( $empty_state['attributes'] ?? null ) ? $empty_state['attributes'] : array();
+				$empty_state['attributes']['hidden'] = count( $args['rows'] ) > 0;
+				self::emptyState( $empty_state );
+				?>
+			<?php endif; ?>
 		</div>
 		<?php
 	}
@@ -88,7 +132,13 @@ class Components {
 				'action'              => '',
 				'nonce'               => '',
 				'filters'             => array(),
+				'filter_params'       => array(),
+				'filter_mode'         => '',
 				'search'              => '',
+				'orderby'             => '',
+				'order'               => 'asc',
+				'loading_label'       => __( 'Loading rows...', 'matterwp-admin-ui' ),
+				'error_label'         => __( 'Unable to load table rows.', 'matterwp-admin-ui' ),
 				'class'               => '',
 				'table_class'         => '',
 				'pagination_class'    => '',
@@ -114,6 +164,10 @@ class Components {
 
 		$columns            = self::normalizeColumns( $args['columns'] );
 		$pagination_mode    = 'server' === $args['pagination_mode'] ? 'server' : 'client';
+		$filter_mode        = in_array( $args['filter_mode'], array( 'client', 'server' ), true ) ? $args['filter_mode'] : $pagination_mode;
+		$filter_definitions = self::normalizeTableFilters( is_array( $args['filters'] ) ? $args['filters'] : array() );
+		$legacy_filters     = empty( $filter_definitions ) && is_array( $args['filters'] ) ? $args['filters'] : array();
+		$filter_params      = array_merge( $legacy_filters, is_array( $args['filter_params'] ) ? $args['filter_params'] : array() );
 		$per_page           = max( 1, absint( $args['per_page'] ) );
 		$total              = $args['total'] ? absint( $args['total'] ) : count( $args['rows'] );
 		$total_pages        = $args['total_pages'] ? absint( $args['total_pages'] ) : (int) ceil( $total / $per_page );
@@ -135,6 +189,7 @@ class Components {
 		$data_attributes                        = is_array( $args['data_attributes'] ) ? $args['data_attributes'] : array();
 		$data_attributes['mwp-paginated-table'] = '';
 		$data_attributes['pagination-mode']     = $pagination_mode;
+		$data_attributes['filter-mode']         = $filter_mode;
 		$data_attributes['per-page']            = $per_page;
 		$data_attributes['current-page']        = $current_page;
 		$data_attributes['total']               = $total;
@@ -145,8 +200,10 @@ class Components {
 		$data_attributes['mwp-endpoint']        = '' !== $args['endpoint'] ? $args['endpoint'] : null;
 		$data_attributes['mwp-action']          = '' !== $args['action'] ? $args['action'] : null;
 		$data_attributes['mwp-nonce']           = '' !== $args['nonce'] ? $args['nonce'] : null;
-		$data_attributes['mwp-search']          = '' !== $args['search'] ? $args['search'] : null;
-		$data_attributes['mwp-filters']         = ! empty( $args['filters'] ) ? wp_json_encode( $args['filters'] ) : null;
+		$data_attributes['mwp-search']          = is_scalar( $args['search'] ) && ! is_bool( $args['search'] ) ? (string) $args['search'] : null;
+		$data_attributes['mwp-filters']         = ! empty( $filter_params ) ? wp_json_encode( $filter_params ) : null;
+		$data_attributes['mwp-orderby']         = '' !== $args['orderby'] ? sanitize_key( (string) $args['orderby'] ) : null;
+		$data_attributes['mwp-order']           = 'desc' === strtolower( (string) $args['order'] ) ? 'desc' : 'asc';
 		$attributes                             = Attrs::merge( is_array( $args['attributes'] ) ? $args['attributes'] : array(), $classes, $data_attributes );
 		$table_attributes                       = Attrs::merge( is_array( $args['table_attributes'] ) ? $args['table_attributes'] : array(), $table_classes );
 		$page_label                             = sprintf(
@@ -161,7 +218,7 @@ class Components {
 				<thead>
 					<tr>
 						<?php foreach ( $columns as $column ) : ?>
-							<th scope="col"><?php echo esc_html( $column['label'] ); ?></th>
+							<?php echo self::renderHeaderCell( $column, $args ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 						<?php endforeach; ?>
 					</tr>
 				</thead>
@@ -188,6 +245,13 @@ class Components {
 				self::emptyState( $empty_state );
 				?>
 			<?php endif; ?>
+			<div class="mwp-table-status is-loading" data-mwp-table-loading role="status" aria-live="polite" hidden>
+				<span class="mwp-table-status__spinner" aria-hidden="true"></span>
+				<span><?php echo esc_html( (string) $args['loading_label'] ); ?></span>
+			</div>
+			<div class="mwp-table-status is-error" data-mwp-table-error role="alert" hidden>
+				<span><?php echo esc_html( (string) $args['error_label'] ); ?></span>
+			</div>
 		</div>
 		<?php
 	}
@@ -200,6 +264,32 @@ class Components {
 	 */
 	public static function dataTable( array $args ): void {
 		$has_pagination = array_key_exists( 'pagination', $args ) ? wp_validate_boolean( $args['pagination'] ) : true;
+		$filters        = self::normalizeTableFilters( is_array( $args['filters'] ?? null ) ? $args['filters'] : array() );
+		$has_search     = ! empty( self::normalizeTableSearch( $args['search'] ?? false ) );
+
+		if ( ! empty( $filters ) || $has_search ) {
+			$filter_mode = in_array( $args['filter_mode'] ?? '', array( 'client', 'server' ), true ) ? $args['filter_mode'] : ( ( $args['pagination_mode'] ?? 'client' ) === 'server' ? 'server' : 'client' );
+			?>
+			<div class="mwp-data-table" data-mwp-data-table data-mwp-filter-mode="<?php echo esc_attr( $filter_mode ); ?>">
+				<?php
+				self::tableFilters(
+					array(
+						'filters' => $filters,
+						'search'  => $args['search'] ?? false,
+					)
+				);
+				?>
+				<?php
+				if ( $has_pagination ) {
+					self::paginatedTable( $args );
+				} else {
+					self::table( $args );
+				}
+				?>
+			</div>
+			<?php
+			return;
+		}
 
 		if ( $has_pagination ) {
 			self::paginatedTable( $args );
@@ -207,6 +297,56 @@ class Components {
 		}
 
 		self::table( $args );
+	}
+
+	/**
+	 * Render DataTable filter buttons and search input.
+	 *
+	 * @param array $args Filter toolbar arguments.
+	 * @return void
+	 */
+	public static function tableFilters( array $args ): void {
+		$args = wp_parse_args(
+			$args,
+			array(
+				'filters'         => array(),
+				'search'          => false,
+				'class'           => '',
+				'attributes'      => array(),
+				'data_attributes' => array(),
+			)
+		);
+
+		$filters    = self::normalizeTableFilters( is_array( $args['filters'] ) ? $args['filters'] : array() );
+		$search     = self::normalizeTableSearch( $args['search'] );
+		$attributes = Attrs::merge( is_array( $args['attributes'] ) ? $args['attributes'] : array(), trim( 'mwp-table-filters ' . $args['class'] ), is_array( $args['data_attributes'] ) ? $args['data_attributes'] : array() );
+
+		if ( empty( $filters ) && empty( $search ) ) {
+			return;
+		}
+		?>
+		<div <?php echo Attrs::render( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> data-mwp-table-filters>
+			<div class="mwp-table-filters__toolbar">
+				<?php if ( ! empty( $filters ) ) : ?>
+					<div class="mwp-table-filters__groups">
+						<?php foreach ( $filters as $filter ) : ?>
+							<div class="mwp-table-filters__buttons" role="group" aria-label="<?php echo esc_attr( $filter['label'] ); ?>">
+								<?php foreach ( $filter['options'] as $value => $label ) : ?>
+									<button class="<?php echo esc_attr( (string) $value === $filter['value'] ? 'active' : '' ); ?>" type="button" data-mwp-table-filter="<?php echo esc_attr( $filter['name'] ); ?>" data-mwp-filter-value="<?php echo esc_attr( (string) $value ); ?>" data-mwp-filter-empty="<?php echo (string) $value === (string) $filter['all_value'] ? 'true' : 'false'; ?>" aria-pressed="<?php echo (string) $value === $filter['value'] ? 'true' : 'false'; ?>"><?php echo esc_html( (string) $label ); ?></button>
+								<?php endforeach; ?>
+							</div>
+						<?php endforeach; ?>
+					</div>
+				<?php endif; ?>
+				<?php if ( ! empty( $search ) ) : ?>
+					<label class="mwp-table-filters__search">
+						<span class="screen-reader-text"><?php echo esc_html( $search['label'] ); ?></span>
+						<input type="search" name="<?php echo esc_attr( $search['name'] ); ?>" value="<?php echo esc_attr( $search['value'] ); ?>" placeholder="<?php echo esc_attr( $search['placeholder'] ); ?>" data-mwp-table-search>
+					</label>
+				<?php endif; ?>
+			</div>
+		</div>
+		<?php
 	}
 
 	/**
@@ -249,6 +389,47 @@ class Components {
 	 */
 	public static function dataTableRow( array $row, array $columns, array $args = array() ): string {
 		return self::renderRow( $row, self::normalizeColumns( $columns ), $args );
+	}
+
+	/**
+	 * Build the supported DataTable AJAX response payload.
+	 *
+	 * @param array $args Response arguments.
+	 * @return array<string, mixed>
+	 */
+	public static function dataTableResponse( array $args ): array {
+		$args = wp_parse_args(
+			$args,
+			array(
+				'columns'     => array(),
+				'rows'        => array(),
+				'page'        => 1,
+				'per_page'    => 10,
+				'total'       => 0,
+				'total_pages' => 0,
+				'empty_state' => null,
+			)
+		);
+
+		$per_page   = max( 1, absint( $args['per_page'] ) );
+		$total      = $args['total'] ? absint( $args['total'] ) : count( $args['rows'] );
+		$total_page = $args['total_pages'] ? absint( $args['total_pages'] ) : (int) ceil( $total / $per_page );
+		$page       = max( 1, min( max( 1, $total_page ), absint( $args['page'] ) ) );
+		$response   = array(
+			'rows_html'   => self::dataTableRows( $args ),
+			'page'        => $page,
+			'per_page'    => $per_page,
+			'total'       => $total,
+			'total_pages' => max( 1, $total_page ),
+		);
+
+		if ( empty( $args['rows'] ) && is_array( $args['empty_state'] ) ) {
+			ob_start();
+			self::emptyState( $args['empty_state'] );
+			$response['empty_html'] = (string) ob_get_clean();
+		}
+
+		return $response;
 	}
 
 	/**
@@ -333,12 +514,12 @@ class Components {
 		} else {
 			$attributes['type']     = in_array( $args['type'], array( 'button', 'submit', 'reset' ), true ) ? $args['type'] : 'button';
 			$attributes['disabled'] = (bool) $args['disabled'];
-			}
-			?>
-			<<?php echo tag_escape( $tag ); ?> <?php echo Attrs::render( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-				<?php echo self::ksesCell( $icon ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-			</<?php echo tag_escape( $tag ); ?>>
-			<?php
+		}
+		?>
+		<<?php echo tag_escape( $tag ); ?> <?php echo Attrs::render( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+			<?php echo self::ksesCell( $icon ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		</<?php echo tag_escape( $tag ); ?>>
+		<?php
 	}
 
 	/**
@@ -715,6 +896,8 @@ class Components {
 						'type'     => 'text',
 						'wrap'     => false,
 						'overflow' => '',
+						'sortable' => false,
+						'sort_key' => $column_key,
 					)
 				);
 				continue;
@@ -726,10 +909,117 @@ class Components {
 				'type'     => 'text',
 				'wrap'     => false,
 				'overflow' => '',
+				'sortable' => false,
+				'sort_key' => (string) $key,
 			);
 		}
 
 		return $normalized;
+	}
+
+	/**
+	 * Normalize DataTable filter definitions.
+	 *
+	 * Scalar maps are retained as legacy request params and return no controls.
+	 *
+	 * @param array<mixed> $filters Raw filter definitions.
+	 * @return array<int, array<string, mixed>>
+	 */
+	private static function normalizeTableFilters( array $filters ): array {
+		$normalized = array();
+
+		foreach ( $filters as $key => $filter ) {
+			if ( ! is_array( $filter ) || ! is_array( $filter['options'] ?? null ) ) {
+				continue;
+			}
+
+			$name = sanitize_key( (string) ( $filter['name'] ?? ( is_string( $key ) ? $key : '' ) ) );
+			if ( '' === $name ) {
+				continue;
+			}
+
+			$options = array();
+			foreach ( $filter['options'] as $value => $label ) {
+				$options[ (string) $value ] = is_array( $label ) ? (string) ( $label['label'] ?? $value ) : (string) $label;
+			}
+
+			if ( empty( $options ) ) {
+				continue;
+			}
+
+			$value             = (string) ( $filter['value'] ?? array_key_first( $options ) );
+			$filter['name']    = $name;
+			$filter['options'] = $options;
+			$filter['value']   = $value;
+			$normalized[]      = wp_parse_args(
+				$filter,
+				array(
+					'name'      => $name,
+					'label'     => ucwords( str_replace( array( '-', '_' ), ' ', $name ) ),
+					'options'   => $options,
+					'value'     => $value,
+					'row_key'   => $name,
+					'all_value' => 'all',
+				)
+			);
+		}
+
+		return $normalized;
+	}
+
+	/**
+	 * Normalize DataTable search configuration.
+	 *
+	 * @param mixed $search Search argument.
+	 * @return array<string, string>
+	 */
+	private static function normalizeTableSearch( $search ): array {
+		if ( false === $search || null === $search || '' === $search ) {
+			return array();
+		}
+
+		$search = is_array( $search ) ? $search : array( 'value' => true === $search ? '' : (string) $search );
+
+		return array(
+			'name'        => sanitize_key( (string) ( $search['name'] ?? 'search' ) ),
+			'label'       => (string) ( $search['label'] ?? __( 'Search table', 'matterwp-admin-ui' ) ),
+			'placeholder' => (string) ( $search['placeholder'] ?? __( 'Search rows...', 'matterwp-admin-ui' ) ),
+			'value'       => (string) ( $search['value'] ?? '' ),
+		);
+	}
+
+	/**
+	 * Render a DataTable header cell.
+	 *
+	 * @param array<string, mixed> $column Column definition.
+	 * @param array<string, mixed> $args Table arguments.
+	 * @return string
+	 */
+	private static function renderHeaderCell( array $column, array $args ): string {
+		$sort_key = sanitize_key( (string) ( $column['sort_key'] ?? $column['key'] ) );
+		$orderby  = sanitize_key( (string) ( $args['orderby'] ?? '' ) );
+		$order    = 'desc' === strtolower( (string) ( $args['order'] ?? 'asc' ) ) ? 'desc' : 'asc';
+		$active   = ! empty( $column['sortable'] ) && $sort_key === $orderby;
+		$attrs    = array(
+			'scope'     => 'col',
+			'class'     => ! empty( $column['sortable'] ) ? 'is-sortable' : null,
+			'aria-sort' => $active ? ( 'desc' === $order ? 'descending' : 'ascending' ) : null,
+		);
+
+		ob_start();
+		?>
+		<th <?php echo Attrs::render( $attrs ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+			<?php if ( ! empty( $column['sortable'] ) ) : ?>
+				<button type="button" class="mwp-table-sort" data-mwp-table-sort="<?php echo esc_attr( $sort_key ); ?>" data-mwp-sort-order="<?php echo esc_attr( $active ? $order : 'asc' ); ?>">
+					<span><?php echo esc_html( $column['label'] ); ?></span>
+					<span class="mwp-table-sort__indicator" aria-hidden="true"></span>
+				</button>
+			<?php else : ?>
+				<?php echo esc_html( $column['label'] ); ?>
+			<?php endif; ?>
+		</th>
+		<?php
+		return (string) ob_get_clean();
 	}
 
 	/**
@@ -827,13 +1117,21 @@ class Components {
 			$row_data['mwp-row-id'] = $row[ $row_key ];
 		}
 
+		$filter_definitions = self::normalizeTableFilters( is_array( $args['filters'] ?? null ) ? $args['filters'] : array() );
+		foreach ( $filter_definitions as $filter ) {
+			$filter_row_key = (string) ( $filter['row_key'] ?? $filter['name'] );
+			if ( isset( $row[ $filter_row_key ] ) ) {
+				$row_data[ 'mwp-filter-' . sanitize_key( (string) $filter['name'] ) ] = $row[ $filter_row_key ];
+			}
+		}
+
 		$attributes = Attrs::merge( $row_attributes, $row_classes, $row_data );
 
 		ob_start();
 		?>
 		<tr <?php echo Attrs::render( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<?php foreach ( $columns as $column ) : ?>
-				<td <?php echo Attrs::render( self::cellAttributes( $column ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php echo self::renderCell( $row, $column ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></td>
+				<td <?php echo Attrs::render( self::cellAttributes( $column, $row ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php echo self::renderCell( $row, $column ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></td>
 			<?php endforeach; ?>
 		</tr>
 		<?php
@@ -844,11 +1142,18 @@ class Components {
 	 * Build table cell attributes from a column definition.
 	 *
 	 * @param array<string, mixed> $column Column definition.
+	 * @param array<string, mixed> $row Row data.
 	 * @return array<string, mixed>
 	 */
-	private static function cellAttributes( array $column ): array {
+	private static function cellAttributes( array $column, array $row = array() ): array {
 		$classes = array( 'mwp-table-cell', 'is-type-' . sanitize_html_class( (string) ( $column['type'] ?? 'text' ) ) );
 		$styles  = array();
+		$key     = (string) ( $column['key'] ?? '' );
+		$value   = $row[ (string) ( $column['sort_key'] ?? $key ) ] ?? ( $row[ $key ] ?? '' );
+
+		if ( is_callable( $column['sort_callback'] ?? null ) ) {
+			$value = call_user_func( $column['sort_callback'], $value, $row, $column );
+		}
 
 		if ( ! empty( $column['wrap'] ) ) {
 			$classes[] = 'is-wrap';
@@ -873,8 +1178,10 @@ class Components {
 		}
 
 		return array(
-			'class' => trim( implode( ' ', $classes ) . ' ' . ( $column['cell_class'] ?? '' ) ),
-			'style' => ! empty( $styles ) ? implode( '; ', $styles ) : null,
+			'class'               => trim( implode( ' ', $classes ) . ' ' . ( $column['cell_class'] ?? '' ) ),
+			'style'               => ! empty( $styles ) ? implode( '; ', $styles ) : null,
+			'data-mwp-column'     => '' !== $key ? $key : null,
+			'data-mwp-sort-value' => is_scalar( $value ) ? (string) $value : '',
 		);
 	}
 
