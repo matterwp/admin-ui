@@ -90,10 +90,23 @@ UI::section(
 		'section_variant' => 'minimal',
 	),
 	static function (): void {
-		// Render stat cards, grids, or other direct content.
+		UI::grid(
+			array(
+				'columns'   => 4,
+				'min_width' => '160px',
+				'density'   => 'comfortable',
+			),
+			static function (): void {
+				// Render stat cards or other direct content.
+			}
+		);
 	}
 );
 ```
+
+`UI::grid()` accepts `columns => 1..6|'auto'|'fit'|'fill'`, `min_width`, `gap`, `row_gap`, `column_gap`, `density => 'compact'|'comfortable'|'spacious'`, `align_items`, `justify_items`, `class`, `attributes`, and `data_attributes`.
+
+Use `UI::divider()` for section dividers. It renders a separator with CSS-variable-backed `height`, `margin`, and `padding`.
 
 Options support:
 
@@ -229,9 +242,10 @@ Buttons support named/custom SVG icons with `icon` and `icon_position => 'before
 ```php
 UI::app(
 	array(
-		'brand'      => __( 'Plugin Name', 'plugin' ),
-		'version'    => '1.1.0',
-		'navigation' => array(
+		'brand'         => __( 'Plugin Name', 'plugin' ),
+		'version'       => '1.1.0',
+		'changelog_url' => 'https://example.com/changelog',
+		'navigation'    => array(
 			'groups' => array(
 				array(
 					'label'     => __( 'Main', 'plugin' ),
@@ -258,7 +272,7 @@ UI::app(
 );
 ```
 
-`UI::navigation()` is also available as a standalone component. Each group supports an optional `label`, `alignment => 'top'|'bottom'`, and an `items` map. The shell includes package-owned tab persistence, active indicator measurement across groups, and a dark-mode toggle. Use `UI::fieldGrid()` or `form( array( 'fields' => ..., 'actions' => ... ) )` for generated form layouts.
+`UI::navigation()` is also available as a standalone component. Each group supports an optional `label`, `alignment => 'top'|'bottom'`, and an `items` map. The shell includes package-owned tab persistence, active indicator measurement across groups, a dark-mode toggle, and an optional linked version badge via `changelog_url`. Use `UI::fieldGrid()` or `form( array( 'fields' => ..., 'actions' => ... ) )` for generated form layouts.
 
 Schema rows now understand richer metadata: `ui`, `component`, `option`, `control`, `layout`, `control_width`, `media`, `choices_display`, `placeholder`, `help`, `dependencies`, `visible_if`, `disabled_if`, and `requires`. Components include `color_picker`, `media`, `switch`, `select`, `textarea`, and standard inputs.
 
@@ -311,7 +325,7 @@ Ajax forms can use `data-mwp-ajax-form`, `data-mwp-action`, `data-mwp-submit`, a
 
 Use `MatterAdminUI.notice(message, type, options)` for stacked, animated package-managed notices. Use `UI::resultCard()` for generated previews, exported files, uploaded assets, API keys, reports, or other Ajax results.
 
-Use `UI::emptyState()` for neutral dashed empty blocks. Pair with paginated tables via `empty_target` or `empty_selector`.
+Use `UI::emptyState()` for neutral dashed empty blocks. Pair with paginated tables via `empty_target` or `empty_selector`. Pass a callback as the second argument to render custom static content, buttons, or HTML inside the empty-state content area.
 
 ## Dynamic modals
 
