@@ -223,9 +223,23 @@ MatterAdminUI::app(
 	array(
 		'brand'      => __( 'Plugin Name', 'plugin' ),
 		'version'    => '1.0.4',
-		'tabs'       => array(
-			'general' => __( 'General', 'plugin' ),
-			'logs'    => __( 'Logs', 'plugin' ),
+		'navigation' => array(
+			'groups' => array(
+				array(
+					'label'     => __( 'Main', 'plugin' ),
+					'alignment' => 'top',
+					'items'     => array(
+						'general' => __( 'General', 'plugin' ),
+					),
+				),
+				array(
+					'label'     => __( 'Support', 'plugin' ),
+					'alignment' => 'bottom',
+					'items'     => array(
+						'logs' => __( 'Logs', 'plugin' ),
+					),
+				),
+			),
 		),
 		'form'       => true,
 	),
@@ -236,7 +250,7 @@ MatterAdminUI::app(
 );
 ```
 
-The shell includes package-owned tab persistence, active indicator measurement, and a dark-mode toggle. Use `MatterAdminUI::fieldGrid()` or `form( array( 'fields' => ..., 'actions' => ... ) )` for generated form layouts.
+`MatterAdminUI::navigation()` is also available as a standalone component. Each group supports an optional `label`, `alignment => 'top'|'bottom'`, and an `items` map. The shell includes package-owned tab persistence, active indicator measurement across groups, and a dark-mode toggle. Use `MatterAdminUI::fieldGrid()` or `form( array( 'fields' => ..., 'actions' => ... ) )` for generated form layouts.
 
 Schema rows now understand richer metadata: `ui`, `component`, `option`, `control`, `layout`, `control_width`, `media`, `choices_display`, `placeholder`, `help`, `dependencies`, `visible_if`, `disabled_if`, and `requires`. Components include `color_picker`, `media`, `switch`, `select`, `textarea`, and standard inputs.
 

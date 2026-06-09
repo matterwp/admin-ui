@@ -34,7 +34,7 @@ class Layout {
 	}
 
 	/**
-	 * Render an admin app shell with header, tabs, optional form, and content.
+	 * Render an admin app shell with header, navigation, optional form, and content.
 	 *
 	 * @param array    $args App shell arguments.
 	 * @param callable $content Content callback.
@@ -48,8 +48,7 @@ class Layout {
 				'brand'           => '',
 				'logo'            => '',
 				'version'         => '',
-				'tabs'            => array(),
-				'active_tab'      => '',
+				'navigation'      => array(),
 				'form'            => true,
 				'form_attributes' => array(),
 				'options_class'   => '',
@@ -70,6 +69,7 @@ class Layout {
 		$form_attributes          = is_array( $args['form_attributes'] ) ? $args['form_attributes'] : array();
 		$form_attributes['class'] = trim( ( $form_attributes['class'] ?? '' ) . ' mwp-options-group mwp-settings-form' );
 		$options_classes          = trim( 'mwp-options ' . $args['options_class'] );
+		$navigation               = is_array( $args['navigation'] ) ? $args['navigation'] : array();
 		?>
 		<div <?php echo Attrs::render( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<header>
@@ -95,7 +95,7 @@ class Layout {
 				</div>
 			</header>
 			<div class="<?php echo esc_attr( $options_classes ); ?>">
-				<?php self::nav( $args['tabs'], $args['active_tab'] ); ?>
+				<?php Navigation::render( $navigation ); ?>
 				<?php if ( wp_validate_boolean( $args['form'] ) ) : ?>
 					<form <?php echo Attrs::render( $form_attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 						<?php $content(); ?>
@@ -580,41 +580,6 @@ class Layout {
 	 */
 	private static function isFalseFlag( $value ): bool {
 		return false === $value || 0 === $value || '0' === $value || 'false' === strtolower( trim( (string) $value ) );
-	}
-
-	/**
-	 * Render app navigation tabs.
-	 *
-	 * @param mixed  $tabs Tabs.
-	 * @param string $active_tab Active tab ID.
-	 * @return void
-	 */
-	private static function nav( $tabs, string $active_tab ): void {
-		if ( empty( $tabs ) || ! is_array( $tabs ) ) {
-			return;
-		}
-
-		?>
-		<nav class="mwp-option-nav" aria-label="<?php esc_attr_e( 'Admin sections', 'matterwp-admin-ui' ); ?>">
-			<div class="mwp-nav-items">
-				<?php foreach ( $tabs as $key => $tab ) : ?>
-					<?php
-					$tab    = is_array( $tab ) ? $tab : array( 'label' => $tab );
-					$id     = (string) ( $tab['id'] ?? ( is_int( $key ) ? ( $tab['label'] ?? $key ) : $key ) );
-					$label  = (string) ( $tab['label'] ?? ucfirst( str_replace( '-', ' ', $id ) ) );
-					$url    = (string) ( $tab['url'] ?? '#' );
-					$active = '' !== $active_tab ? $id === $active_tab : ! empty( $tab['active'] );
-					?>
-					<a class="mwp-nav-item <?php echo $active ? 'active' : ''; ?>" href="<?php echo esc_url( $url ); ?>" data-ui-tab="<?php echo esc_attr( $id ); ?>">
-						<?php if ( ! empty( $tab['icon'] ) ) : ?>
-							<span class="icon" aria-hidden="true"><?php echo Components::iconMarkup( (string) $tab['icon'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
-						<?php endif; ?>
-						<span><?php echo esc_html( $label ); ?></span>
-					</a>
-				<?php endforeach; ?>
-			</div>
-		</nav>
-		<?php
 	}
 
 	/**

@@ -46,9 +46,25 @@ Renders one tab panel.
 
 Current use: every admin tab wraps content in `panel()`.
 
+### `navigation( array $args )`
+
+Renders standalone grouped admin navigation with the package active-indicator service.
+
+| Option | Default | Accepted values / notes |
+| --- | --- | --- |
+| `groups` | `array()` | Groups with optional `label`, `alignment => top\|bottom`, and required `items`. |
+| `items` | `array()` | Flat item map used when `groups` is empty. |
+| `active_item` | empty | Active item id. If empty, item-level `active` is used. |
+| `aria_label` | `Admin sections` | Accessible navigation label. |
+| `class` | empty | Extra root class. |
+| `attributes` | `array()` | Root attributes. |
+| `data_attributes` | `array()` | Root data attributes. |
+
+String item values become labels. Array items may contain `id`, `label`, `url`, `active`, and `icon`.
+
 ### `app( array $args, callable $content )`
 
-Renders the full admin app shell with header, tabs, optional form, theme toggle, and content.
+Renders the full admin app shell with header, navigation, optional form, theme toggle, and content.
 
 | Option | Default | Accepted values / notes |
 | --- | --- | --- |
@@ -56,8 +72,7 @@ Renders the full admin app shell with header, tabs, optional form, theme toggle,
 | `brand` | empty | Header brand text. |
 | `logo` | empty | Image URL or SVG markup. |
 | `version` | empty | Header version badge text. |
-| `tabs` | `array()` | Tab map. String values become labels. Array items may contain `id`, `label`, `url`, `active`, `icon`. |
-| `active_tab` | empty | Active tab id. If empty, tab item `active` is used. |
+| `navigation` | `array()` | Preferred `navigation()` args rendered inside app shell. |
 | `form` | `true` | Wrap content in a `<form>`. |
 | `form_attributes` | `array()` | Attributes for the generated form. |
 | `options_class` | empty | Extra class on `.mwp-options`. |
@@ -69,7 +84,7 @@ Renders the full admin app shell with header, tabs, optional form, theme toggle,
 | `attributes` | `array()` | Root attributes. |
 | `data_attributes` | `array()` | Root data attributes. |
 
-Current use: `templates/admin/settings.php` passes `brand`, `logo`, `version`, `tabs`, `options_class => mwp-options-full-width`, and `form_attributes` with `method` and `data-ui-form`.
+Current use: `templates/admin/settings.php` defines grouped navigation directly inside `app()`.
 
 ### `section( array $args, callable $content )`
 
@@ -851,6 +866,17 @@ Important CSS variables:
 - Status: `--mwp-color-success-*`, `--mwp-color-danger-*`, `--mwp-color-warning-*`, `--mwp-color-info-*`.
 - Media: `--mwp-media-preview-height`, `--mwp-media-preview-ratio`.
 
+App navigation classes:
+
+| Selector | Purpose |
+| --- | --- |
+| `.mwp-option-nav` | Navigation surface and animated active indicator. |
+| `.mwp-nav-sections` | Top-aligned group container. |
+| `.mwp-nav-bottom` | Bottom-aligned group container. |
+| `.mwp-nav-group` | One navigation group. |
+| `.mwp-nav-label` | Optional group label. |
+| `.mwp-nav-item` | Navigation item using `data-ui-tab`. |
+
 ### Section And Option Styles
 
 | Class | Source / use |
@@ -1003,6 +1029,7 @@ Important CSS variables:
 | Component | Current usage |
 | --- | --- |
 | `app()` | Main admin shell in `templates/admin/settings.php`. |
+| `navigation()` | Grouped top/bottom app navigation defined in `templates/admin/settings.php`. |
 | `panel()` | All admin tabs. |
 | `section()` | Wrapped sections plus `section_variant => minimal` for cards, stats, result cards, empty states, and tables. |
 | `option()` | Most rows; uses row, column, divided, full label, control widths, badges, help, actions. |
@@ -1042,6 +1069,12 @@ Important CSS variables:
 | `choiceGrid()` | Available through `schemaOption()` or direct calls, but not directly used in current boilerplate templates. |
 
 ## Changelog
+
+### Unreleased
+
+- Added first-class `navigation()` component and explicit `app( navigation => ... )` composition.
+- Added grouped navigation with optional group labels and `top` or `bottom` alignment.
+- Improved active-indicator measurement across grouped navigation, resize, font loading, and reduced-motion preferences.
 
 ### `1.0.4`
 

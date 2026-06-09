@@ -19,6 +19,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 class MatterAdminUI {
 
 	/**
+	 * Render admin navigation.
+	 *
+	 * @param array $args Navigation arguments.
+	 * @return void
+	 */
+	public static function navigation( array $args ): void {
+		Navigation::render( $args );
+	}
+
+	/**
 	 * Render a tab panel wrapper.
 	 *
 	 * @param string   $id Panel identifier.

@@ -875,7 +875,7 @@ function initTabs() {
 		return tab.closest('.mwp-admin-app, #mwp-settings, form, body') || document.body;
 	}
 
-	function measureActive(group) {
+	function measureActive(group, animate = true) {
 		const nav = group.querySelector('.mwp-option-nav');
 		const active = nav?.querySelector('[data-ui-tab].active');
 
@@ -885,20 +885,30 @@ function initTabs() {
 
 		const navRect = nav.getBoundingClientRect();
 		const activeRect = active.getBoundingClientRect();
-		nav.style.setProperty('--mwp-nav-active-x', `${activeRect.left - navRect.left}px`);
-		nav.style.setProperty('--mwp-nav-active-y', `${activeRect.top - navRect.top}px`);
+		nav.style.setProperty('--mwp-nav-active-x', `${activeRect.left - navRect.left + nav.scrollLeft}px`);
+		nav.style.setProperty('--mwp-nav-active-y', `${activeRect.top - navRect.top + nav.scrollTop}px`);
 		nav.style.setProperty('--mwp-nav-active-width', `${activeRect.width}px`);
 		nav.style.setProperty('--mwp-nav-active-height', `${activeRect.height}px`);
 		nav.classList.add('has-active-indicator');
-		window.requestAnimationFrame(() => nav.classList.add('is-indicator-ready'));
+
+		if (!animate) {
+			nav.classList.remove('is-indicator-ready');
+			window.requestAnimationFrame(() => nav.classList.add('is-indicator-ready'));
+		} else {
+			nav.classList.add('is-indicator-ready');
+		}
 	}
 
-	function activate(tab, persist = true) {
+	function activate(tab, persist = true, animate = true) {
 		const id = tab.dataset.uiTab;
 		const group = getGroup(tab);
 		const storageKey = `mwp-active-tab:${group.id || 'default'}`;
 
-		group.querySelectorAll('[data-ui-tab]').forEach(item => item.classList.toggle('active', item === tab));
+		group.querySelectorAll('[data-ui-tab]').forEach(item => {
+			const isActive = item === tab;
+			item.classList.toggle('active', isActive);
+			item.toggleAttribute('aria-current', isActive);
+		});
 		group.querySelectorAll('[data-ui-panel]').forEach(panel => {
 			const isActive = panel.dataset.uiPanel === id;
 			panel.hidden = !isActive;
@@ -909,20 +919,22 @@ function initTabs() {
 			localStorage.setItem(storageKey, id);
 		}
 
-		measureActive(group);
+		measureActive(group, animate);
 		group.dispatchEvent(new CustomEvent('mwp:tab-change', { bubbles: true, detail: { id, tab } }));
 	}
 
-	tabs.forEach(tab => {
-		const group = getGroup(tab);
+	const groups = Array.from(new Set(tabs.map(getGroup)));
+
+	groups.forEach(group => {
+		const groupTabs = tabs.filter(tab => getGroup(tab) === group);
 		const storageKey = `mwp-active-tab:${group.id || 'default'}`;
 		const stored = localStorage.getItem(storageKey);
 		const initial = stored ? group.querySelector(`[data-ui-tab="${cssEscape(stored)}"]`) : group.querySelector('[data-ui-tab].active');
 
 		if (initial) {
-			activate(initial, false);
-		} else if (tab === tabs[0]) {
-			activate(tab, false);
+			activate(initial, false, false);
+		} else if (groupTabs[0]) {
+			activate(groupTabs[0], false, false);
 		}
 	});
 
@@ -945,7 +957,11 @@ function initTabs() {
 	});
 
 	window.addEventListener('resize', () => {
-		document.querySelectorAll('.mwp-admin-app, #mwp-settings').forEach(measureActive);
+		groups.forEach(group => measureActive(group, false));
+	});
+
+	document.fonts?.ready.then(() => {
+		groups.forEach(group => measureActive(group, false));
 	});
 }
 
