@@ -862,106 +862,93 @@ function initSwitchGrid() {
 	});
 }
 
-function initTabs() {
-	const tabs = Array.from(document.querySelectorAll('[data-ui-tab]'));
+function initNavigation() {
+	const navItems = document.querySelectorAll('[data-ui-tab]');
+	const navSurfaces = document.querySelectorAll('.mwp-option-nav');
+	const optionGroups = document.querySelectorAll('[data-ui-panel]');
+	const activeTabStorageKey = 'boilerplate_active_tab';
 
-	if (!tabs.length || document.documentElement.dataset.mwpTabsReady === 'true') {
-		return;
+	function getTabElements(tabId) {
+		if (!tabId) {
+			return { navItem: null, panel: null };
+		}
+
+		return {
+			navItem: document.querySelector(`[data-ui-tab="${tabId}"]`),
+			panel: document.querySelector(`[data-ui-panel="${tabId}"]`)
+		};
 	}
 
-	document.documentElement.dataset.mwpTabsReady = 'true';
+	function updateActiveIndicator(navItem, animate = true) {
+		const activeSurface = navItem.closest('.mwp-option-nav');
 
-	function getGroup(tab) {
-		return tab.closest('.mwp-admin-app, #mwp-settings, form, body') || document.body;
-	}
-
-	function measureActive(group, animate = true) {
-		const nav = group.querySelector('.mwp-option-nav');
-		const active = nav?.querySelector('[data-ui-tab].active');
-
-		if (!nav || !active) {
+		if (!activeSurface) {
 			return;
 		}
 
-		const navRect = nav.getBoundingClientRect();
-		const activeRect = active.getBoundingClientRect();
-		nav.style.setProperty('--mwp-nav-active-x', `${activeRect.left - navRect.left + nav.scrollLeft}px`);
-		nav.style.setProperty('--mwp-nav-active-y', `${activeRect.top - navRect.top + nav.scrollTop}px`);
-		nav.style.setProperty('--mwp-nav-active-width', `${activeRect.width}px`);
-		nav.style.setProperty('--mwp-nav-active-height', `${activeRect.height}px`);
-		nav.classList.add('has-active-indicator');
+		navSurfaces.forEach(surface => {
+			if (surface !== activeSurface) {
+				surface.classList.remove('has-active-indicator');
+			}
+		});
+
+		const surfaceRect = activeSurface.getBoundingClientRect();
+		const navItemRect = navItem.getBoundingClientRect();
+
+		activeSurface.style.setProperty('--mwp-nav-active-x', `${navItemRect.left - surfaceRect.left + activeSurface.scrollLeft}px`);
+		activeSurface.style.setProperty('--mwp-nav-active-y', `${navItemRect.top - surfaceRect.top + activeSurface.scrollTop}px`);
+		activeSurface.style.setProperty('--mwp-nav-active-width', `${navItemRect.width}px`);
+		activeSurface.style.setProperty('--mwp-nav-active-height', `${navItemRect.height}px`);
+		activeSurface.classList.add('has-active-indicator');
 
 		if (!animate) {
-			nav.classList.remove('is-indicator-ready');
-			window.requestAnimationFrame(() => nav.classList.add('is-indicator-ready'));
+			activeSurface.classList.remove('is-indicator-ready');
+			requestAnimationFrame(() => activeSurface.classList.add('is-indicator-ready'));
 		} else {
-			nav.classList.add('is-indicator-ready');
+			activeSurface.classList.add('is-indicator-ready');
 		}
 	}
 
-	function activate(tab, persist = true, animate = true) {
-		const id = tab.dataset.uiTab;
-		const group = getGroup(tab);
-		const storageKey = `mwp-active-tab:${group.id || 'default'}`;
+	function setActiveTab(tabId, persist = true, clickedNavItem = null) {
+		const { navItem, panel } = getTabElements(tabId);
+		const activeNavItem = clickedNavItem || navItem;
 
-		group.querySelectorAll('[data-ui-tab]').forEach(item => {
-			const isActive = item === tab;
-			item.classList.toggle('active', isActive);
-			item.toggleAttribute('aria-current', isActive);
-		});
-		group.querySelectorAll('[data-ui-panel]').forEach(panel => {
-			const isActive = panel.dataset.uiPanel === id;
-			panel.hidden = !isActive;
-			panel.classList.toggle('active', isActive);
-		});
+		if (!activeNavItem || !panel) {
+			return false;
+		}
+
+		navItems.forEach(nav => nav.classList.remove('active'));
+		optionGroups.forEach(group => group.classList.remove('active'));
+
+		activeNavItem.classList.add('active');
+		panel.classList.add('active');
+		updateActiveIndicator(activeNavItem, persist);
 
 		if (persist) {
-			localStorage.setItem(storageKey, id);
+			localStorage.setItem(activeTabStorageKey, tabId);
 		}
 
-		measureActive(group, animate);
-		group.dispatchEvent(new CustomEvent('mwp:tab-change', { bubbles: true, detail: { id, tab } }));
+		return true;
 	}
 
-	const groups = Array.from(new Set(tabs.map(getGroup)));
-
-	groups.forEach(group => {
-		const groupTabs = tabs.filter(tab => getGroup(tab) === group);
-		const storageKey = `mwp-active-tab:${group.id || 'default'}`;
-		const stored = localStorage.getItem(storageKey);
-		const initial = stored ? group.querySelector(`[data-ui-tab="${cssEscape(stored)}"]`) : group.querySelector('[data-ui-tab].active');
-
-		if (initial) {
-			activate(initial, false, false);
-		} else if (groupTabs[0]) {
-			activate(groupTabs[0], false, false);
-		}
+	navItems.forEach(item => {
+		item.addEventListener('click', function () {
+			const targetId = item.getAttribute('data-ui-tab');
+			setActiveTab(targetId, true, item);
+		});
 	});
 
-	document.addEventListener('click', event => {
-		const tab = event.target.closest('[data-ui-tab]');
-
-		if (!tab) {
-			return;
-		}
-
-		const group = getGroup(tab);
-		const panel = group.querySelector(`[data-ui-panel="${cssEscape(tab.dataset.uiTab)}"]`);
-
-		if (!panel) {
-			return;
-		}
-
-		event.preventDefault();
-		activate(tab);
-	});
+	const savedTabId = localStorage.getItem(activeTabStorageKey);
+	if (!setActiveTab(savedTabId, false)) {
+		setActiveTab('components', false);
+	}
 
 	window.addEventListener('resize', () => {
-		groups.forEach(group => measureActive(group, false));
-	});
+		const activeNavItem = document.querySelector('[data-ui-tab].active');
 
-	document.fonts?.ready.then(() => {
-		groups.forEach(group => measureActive(group, false));
+		if (activeNavItem) {
+			updateActiveIndicator(activeNavItem, false);
+		}
 	});
 }
 
@@ -1068,7 +1055,7 @@ export function initAdminUI() {
 	initThemeToggle();
 
 	const initializers = [
-		['[data-ui-tab]', initTabs],
+		['[data-ui-tab]', initNavigation],
 		['[data-mwp-tabs]', initComponentTabs],
 		['.mwp-switch-grid__item', initSwitchGrid],
 		['[data-mwp-visible-if], [data-mwp-disabled-if], [data-mwp-requires]', initDependencies],

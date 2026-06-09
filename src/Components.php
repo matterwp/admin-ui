@@ -2,10 +2,10 @@
 /**
  * Data display and misc component rendering helpers.
  *
- * @package MatterWP\AdminUI
+ * @package MTWP\ADMIN\V110
  */
 
-namespace MatterWP\AdminUI;
+namespace MTWP\ADMIN\V110;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

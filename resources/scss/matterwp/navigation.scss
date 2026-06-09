@@ -38,61 +38,10 @@ $nav-item-radius: 8px;
 
 		&:hover {
 			color: $color-black;
-			text-decoration: none;
-		}
-
-		&:focus,
-		&:focus-visible {
-			outline: none;
-			box-shadow: none;
 		}
 
 		&.active {
 			color: $color-gray-950;
-		}
-	}
-}
-
-// Dark mode
-html[data-mwp-theme="dark"] {
-	.mwp-nav-items,
-	.mwp-nav-misc,
-	.mwp-nav-upgrade {
-		.mwp-nav-item {
-			color: $color-gray-300;
-
-			&:hover,
-			&.active {
-				color: $color-gray-50;
-			}
-		}
-	}
-
-	.mwp-nav-link-account {
-		border-color: $color-gray-800;
-		color: $color-gray-400;
-
-		&:hover {
-			border-color: $color-gray-700;
-			color: $color-gray-50;
-		}
-	}
-
-	.mwp-nav-label {
-		color: $color-gray-500;
-	}
-
-	.mwp-option-nav {
-		border-color: $color-gray-800;
-		background-color: $color-gray-900;
-
-		&::before {
-			background: var(--mwp-nav-active-bg, var(--mwp-color-nav-active, #{$color-gray-800}));
-		}
-
-		.mwp-nav-misc,
-		.mwp-nav-upgrade {
-			border-color: $color-gray-800;
 		}
 	}
 }
@@ -229,7 +178,6 @@ html[data-mwp-theme="dark"] {
 	.mwp-nav-bottom {
 		display: flex;
 		flex-direction: column;
-		gap: 16px;
 		min-width: 0;
 		margin-top: auto;
 	}
@@ -262,8 +210,46 @@ html[data-mwp-theme="dark"] {
 	}
 }
 
-@media (prefers-reduced-motion: reduce) {
-	.mwp-option-nav.is-indicator-ready::before {
-		transition: opacity 0.18s ease;
+// Dark mode
+html[data-mwp-theme="dark"] {
+	.mwp-nav-items,
+	.mwp-nav-misc,
+	.mwp-nav-upgrade {
+		.mwp-nav-item {
+			color: $color-gray-300;
+
+			&:hover,
+			&.active {
+				color: $color-gray-50;
+			}
+		}
+	}
+
+	.mwp-nav-link-account {
+		border-color: $color-gray-800;
+		color: $color-gray-400;
+
+		&:hover {
+			border-color: $color-gray-700;
+			color: $color-gray-50;
+		}
+	}
+
+	.mwp-nav-label {
+		color: $color-gray-500;
+	}
+
+	.mwp-option-nav {
+		border-color: $color-gray-800;
+		background-color: $color-gray-900;
+
+		&::before {
+			background: var(--mwp-nav-active-bg, var(--mwp-color-nav-active, #{$color-gray-800}));
+		}
+
+		.mwp-nav-misc,
+		.mwp-nav-upgrade {
+			border-color: $color-gray-800;
+		}
 	}
 }

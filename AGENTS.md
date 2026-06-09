@@ -22,16 +22,17 @@ For other plugins, Composer packages should be consumed through Composer. No plu
 - SCSS lives in `resources/scss/matterwp/`.
 - JavaScript lives in `resources/js/`.
 - Built assets live in `dist/` and are consumed by plugins through Composer.
+- This package owns only admin UI components/assets/browser services. Subscription, onboarding, licensing, analytics, and product telemetry integrations belong to consuming plugins.
 
 ## Upgrade First Steps
 
 When upgrading this package or updating existing components:
 
 1. Read `skills/RULES.md` and `skills/COMPONENTS.md` first.
-2. Inspect the existing component source before editing: facade in `src/MatterAdminUI.php`, implementation class, SCSS, JavaScript initializer, and current boilerplate example.
+2. Inspect the existing component source before editing: facade in `src/UI.php`, implementation class, SCSS, JavaScript initializer, and current boilerplate example.
 3. Check backward compatibility before changing public args, class names, markup shape, data attributes, or browser APIs.
 4. Keep reusable behavior in Admin UI; use boilerplate only to demonstrate the package API.
-5. If another active plugin may load an older `MatterWP\AdminUI` copy first, avoid fatal examples by feature-detecting newly added methods.
+5. Keep `1.1.x` changes compatible within `MTWP\ADMIN\V110`; use a new versioned namespace for the next minor release line when isolation is required.
 
 ## Verification
 

@@ -2,10 +2,10 @@
 /**
  * Compound input rendering helpers: colorPicker, inputButton, radioGroup, buttonGroup, mediaField.
  *
- * @package MatterWP\AdminUI
+ * @package MTWP\ADMIN\V110
  */
 
-namespace MatterWP\AdminUI;
+namespace MTWP\ADMIN\V110;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -69,8 +69,8 @@ class InputGroups {
 		?>
 		<div class="<?php echo esc_attr( $classes ); ?>">
 			<?php
-			MatterAdminUI::input( $args['input'] );
-			MatterAdminUI::button( $args['button'] );
+			UI::input( $args['input'] );
+			UI::button( $args['button'] );
 			?>
 		</div>
 		<?php
@@ -133,7 +133,7 @@ class InputGroups {
 		?>
 		<div class="<?php echo esc_attr( $classes ); ?>" role="group">
 			<?php foreach ( $args['buttons'] as $button ) : ?>
-				<?php MatterAdminUI::button( $button ); ?>
+				<?php UI::button( $button ); ?>
 			<?php endforeach; ?>
 		</div>
 		<?php

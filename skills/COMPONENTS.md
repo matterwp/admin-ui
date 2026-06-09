@@ -1,12 +1,12 @@
 # MatterWP Admin UI Component Reference
 
-Version: `1.0.4`
+Version: `1.1.0`
 
-This document maps the public `MatterWP\AdminUI\MatterAdminUI` API, accepted options, style variants, JavaScript hooks, and current boilerplate usage.
+This document maps the public `MTWP\ADMIN\V110\UI` API, accepted options, style variants, JavaScript hooks, and current boilerplate usage.
 
 Primary source files:
 
-- `src/MatterAdminUI.php`: public facade.
+- `src/UI.php`: public facade.
 - `src/Layout.php`: app shell, sections, options, cards, forms, fields.
 - `src/Controls.php`: primitive controls.
 - `src/InputGroups.php`: compound input controls.
@@ -1070,11 +1070,13 @@ App navigation classes:
 
 ## Changelog
 
-### Unreleased
+### `1.1.0`
 
+- Moved PHP classes to the release-line namespace `MTWP\ADMIN\V110`.
+- Renamed the PHP facade from `MatterAdminUI` to `UI`; browser APIs remain under `window.MatterAdminUI`.
 - Added first-class `navigation()` component and explicit `app( navigation => ... )` composition.
 - Added grouped navigation with optional group labels and `top` or `bottom` alignment.
-- Improved active-indicator measurement across grouped navigation, resize, font loading, and reduced-motion preferences.
+- Improved active-indicator measurement across grouped navigation and resize.
 
 ### `1.0.4`
 
@@ -1087,7 +1089,7 @@ App navigation classes:
 - Removed legacy option/section style classes from generated markup and SCSS: `is-style-*`, `is-divided`, `is-borderless`, `is-table-only`, and `is-option-box-*`.
 - Added `icon_position => 'before'|'after'` to `button()` and modal footer actions, with matching button classes and SCSS.
 - Added `full_width => true` to `button()` for container-filling action buttons.
-- Added `unitInput()` to `Controls` and the `MatterAdminUI` facade for static unit-badge inputs.
+- Added `unitInput()` to `Controls` and the `UI` facade for static unit-badge inputs.
 - Added `tabs()` / `Tabs::render()` for segmented tab controls with optional panel content switching.
 - Added clickable and keyboard-toggleable `.mwp-switch-grid__item` behavior.
 - Added enter/exit animation and collapsing stack behavior for package-managed notices.

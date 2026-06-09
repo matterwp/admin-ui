@@ -2,10 +2,10 @@
 /**
  * Layout rendering helpers: sections, options, cards, forms, fields.
  *
- * @package MatterWP\AdminUI
+ * @package MTWP\ADMIN\V110
  */
 
-namespace MatterWP\AdminUI;
+namespace MTWP\ADMIN\V110;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -168,7 +168,7 @@ class Layout {
 			<?php endif; ?>
 			<div class="<?php echo esc_attr( $options_classes ); ?>">
 				<?php if ( null !== $args['badge'] ) : ?>
-					<?php MatterAdminUI::premiumBadge( $args['badge'] ); ?>
+					<?php UI::premiumBadge( $args['badge'] ); ?>
 				<?php endif; ?>
 				<?php $content(); ?>
 			</div>

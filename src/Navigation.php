@@ -2,10 +2,10 @@
 /**
  * Admin navigation component.
  *
- * @package MatterWP\AdminUI
+ * @package MTWP\ADMIN\V110
  */
 
-namespace MatterWP\AdminUI;
+namespace MTWP\ADMIN\V110;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -156,12 +156,12 @@ class Navigation {
 		$url    = (string) ( $item['url'] ?? '#' );
 		$active = '' !== $active_item ? $id === $active_item : ! empty( $item['active'] );
 		?>
-		<a class="mwp-nav-item <?php echo $active ? 'active' : ''; ?>" href="<?php echo esc_url( $url ); ?>" data-ui-tab="<?php echo esc_attr( $id ); ?>"<?php echo $active ? ' aria-current="page"' : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+		<div class="mwp-nav-item <?php echo $active ? 'active' : ''; ?>" data-ui-tab="<?php echo esc_attr( $id ); ?>">
 			<?php if ( ! empty( $item['icon'] ) ) : ?>
 				<span class="icon" aria-hidden="true"><?php echo Components::iconMarkup( (string) $item['icon'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 			<?php endif; ?>
 			<span><?php echo esc_html( $label ); ?></span>
-		</a>
+		</div>
 		<?php
 	}
 }

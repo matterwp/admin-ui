@@ -7,8 +7,14 @@ Reusable admin UI helpers, styles, and small JavaScript behaviors for MatterWP W
 Install the package with Composer:
 
 ```bash
-composer require matterwp/admin-ui
+composer require matterwp/admin-ui:^1.1
 ```
+
+Release-line namespaces prevent bundled copies from colliding across WordPress plugins:
+
+- `1.1.x` uses `MTWP\ADMIN\V110`
+- `1.2.x` uses `MTWP\ADMIN\V120`
+- Patch releases keep the namespace of their minor release line
 
 Load Composer's autoloader from your plugin bootstrap if your plugin does not already do so:
 
@@ -19,8 +25,8 @@ require_once __DIR__ . '/vendor/autoload.php';
 Import the helpers you need:
 
 ```php
-use MatterWP\AdminUI\Assets;
-use MatterWP\AdminUI\MatterAdminUI;
+use MTWP\ADMIN\V110\Assets;
+use MTWP\ADMIN\V110\UI;
 ```
 
 ## Assets
@@ -45,12 +51,14 @@ Call `wp_enqueue_media()` on admin pages that render media fields.
 
 Avoid copying package internals into consuming plugins. If a plugin needs a very custom workflow, compose it from smaller admin-ui primitives or use component slots/callbacks where available.
 
+This package only provides admin UI components, assets, and small browser services. It does not include subscription, onboarding, licensing, or analytics dependencies; consuming plugins own those integrations when needed.
+
 ## Attribute helpers
 
-Use `MatterAdminUI::attrs()` or `MatterAdminUI::dataAttrs()` when a plugin needs to render escaped attributes consistently with the package.
+Use `UI::attrs()` or `UI::dataAttrs()` when a plugin needs to render escaped attributes consistently with the package.
 
 ```php
-echo MatterAdminUI::attrs(
+echo UI::attrs(
 	array(
 		'class' => 'plugin-custom-control',
 		'data-plugin-control' => 'logo',
@@ -76,7 +84,7 @@ Deprecated `variant` and `option_box` aliases remain supported for `1.x` consume
 Use `section_variant => 'minimal'` for direct content such as tables, stat grids, cards, and result blocks:
 
 ```php
-MatterAdminUI::section(
+UI::section(
 	array(
 		'title'           => __( 'Stats', 'plugin' ),
 		'section_variant' => 'minimal',
@@ -100,7 +108,7 @@ Options support:
 Deprecated `style`, `wide`, `divider`, and `align_start` aliases remain supported for `1.x` consumers.
 
 ```php
-MatterAdminUI::option(
+UI::option(
 	array(
 		'title'       => __( 'Status', 'plugin' ),
 		'description' => __( 'Full-width label with a divided control area.', 'plugin' ),
@@ -110,7 +118,7 @@ MatterAdminUI::option(
 		'input_id'    => 'plugin-status',
 	),
 	static function (): void {
-		MatterAdminUI::select(
+		UI::select(
 			array(
 				'id'      => 'plugin-status',
 				'value'   => 'queued',
@@ -127,13 +135,13 @@ MatterAdminUI::option(
 Use `section_variant => 'minimal'` for a table rendered directly in a section:
 
 ```php
-MatterAdminUI::section(
+UI::section(
 	array(
 		'title'           => __( 'Entries', 'plugin' ),
 		'section_variant' => 'minimal',
 	),
 	static function (): void {
-		MatterAdminUI::paginatedTable(
+		UI::paginatedTable(
 			array(
 				'columns'  => array( 'name' => __( 'Name', 'plugin' ) ),
 				'rows'     => $rows,
@@ -147,7 +155,7 @@ MatterAdminUI::section(
 Schema-driven rows can use `schemaOption()`:
 
 ```php
-MatterAdminUI::schemaOption(
+UI::schemaOption(
 	array(
 		'name'        => 'plugin_limit',
 		'label'       => __( 'Limit', 'plugin' ),
@@ -171,7 +179,7 @@ Inputs support standard text-like controls plus schedule controls: `text`, `numb
 For a schedule row with start/end datetime and timezone, compose a column option with `fieldGrid()`:
 
 ```php
-MatterAdminUI::option(
+UI::option(
 	array(
 		'title'         => __( 'Activation Schedule', 'plugin' ),
 		'description'   => __( 'Schedule when maintenance should begin and end.', 'plugin' ),
@@ -179,27 +187,27 @@ MatterAdminUI::option(
 		'control_width' => 'full',
 	),
 	static function () use ( $values ): void {
-		MatterAdminUI::fieldGrid(
+		UI::fieldGrid(
 			array(
 				'columns' => 3,
 				'density' => 'compact',
 			),
 			static function () use ( $values ): void {
-				MatterAdminUI::input(
+				UI::input(
 					array(
 						'name'  => 'schedule_start',
 						'type'  => 'datetime-local',
 						'value' => $values['schedule_start'] ?? '',
 					)
 				);
-				MatterAdminUI::input(
+				UI::input(
 					array(
 						'name'  => 'schedule_end',
 						'type'  => 'datetime-local',
 						'value' => $values['schedule_end'] ?? '',
 					)
 				);
-				MatterAdminUI::select(
+				UI::select(
 					array(
 						'name'    => 'schedule_timezone',
 						'value'   => $values['schedule_timezone'] ?? wp_timezone_string(),
@@ -216,13 +224,13 @@ Badges support `size => 'compact'`.
 
 Buttons support named/custom SVG icons with `icon` and `icon_position => 'before'|'after'`.
 
-`MatterAdminUI::app()` renders the common admin shell:
+`UI::app()` renders the common admin shell:
 
 ```php
-MatterAdminUI::app(
+UI::app(
 	array(
 		'brand'      => __( 'Plugin Name', 'plugin' ),
-		'version'    => '1.0.4',
+		'version'    => '1.1.0',
 		'navigation' => array(
 			'groups' => array(
 				array(
@@ -244,13 +252,13 @@ MatterAdminUI::app(
 		'form'       => true,
 	),
 	static function (): void {
-		MatterAdminUI::panel( 'general', static function (): void {} );
-		MatterAdminUI::panel( 'logs', static function (): void {} );
+		UI::panel( 'general', static function (): void {} );
+		UI::panel( 'logs', static function (): void {} );
 	}
 );
 ```
 
-`MatterAdminUI::navigation()` is also available as a standalone component. Each group supports an optional `label`, `alignment => 'top'|'bottom'`, and an `items` map. The shell includes package-owned tab persistence, active indicator measurement across groups, and a dark-mode toggle. Use `MatterAdminUI::fieldGrid()` or `form( array( 'fields' => ..., 'actions' => ... ) )` for generated form layouts.
+`UI::navigation()` is also available as a standalone component. Each group supports an optional `label`, `alignment => 'top'|'bottom'`, and an `items` map. The shell includes package-owned tab persistence, active indicator measurement across groups, and a dark-mode toggle. Use `UI::fieldGrid()` or `form( array( 'fields' => ..., 'actions' => ... ) )` for generated form layouts.
 
 Schema rows now understand richer metadata: `ui`, `component`, `option`, `control`, `layout`, `control_width`, `media`, `choices_display`, `placeholder`, `help`, `dependencies`, `visible_if`, `disabled_if`, and `requires`. Components include `color_picker`, `media`, `switch`, `select`, `textarea`, and standard inputs.
 
@@ -258,9 +266,9 @@ Schema rows now understand richer metadata: `ui`, `component`, `option`, `contro
 
 Admin tables use `.mwp-table-wrap` and `.mwp-table`. Columns can be strings or typed arrays with `label`, `type`, and optional `callback`. Supported cell types include `badge`, `link`, `code`, `image`, `date`, and `actions`.
 
-`MatterAdminUI::paginatedTable()` provides static client-side pagination with previous/next buttons, a page label, default `per_page` of 10, mutation re-rendering, `empty_selector`/`empty_target`, `initial_page => 'first'|'last'|1`, and an `mwp:table-refresh` event for manual refreshes.
+`UI::paginatedTable()` provides static client-side pagination with previous/next buttons, a page label, default `per_page` of 10, mutation re-rendering, `empty_selector`/`empty_target`, `initial_page => 'first'|'last'|1`, and an `mwp:table-refresh` event for manual refreshes.
 
-`MatterAdminUI::dataTable()` adds row-level and typed-column arguments for plugin-managed tables: `row_id`, `row_key`, `row_attributes`, `row_data_attributes`, `row_class`, `empty_state`, `pagination`, `table_class`, `wrap`, `min_width`, `max_width`, `overflow`, `vertical_align`, `strip_site_url`, `display_callback`, and `format => 'relative_site_url'`. Column types include `text`, `title`, `link`, `external_link`, `code`, `image`, `badge`, `date`, and `actions`.
+`UI::dataTable()` adds row-level and typed-column arguments for plugin-managed tables: `row_id`, `row_key`, `row_attributes`, `row_data_attributes`, `row_class`, `empty_state`, `pagination`, `table_class`, `wrap`, `min_width`, `max_width`, `overflow`, `vertical_align`, `strip_site_url`, `display_callback`, and `format => 'relative_site_url'`. Column types include `text`, `title`, `link`, `external_link`, `code`, `image`, `badge`, `date`, and `actions`.
 
 The JavaScript table API is available as:
 
@@ -271,10 +279,10 @@ MatterAdminUI.table.removeRow(table, rowId);
 MatterAdminUI.table.refresh(table, { page: 'first' });
 ```
 
-For compact table action columns, use `MatterAdminUI::actionGroup()` with named or custom SVG icons:
+For compact table action columns, use `UI::actionGroup()` with named or custom SVG icons:
 
 ```php
-MatterAdminUI::actionGroup(
+UI::actionGroup(
 	array(
 		'actions' => array(
 			array(
@@ -301,9 +309,9 @@ Modals can be rendered without a trigger by passing `render_trigger => false` or
 
 Ajax forms can use `data-mwp-ajax-form`, `data-mwp-action`, `data-mwp-submit`, and `data-mwp-loading`. The package exposes `MatterAdminUI.ajax.submit(formOrRoot, options)` and dispatches `mwp:ajax-before`, `mwp:ajax-success`, `mwp:ajax-error`, and `mwp:ajax-complete`.
 
-Use `MatterAdminUI.notice(message, type, options)` for stacked, animated package-managed notices. Use `MatterAdminUI::resultCard()` for generated previews, exported files, uploaded assets, API keys, reports, or other Ajax results.
+Use `MatterAdminUI.notice(message, type, options)` for stacked, animated package-managed notices. Use `UI::resultCard()` for generated previews, exported files, uploaded assets, API keys, reports, or other Ajax results.
 
-Use `MatterAdminUI::emptyState()` for neutral dashed empty blocks. Pair with paginated tables via `empty_target` or `empty_selector`.
+Use `UI::emptyState()` for neutral dashed empty blocks. Pair with paginated tables via `empty_target` or `empty_selector`.
 
 ## Dynamic modals
 
@@ -314,7 +322,7 @@ JavaScript exposes `window.MatterAdminUI.openModal(idOrElement, values, trigger)
 Modals can generate simple fields with `fields` and submit controls with `footer_actions`:
 
 ```php
-MatterAdminUI::modal(
+UI::modal(
 	array(
 		'id'     => 'plugin-edit-modal',
 		'title'  => __( 'Edit item', 'plugin' ),
@@ -338,7 +346,7 @@ MatterAdminUI::modal(
 The media field supports compact, logo, wide, and button-only modes. It can also be customized with CSS variables, data attributes, slots, and filters.
 
 ```php
-MatterAdminUI::mediaField(
+UI::mediaField(
 	array(
 		'name'           => 'plugin_logo_id',
 		'value'          => $logo_id,
@@ -357,7 +365,7 @@ MatterAdminUI::mediaField(
 For deeper customization, pass callable slots:
 
 ```php
-MatterAdminUI::mediaField(
+UI::mediaField(
 	array(
 		'name' => 'plugin_image_id',
 		'preview' => static function ( array $args, string $uid, string $image_url ): void {

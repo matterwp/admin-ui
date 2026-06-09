@@ -2,10 +2,10 @@
 /**
  * Form control rendering helpers: switch, input, textarea, select, button, badge, notice.
  *
- * @package MatterWP\AdminUI
+ * @package MTWP\ADMIN\V110
  */
 
-namespace MatterWP\AdminUI;
+namespace MTWP\ADMIN\V110;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

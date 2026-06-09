@@ -2,10 +2,10 @@
 /**
  * Admin UI rendering helpers.
  *
- * @package MatterWP\AdminUI
+ * @package MTWP\ADMIN\V110
  */
 
-namespace MatterWP\AdminUI;
+namespace MTWP\ADMIN\V110;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * All methods delegate to focused sub-classes, maintaining backward compatibility.
  */
-class MatterAdminUI {
+class UI {
 
 	/**
 	 * Render admin navigation.

@@ -1,6 +1,6 @@
 {
 	"name": "matterwp/admin-ui",
-	"version": "1.0.4",
+	"version": "1.1.0",
 	"description": "Reusable MatterWP admin UI helpers and styles for WordPress plugins.",
 	"type": "library",
 	"keywords": [
@@ -24,7 +24,7 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"MatterWP\\AdminUI\\": "src/"
+			"MTWP\\ADMIN\\V110\\": "src/"
 		}
 	},
 	"require": {

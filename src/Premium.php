@@ -2,10 +2,10 @@
 /**
  * Premium/gating rendering helpers: premiumBadge, controlLockedAttrs.
  *
- * @package MatterWP\AdminUI
+ * @package MTWP\ADMIN\V110
  */
 
-namespace MatterWP\AdminUI;
+namespace MTWP\ADMIN\V110;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
