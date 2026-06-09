@@ -11,11 +11,11 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		height: 55px;
+		height: 50px;
 		padding: 0 16px;
 		border-bottom: 1px solid $color-gray-200;
 		background-color: $color-white;
-		flex: 0 0 55px;
+		flex: 0 0 50px;
 
 		.mwp-brand {
 			display: flex;
@@ -24,27 +24,53 @@
 
 			.mwp-title {
 				color: $color-black;
-				font-size: 16px;
+				font-size: 15px;
 				font-weight: 600;
 				letter-spacing: -0.01em;
 			}
 
 			img,
 			svg {
-				height: 24px;
+				height: 22px;
 				width: auto;
 				border-radius: 6px;
 			}
 		}
 
 		.mwp-version {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: 2px;
+			min-height: 26px;
+			border: 1px solid $color-gray-200;
 			background-color: #f4f4f5;
-			border-radius: 4px;
+			border-radius: 6px;
 			color: #71717a;
 			font-size: 11px;
 			font-weight: 500;
-			padding: 1px 9px;
+			line-height: 1;
+			padding: 0 9px;
 			text-decoration: none;
+
+			&:hover {
+				border-color: $color-gray-300;
+				color: $color-gray-900;
+			}
+		}
+
+		.mwp-version-icon {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 12px;
+			height: 12px;
+			line-height: 0;
+
+			svg {
+				width: 12px;
+				height: 12px;
+			}
 		}
 
 		.mwp-header-actions {
@@ -56,32 +82,47 @@
 
 		.mwp-theme-toggle {
 			display: inline-flex;
-			position: relative;
 			align-items: center;
 			justify-content: center;
-			width: 30px;
-			height: 30px;
-			padding: 0;
-			border: 0;
-			background: transparent;
+			gap: 6px;
+			min-height: 28px;
+			padding: 0 9px;
+			border: 1px solid $color-gray-200;
+			border-radius: 6px;
+			background: #f4f4f5;
 			color: $color-gray-500;
 			cursor: pointer;
+			font-size: 11px;
+			font-weight: 500;
+			line-height: 1;
 		}
 
 		.mwp-theme-toggle-icon {
-			display: inline-flex;
-			position: absolute;
+			display: none;
 			align-items: center;
 			justify-content: center;
-			opacity: 0;
-			transform: rotate(-90deg) scale(0.7);
-			transition: opacity 0.18s ease, transform 0.22s ease;
+			width: 14px;
+			height: 14px;
+			line-height: 0;
+
+			svg {
+				width: 14px;
+				height: 14px;
+			}
+		}
+
+		.mwp-theme-toggle-label {
+			display: none;
 		}
 
 		.mwp-theme-toggle[data-mwp-theme="light"] .mwp-theme-toggle-icon-light,
 		.mwp-theme-toggle[data-mwp-theme="dark"] .mwp-theme-toggle-icon-dark {
-			opacity: 1;
-			transform: rotate(0deg) scale(1);
+			display: inline-flex;
+		}
+
+		.mwp-theme-toggle[data-mwp-theme="light"] .mwp-theme-toggle-label-light,
+		.mwp-theme-toggle[data-mwp-theme="dark"] .mwp-theme-toggle-label-dark {
+			display: inline-flex;
 		}
 	}
 }
@@ -96,11 +137,26 @@ html[data-mwp-theme="dark"] #mwp-settings header {
 	}
 
 	.mwp-version {
-		background-color: $color-gray-900;
-		color: $color-gray-400;
+		border-color: $color-gray-800;
+		background: $color-gray-900;
+		box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.05);
+		color: $color-gray-300 !important;
+
+		&:hover {
+			border-color: $color-gray-600;
+			background: $color-gray-800;
+			color: $color-gray-50;
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--mwp-focus-ring-color, var(--mwp-ui-primary, #{$color-primary}));
+			outline-offset: 2px;
+		}
 	}
 
 	.mwp-theme-toggle {
+		border-color: $color-gray-800;
+		background: $color-gray-900;
 		color: $color-gray-300;
 
 		&:hover {

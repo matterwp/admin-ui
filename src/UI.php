@@ -62,6 +62,27 @@ class UI {
 	}
 
 	/**
+	 * Render a generic grid wrapper.
+	 *
+	 * @param array    $args Grid arguments.
+	 * @param callable $content Content callback.
+	 * @return void
+	 */
+	public static function grid( array $args, callable $content ): void {
+		Layout::grid( $args, $content );
+	}
+
+	/**
+	 * Render a section divider.
+	 *
+	 * @param array $args Divider arguments.
+	 * @return void
+	 */
+	public static function divider( array $args = array() ): void {
+		Layout::divider( $args );
+	}
+
+	/**
 	 * Render a settings option row.
 	 *
 	 * @param array    $args Option arguments.
@@ -293,11 +314,12 @@ class UI {
 	/**
 	 * Render an empty state.
 	 *
-	 * @param array $args Empty state arguments.
+	 * @param array         $args Empty state arguments.
+	 * @param callable|null $content Optional custom content callback.
 	 * @return void
 	 */
-	public static function emptyState( array $args ): void {
-		Components::emptyState( $args );
+	public static function emptyState( array $args, callable $content = null ): void {
+		Components::emptyState( $args, $content );
 	}
 
 	/**
