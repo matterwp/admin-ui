@@ -2,10 +2,10 @@
 /**
  * Form control rendering helpers: switch, input, textarea, select, button, badge, notice.
  *
- * @package MTWP\ADMIN\V110
+ * @package MTWP\ADMIN\V120
  */
 
-namespace MTWP\ADMIN\V110;
+namespace MTWP\ADMIN\V120;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

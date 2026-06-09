@@ -2,10 +2,10 @@
 /**
  * Settings schema definition and sanitization.
  *
- * @package MTWP\ADMIN\V110
+ * @package MTWP\ADMIN\V120
  */
 
-namespace MTWP\ADMIN\V110;
+namespace MTWP\ADMIN\V120;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

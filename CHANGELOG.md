@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.0
+
+- Moved PHP classes to the release-line namespace `MTWP\ADMIN\V120`.
+- Bumped the package version line for the next minor release.
+
 ## 1.1.1
 
 - Added server-side DataTable pagination with shared `dataTableRows()`, `dataTableRow()`, and `dataTableResponse()` helpers.
