@@ -50,11 +50,12 @@ class Layout {
 				'version' => '',
 				'changelog_url' => '',
 				'navigation' => array(),
-				'form' => true,
+				'storage_key' => '',
 				'form_attributes' => array(),
 				'options_class' => '',
 				'header_actions' => array(),
 				'theme_toggle' => true,
+				'theme_storage_key' => '',
 				'layout' => 'standard',
 				'full_width' => false,
 				'class' => '',
@@ -71,6 +72,10 @@ class Layout {
 		$form_attributes['class'] = trim( ( $form_attributes['class'] ?? '' ) . ' mwp-options-group mwp-settings-form' );
 		$options_classes = trim( 'mwp-options ' . $args['options_class'] );
 		$navigation = is_array( $args['navigation'] ) ? $args['navigation'] : array();
+		$app_storage_key = trim( (string) ( $args['storage_key'] ?? '' ) );
+		if ( '' !== $app_storage_key && empty( $navigation['storage_key'] ) ) {
+			$navigation['storage_key'] = $app_storage_key;
+		}
 		?>
 		<div <?php echo Attrs::render( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<header>
@@ -94,8 +99,9 @@ class Layout {
 					<?php foreach ( is_array( $args['header_actions'] ) ? $args['header_actions'] : array() as $action ) : ?>
 						<?php Controls::button( is_array( $action ) ? $action : array() ); ?>
 					<?php endforeach; ?>
+					<?php $theme_storage_key = trim( (string) ( $args['theme_storage_key'] ?? '' ) ); ?>
 					<?php if ( wp_validate_boolean( $args['theme_toggle'] ) ) : ?>
-						<button class="mwp-theme-toggle" type="button" data-mwp-theme-toggle data-mwp-theme="light"
+						<button class="mwp-theme-toggle" type="button" data-mwp-theme-toggle data-mwp-theme="light"<?php echo '' !== $theme_storage_key ? ' data-mwp-theme-key="' . esc_attr( $theme_storage_key ) . '"' : ''; ?>
 							aria-label="<?php esc_attr_e( 'Toggle theme', 'matterwp-admin-ui' ); ?>">
 							<span class="mwp-theme-toggle-icon mwp-theme-toggle-icon-light"
 								aria-hidden="true"><?php echo Components::iconMarkup( 'sun' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>

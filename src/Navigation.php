@@ -30,6 +30,7 @@ class Navigation {
 				'items'           => array(),
 				'active_item'     => '',
 				'aria_label'      => __( 'Admin sections', 'matterwp-admin-ui' ),
+				'storage_key'     => '',
 				'class'           => '',
 				'attributes'      => array(),
 				'data_attributes' => array(),
@@ -54,8 +55,11 @@ class Navigation {
 			}
 		}
 
-		$attributes               = Attrs::merge( is_array( $args['attributes'] ) ? $args['attributes'] : array(), trim( 'mwp-option-nav ' . $args['class'] ), is_array( $args['data_attributes'] ) ? $args['data_attributes'] : array() );
 		$attributes['aria-label'] = (string) $args['aria_label'];
+		$storage_key              = trim( (string) $args['storage_key'] );
+		if ( '' !== $storage_key ) {
+			$attributes['data-ui-storage-key'] = $storage_key;
+		}
 		?>
 		<nav <?php echo Attrs::render( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<?php if ( ! empty( $top_groups ) ) : ?>

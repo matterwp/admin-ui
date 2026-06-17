@@ -50,17 +50,14 @@ Current use: every admin tab wraps content in `panel()`.
 
 Renders standalone grouped admin navigation with the package active-indicator service.
 
-| Option | Default | Accepted values / notes |
-| --- | --- | --- |
 | `groups` | `array()` | Groups with optional `label`, `alignment => top\|bottom`, and required `items`. |
 | `items` | `array()` | Flat item map used when `groups` is empty. |
 | `active_item` | empty | Active item id. If empty, item-level `active` is used. |
 | `aria_label` | `Admin sections` | Accessible navigation label. |
+| `storage_key` | empty | Per-nav localStorage namespace. When set, the active tab is persisted as `<storage_key>_active_tab` instead of the package default. Rendered as `data-ui-storage-key` on the nav root. |
 | `class` | empty | Extra root class. |
 | `attributes` | `array()` | Root attributes. |
 | `data_attributes` | `array()` | Root data attributes. |
-
-String item values become labels. Array items may contain `id`, `label`, `url`, `active`, and `icon`.
 
 ### `app( array $args, callable $content )`
 
@@ -74,11 +71,13 @@ Renders the full admin app shell with header, navigation, optional form, theme t
 | `version` | empty | Header version badge text. |
 | `changelog_url` | empty | Makes the version badge a linked changelog button. |
 | `navigation` | `array()` | Preferred `navigation()` args rendered inside app shell. |
+| `storage_key` | empty | App-level shortcut for `navigation()['storage_key']`. When set, it is merged into `navigation()` unless the inner `storage_key` is also set. |
 | `form` | `true` | Wrap content in a `<form>`. |
 | `form_attributes` | `array()` | Attributes for the generated form. |
 | `options_class` | empty | Extra class on `.mwp-options`. |
 | `header_actions` | `array()` | Array of `button()` args. |
 | `theme_toggle` | `true` | Render package dark-mode toggle. |
+| `theme_storage_key` | empty | Per-page localStorage namespace for the theme toggle. When set, theme preference is persisted as `<theme_storage_key>_theme` instead of the package default `'mwp-theme'`. Rendered as `data-mwp-theme-key` on the toggle button. |
 | `layout` | `standard` | `standard`, `fullscreen`. |
 | `full_width` | `false` | Adds `is-full-width`. |
 | `class` | empty | Extra root class. |
@@ -1081,14 +1080,17 @@ App navigation classes:
 | `MatterAdminUI.table.refresh(table, options)` | Refreshes pagination and empty states. |
 | `MatterAdminUI.table.loadPage(table, page, options)` | Loads a server page. Options support `endpoint`, `action`, `method`, `perPage`, `params`, and `search`. |
 | `MatterAdminUI.table.replaceRows(table, rowsHtml, meta)` | Replaces `<tbody>` and updates page/total/empty metadata. |
+| `MatterAdminUI.tabs.setStorageKey(key, options?)` | Sets the package default `localStorage` key used to persist the active tab in settings navigation. Pass `{ migrateFrom: 'old_key' }` to copy and remove an old key in one step. The legacy default is `'boilerplate_active_tab'`. |
+| `MatterAdminUI.tabs.getStorageKey()` | Returns the active package default storage key. |
+| `MatterAdminUI.theme.setStorageKey(key, options?)` | Sets the package default `localStorage` key used to persist the dark-mode preference. Pass `{ migrateFrom: 'old_key' }` to copy and remove an old key in one step. The legacy default is `'mwp-theme'`. |
+| `MatterAdminUI.theme.getStorageKey()` | Returns the active package default theme storage key. |
 
 ### Data Attributes
 
 | Attribute | Purpose |
-| --- | --- |
-| `data-ui-tab`, `data-ui-panel` | Tab trigger and panel. |
+| `data-ui-tab`, `data-ui-panel`, `data-ui-storage-key` | Tab trigger, panel, and per-nav localStorage namespace. When `data-ui-storage-key` is set on the nav surface, the active tab is persisted as `<key>_active_tab` and multiple nav blocks on one page stay independent. |
 | `data-mwp-tabs`, `data-mwp-tabs-active`, `data-mwp-tab`, `data-mwp-panel` | Component tab set and panels. |
-| `data-mwp-theme-toggle` | Theme toggle. |
+| `data-mwp-theme-toggle`, `data-mwp-theme-key` | Theme toggle button and optional per-toggle localStorage namespace. When `data-mwp-theme-key` is set, the theme preference is persisted as `<key>_theme` instead of the package default `'mwp-theme'`. |
 | `data-mwp-visible-if`, `data-mwp-disabled-if`, `data-mwp-requires` | Dependency behavior. |
 | `data-mwp-color-picker`, `data-mwp-color-swatch`, `data-mwp-color-input` | Color picker sync. |
 | `data-mwp-modal`, `data-mwp-modal-trigger`, `data-mwp-modal-close`, `data-mwp-field`, `data-mwp-autofocus` | Modal behavior. |

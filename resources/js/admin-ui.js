@@ -872,11 +872,47 @@ function initSwitchGrid() {
 	});
 }
 
+let defaultTabStorageKey = 'boilerplate_active_tab';
+
+function getDefaultTabStorageKey() {
+	return defaultTabStorageKey;
+}
+
+function setDefaultTabStorageKey(key, { migrateFrom } = {}) {
+	if (typeof key !== 'string' || '' === key) {
+		return;
+	}
+
+	if (typeof migrateFrom === 'string' && migrateFrom !== key) {
+		const legacy = localStorage.getItem(migrateFrom);
+		if (legacy !== null && localStorage.getItem(key) === null) {
+			localStorage.setItem(key, legacy);
+			localStorage.removeItem(migrateFrom);
+		}
+	}
+
+	defaultTabStorageKey = key;
+}
+
+function resolveTabStorageKey(navItem) {
+	const surface = navItem?.closest('.mwp-option-nav');
+	const surfaceKey = surface?.getAttribute('data-ui-storage-key');
+	return surfaceKey ? `${surfaceKey}_active_tab` : defaultTabStorageKey;
+}
+
+function firstTabIdInSurface(surface) {
+	if (!surface) {
+		return '';
+	}
+
+	const first = surface.querySelector('[data-ui-tab]');
+	return first ? first.getAttribute('data-ui-tab') || '' : '';
+}
+
 function initNavigation() {
 	const navItems = document.querySelectorAll('[data-ui-tab]');
 	const navSurfaces = document.querySelectorAll('.mwp-option-nav');
 	const optionGroups = document.querySelectorAll('[data-ui-panel]');
-	const activeTabStorageKey = 'boilerplate_active_tab';
 
 	function getTabElements(tabId) {
 		if (!tabId) {
@@ -935,7 +971,10 @@ function initNavigation() {
 		updateActiveIndicator(activeNavItem, persist);
 
 		if (persist) {
-			localStorage.setItem(activeTabStorageKey, tabId);
+			const storageKey = resolveTabStorageKey(activeNavItem);
+			if (storageKey) {
+				localStorage.setItem(storageKey, tabId);
+			}
 		}
 
 		return true;
@@ -948,10 +987,15 @@ function initNavigation() {
 		});
 	});
 
-	const savedTabId = localStorage.getItem(activeTabStorageKey);
-	if (!setActiveTab(savedTabId, false)) {
-		setActiveTab('components', false);
-	}
+	navSurfaces.forEach(surface => {
+		const surfaceKey = surface.getAttribute('data-ui-storage-key');
+		const storageKey = surfaceKey ? `${surfaceKey}_active_tab` : defaultTabStorageKey;
+		const savedTabId = localStorage.getItem(storageKey);
+
+		if (!setActiveTab(savedTabId, false)) {
+			setActiveTab(firstTabIdInSurface(surface), false);
+		}
+	});
 
 	window.addEventListener('resize', () => {
 		const activeNavItem = document.querySelector('[data-ui-tab].active');
@@ -962,8 +1006,41 @@ function initNavigation() {
 	});
 }
 
+mergeGlobalApi({
+	tabs: {
+		setStorageKey: setDefaultTabStorageKey,
+		getStorageKey: getDefaultTabStorageKey
+	}
+});
+
+let defaultThemeStorageKey = 'mwp-theme';
+
+function getDefaultThemeStorageKey() {
+	return defaultThemeStorageKey;
+}
+
+function setDefaultThemeStorageKey(key, { migrateFrom } = {}) {
+	if (typeof key !== 'string' || '' === key) {
+		return;
+	}
+
+	if (typeof migrateFrom === 'string' && migrateFrom !== key) {
+		const legacy = localStorage.getItem(migrateFrom);
+		if (legacy !== null && localStorage.getItem(key) === null) {
+			localStorage.setItem(key, legacy);
+			localStorage.removeItem(migrateFrom);
+		}
+	}
+
+	defaultThemeStorageKey = key;
+}
+
+function resolveThemeStorageKey(toggle) {
+	const surfaceKey = toggle?.getAttribute('data-mwp-theme-key');
+	return surfaceKey ? `${surfaceKey}_theme` : defaultThemeStorageKey;
+}
+
 function initThemeToggle() {
-	const storageKey = 'mwp-theme';
 	const applyTheme = theme => {
 		const next = theme === 'dark' ? 'dark' : 'light';
 		document.documentElement.dataset.mwpTheme = next;
@@ -973,7 +1050,16 @@ function initThemeToggle() {
 		});
 	};
 
-	applyTheme(localStorage.getItem(storageKey) || document.documentElement.dataset.mwpTheme || 'light');
+	const toggles = document.querySelectorAll('[data-mwp-theme-toggle]');
+	toggles.forEach(toggle => {
+		const storageKey = resolveThemeStorageKey(toggle);
+		const stored = localStorage.getItem(storageKey);
+		if (stored === 'dark' || stored === 'light') {
+			toggle.dataset.mwpTheme = stored;
+		}
+	});
+
+	applyTheme(localStorage.getItem(defaultThemeStorageKey) || document.documentElement.dataset.mwpTheme || 'light');
 
 	document.addEventListener('click', event => {
 		const toggle = event.target.closest('[data-mwp-theme-toggle]');
@@ -982,11 +1068,19 @@ function initThemeToggle() {
 			return;
 		}
 
+		const storageKey = resolveThemeStorageKey(toggle);
 		const next = document.documentElement.dataset.mwpTheme === 'dark' ? 'light' : 'dark';
 		localStorage.setItem(storageKey, next);
 		applyTheme(next);
 	});
 }
+
+mergeGlobalApi({
+	theme: {
+		setStorageKey: setDefaultThemeStorageKey,
+		getStorageKey: getDefaultThemeStorageKey
+	}
+});
 
 function parseCondition(value) {
 	try {
