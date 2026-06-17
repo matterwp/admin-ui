@@ -135,12 +135,36 @@ html[data-mwp-theme="dark"] .mwp-lightbox {
 	--mwp-color-upsell-bg: rgba(95, 35, 35, 0.28);
 	--mwp-color-upsell-text: #ffffff;
 
-	--mwp-nav-active-bg: var(--mwp-color-nav-active);
-	--mwp-primary-badge-bg: color-mix(in srgb, var(--mwp-ui-primary, #{$color-primary}) 18%, transparent);
+	// Primary color anchors. The light block declares --mwp-ui-primary implicitly
+	// via the var() fallbacks; redeclaring it here gives consumers a single,
+	// self-contained extension point: override --mwp-ui-primary under
+	// html[data-mwp-theme="dark"] in your SCSS (layered after admin-ui) to give
+	// dark mode a distinct primary. The values below match the light block, so
+	// current consumers see no change.
+	--mwp-ui-primary: #{$color-primary};
+	--mwp-ui-primary-hover: #{$color-primary-hover};
+
+	--mwp-action-primary-bg: var(--mwp-ui-primary);
+	--mwp-action-primary-bg-hover: var(--mwp-ui-primary-hover);
+	--mwp-action-primary-border: var(--mwp-action-primary-bg);
+	--mwp-action-primary-border-hover: var(--mwp-action-primary-bg-hover);
+	--mwp-action-primary-text: #{$color-white};
+
+	--mwp-focus-ring-color: var(--mwp-ui-primary);
+
+	--mwp-switch-active-bg: var(--mwp-ui-primary);
+	--mwp-progress-bar-bg: var(--mwp-ui-primary);
+	--mwp-nav-upgrade-bg: var(--mwp-ui-primary);
+	--mwp-nav-upgrade-bg-hover: var(--mwp-ui-primary-hover);
+	--mwp-upsell-action-bg: var(--mwp-ui-primary);
+	--mwp-primary-badge-bg: color-mix(in srgb, var(--mwp-ui-primary) 18%, transparent);
 	--mwp-primary-badge-text: #6ee7b7;
-	--mwp-log-filter-active-bg: color-mix(in srgb, var(--mwp-ui-primary, #{$color-primary}) 14%, transparent);
-  --mwp-log-filter-active-text: #{$color-gray-100};
+	--mwp-log-filter-active-bg: color-mix(in srgb, var(--mwp-ui-primary) 14%, transparent);
+	--mwp-log-filter-active-text: #{$color-gray-100};
+	--mwp-log-filter-active-border: var(--mwp-ui-primary);
 	--mwp-premium-badge-bg: #{$color-gray-700};
+
+	--mwp-nav-active-bg: var(--mwp-color-nav-active);
 
 	--mwp-log-badge-success-bg: rgba(20, 83, 45, 0.32);
 	--mwp-log-badge-success-text: #bbf7d0;

@@ -2,10 +2,10 @@
 
 ## 1.2.0
 
-- Moved PHP classes to the release-line namespace `MTWP\ADMIN\V120`.
-- Bumped the package version line for the next minor release.
+- Made the dark block in `_tokens.scss` self-contained: redeclared `--mwp-ui-primary` (and the action-primary, focus ring, switch active, progress bar, nav upgrade, premium badge, upsell action, primary badge, and log filter active variants) so consumers can override a single token under `html[data-mwp-theme="dark"]` to give dark mode a distinct primary. Default values match the light block; current consumers see no change. Documented the extension point in the README.
 
 ## 1.1.1
+
 
 - Added server-side DataTable pagination with shared `dataTableRows()`, `dataTableRow()`, and `dataTableResponse()` helpers.
 - Added package-rendered table filters/search with automatic client/server request wiring.

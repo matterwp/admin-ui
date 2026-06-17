@@ -942,7 +942,7 @@ Named icons:
 
 Important CSS variables:
 
-- Brand: `--mwp-ui-primary`, `--mwp-ui-primary-hover`, `--mwp-ui-radius`, `--mwp-ui-border`, `--mwp-ui-bg`.
+- Brand: `--mwp-ui-primary`, `--mwp-ui-primary-hover`, `--mwp-ui-radius`, `--mwp-ui-border`, `--mwp-ui-bg`. The dark block in `resources/scss/matterwp/_tokens.scss` redeclares `--mwp-ui-primary` and `--mwp-ui-primary-hover` to keep the dark theme self-contained; override them under `html[data-mwp-theme="dark"]` in your SCSS (layered after the admin-ui bundle) to give dark mode a distinct primary. The override propagates to all action-primary, focus ring, switch active, progress bar, nav upgrade, premium badge, upsell action, primary badge, and log filter active tokens.
 - Focus: `--mwp-focus-ring-color`.
 - Nav: `--mwp-nav-active-bg`, `--mwp-nav-active-x`, `--mwp-nav-active-y`, `--mwp-nav-active-width`, `--mwp-nav-active-height`.
 - Buttons: `--mwp-action-primary-bg`, `--mwp-action-primary-bg-hover`, `--mwp-action-primary-border`, `--mwp-action-primary-text`.

@@ -412,7 +412,31 @@ UI::modal(
 	),
 	static function (): void {}
 );
+
+## Theming
+
+The package ships a token system under `resources/scss/matterwp/_tokens.scss`. All public surfaces (backgrounds, borders, text, action colors, focus rings, badges, log viewer, toasts, etc.) read from CSS custom properties, so consumers can override individual tokens without forking the stylesheet.
+
+### Per-theme primary color
+
+The light and dark blocks both anchor on `--mwp-ui-primary` (and `--mwp-ui-primary-hover` for the hover variant). To give dark mode a distinct primary, override this single token under `html[data-mwp-theme="dark"]` in your SCSS, layered after the admin-ui bundle:
+
+```scss
+html[data-mwp-theme="dark"] {
+	--mwp-ui-primary: #6366f1;
+	--mwp-ui-primary-hover: #818cf8;
+}
 ```
+
+The value propagates to all primary-chain tokens: action-primary bg / bg-hover / border / border-hover / text, focus ring, switch active track, progress bar, nav upgrade button, premium badge, upsell action, primary badge, log filter active state.
+
+For fine-grained control, override the individual `--mwp-action-primary-*` tokens instead — the dark block now redeclares them explicitly so the dark theme is self-contained.
+
+If you want the same brand color in both themes, do nothing — the dark block's default matches the light block.
+
+### Other tokens
+
+Other overridable token families: `--mwp-color-*` (surfaces, borders, text, danger / warning / success / info / upsell), `--mwp-color-nav-active`, and per-component tokens like `--mwp-table-filter-active-*`, `--mwp-log-filter-active-*`, `--mwp-primary-badge-*`, and `--mwp-toast-*`. See `_tokens.scss` for the full list.
 
 ## Media field customization
 
