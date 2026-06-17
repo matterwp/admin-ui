@@ -2,10 +2,10 @@
 /**
  * Attribute rendering helpers.
  *
- * @package MTWP\ADMIN\V120
+ * @package MTWP\ADMIN\V130
  */
 
-namespace MTWP\ADMIN\V120;
+namespace MTWP\ADMIN\V130;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

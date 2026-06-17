@@ -1,8 +1,8 @@
 # MatterWP Admin UI Component Reference
 
-Version: `1.2.0`
+Version: `1.3.0`
 
-This document maps the public `MTWP\ADMIN\V120\UI` API, accepted options, style variants, JavaScript hooks, and current boilerplate usage.
+This document maps the public `MTWP\ADMIN\V130\UI` API, accepted options, style variants, JavaScript hooks, and current boilerplate usage.
 
 Primary source files:
 
@@ -1171,6 +1171,12 @@ App navigation classes:
 | `choiceGrid()` | Available through `schemaOption()` or direct calls, but not directly used in current boilerplate templates. |
 
 ## Changelog
+
+### `1.3.0`
+
+- Moved PHP classes to the release-line namespace `MTWP\ADMIN\V130`.
+- Updated the package metadata, documentation, and boilerplate imports for the next minor release line.
+- Bumped fallback asset versions in `Assets` to `1.3.0`.
 
 ### `1.2.0`
 

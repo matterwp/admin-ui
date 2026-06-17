@@ -2,10 +2,10 @@
 /**
  * Admin navigation component.
  *
- * @package MTWP\ADMIN\V120
+ * @package MTWP\ADMIN\V130
  */
 
-namespace MTWP\ADMIN\V120;
+namespace MTWP\ADMIN\V130;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -55,6 +55,7 @@ class Navigation {
 			}
 		}
 
+		$attributes               = Attrs::merge( is_array( $args['attributes'] ) ? $args['attributes'] : array(), trim( 'mwp-option-nav ' . $args['class'] ), is_array( $args['data_attributes'] ) ? $args['data_attributes'] : array() );
 		$attributes['aria-label'] = (string) $args['aria_label'];
 		$storage_key              = trim( (string) $args['storage_key'] );
 		if ( '' !== $storage_key ) {

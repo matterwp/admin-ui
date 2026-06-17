@@ -78,7 +78,7 @@ Every option should describe intent, not implementation trivia. Good options are
    - Preserve deprecated aliases within the current major version when removing them would silently change consumer output.
    - Prefer one clean documented API; compatibility aliases exist for migration and should not appear in new examples.
    - Historical changelog entries may mention old names, but active guidance should point to current names.
-   - Patch releases in `MTWP\ADMIN\V120` must remain compatible. New minor release lines receive a new namespace, such as `MTWP\ADMIN\V130`, so bundled versions can coexist.
+   - Patch releases in `MTWP\ADMIN\V130` must remain compatible. New minor release lines receive a new namespace, such as `MTWP\ADMIN\V140`, so bundled versions can coexist.
    - Release and update artifacts should exclude local QA/tooling files such as PHPCS config, Composer lock files, vendor directories, and node modules; runtime assets such as `dist/` must remain available unless release packaging explicitly builds them elsewhere.
 
 10. Verification is required for meaningful UI changes.

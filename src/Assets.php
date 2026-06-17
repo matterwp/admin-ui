@@ -2,10 +2,10 @@
 /**
  * Admin UI asset helper.
  *
- * @package MTWP\ADMIN\V120
+ * @package MTWP\ADMIN\V130
  */
 
-namespace MTWP\ADMIN\V120;
+namespace MTWP\ADMIN\V130;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -49,7 +49,7 @@ class Assets {
 	 * @param string $fallback_version Fallback version.
 	 * @return void
 	 */
-	public static function enqueueStyle( string $handle, string $url, string $path, array $dependencies = array(), string $fallback_version = '1.2.0' ): void {
+	public static function enqueueStyle( string $handle, string $url, string $path, array $dependencies = array(), string $fallback_version = '1.3.0' ): void {
 		wp_enqueue_style(
 			$handle,
 			$url,
@@ -70,7 +70,7 @@ class Assets {
 	 * @param string $fallback_version Fallback version.
 	 * @return void
 	 */
-	public static function enqueueScript( string $handle, string $url, string $path, array $dependencies = array(), bool $in_footer = true, string $fallback_version = '1.2.0' ): void {
+	public static function enqueueScript( string $handle, string $url, string $path, array $dependencies = array(), bool $in_footer = true, string $fallback_version = '1.3.0' ): void {
 		wp_enqueue_script(
 			$handle,
 			$url,
@@ -97,7 +97,7 @@ class Assets {
 
 		if ( '' === $version ) {
 			$path    = $dir . '/' . $file;
-			$version = file_exists( $path ) ? (string) filemtime( $path ) : '1.2.0';
+			$version = file_exists( $path ) ? (string) filemtime( $path ) : '1.3.0';
 		}
 
 		wp_enqueue_style(
@@ -124,7 +124,7 @@ class Assets {
 
 		if ( '' === $version ) {
 			$path    = $dir . '/' . $file;
-			$version = file_exists( $path ) ? (string) filemtime( $path ) : '1.2.0';
+			$version = file_exists( $path ) ? (string) filemtime( $path ) : '1.3.0';
 		}
 
 		wp_enqueue_script(

@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.3.0
+
+- Moved live package classes to the release-line namespace `MTWP\ADMIN\V130`.
+- Updated the package metadata, boilerplate imports, and examples for the next minor release line.
+- Bumped fallback asset versions in `Assets` to `1.3.0`.
+- Restored the `mwp-option-nav` class on the outer navigation element emitted by `Navigation::render()` so the sidebar layout, animated active indicator, and dark-mode styling match the documented contract.
+- Added a defensive `'form' => true` default in `Layout::app()` so missing `form` args no longer trigger a PHP 8+ undefined-key warning and the settings form wraps correctly.
+- Made the navigation active-tab storage key pluggable. `Navigation::render()` and `Layout::app()` accept `storage_key`, emitted as `data-ui-storage-key` on the nav root and persisted as `<key>_active_tab`. Exposed `MatterAdminUI.tabs.setStorageKey(key, { migrateFrom })` for the package default with a one-shot legacy migration. The legacy `boilerplate_active_tab` key remains the package default so existing consumers keep their saved tab.
+- Made the dark-mode storage key pluggable. `Layout::app()` accepts `theme_storage_key`, emitted as `data-mwp-theme-key` on the `[data-mwp-theme-toggle]` button and persisted as `<key>_theme`. Exposed `MatterAdminUI.theme.setStorageKey(key, { migrateFrom })` for the package default with a one-shot legacy migration. The legacy `mwp-theme` key remains the package default. Both changes are backward compatible and require no consumer opt-in.
+
 ## 1.2.0
 
 - Made the dark block in `_tokens.scss` self-contained: redeclared `--mwp-ui-primary` (and the action-primary, focus ring, switch active, progress bar, nav upgrade, premium badge, upsell action, primary badge, and log filter active variants) so consumers can override a single token under `html[data-mwp-theme="dark"]` to give dark mode a distinct primary. Default values match the light block; current consumers see no change. Documented the extension point in the README.

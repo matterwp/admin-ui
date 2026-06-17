@@ -2,10 +2,10 @@
 /**
  * Layout rendering helpers: sections, options, cards, forms, fields.
  *
- * @package MTWP\ADMIN\V120
+ * @package MTWP\ADMIN\V130
  */
 
-namespace MTWP\ADMIN\V120;
+namespace MTWP\ADMIN\V130;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -58,7 +58,7 @@ class Layout {
 				'theme_storage_key' => '',
 				'layout' => 'standard',
 				'full_width' => false,
-				'class' => '',
+				'form' => true,
 				'attributes' => array(),
 				'data_attributes' => array(),
 			)

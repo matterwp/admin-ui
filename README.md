@@ -7,13 +7,15 @@ Reusable admin UI helpers, styles, and small JavaScript behaviors for MatterWP W
 Install the package with Composer:
 
 ```bash
-composer require matterwp/admin-ui:^1.2
+composer require matterwp/admin-ui:^1.3
 ```
 
 Release-line namespaces prevent bundled copies from colliding across WordPress plugins:
 
+- `1.3.x` uses `MTWP\ADMIN\V130`
 - `1.2.x` uses `MTWP\ADMIN\V120`
 - `1.1.x` uses `MTWP\ADMIN\V110`
+
 - Patch releases keep the namespace of their minor release line
 
 Load Composer's autoloader from your plugin bootstrap if your plugin does not already do so:
@@ -25,8 +27,8 @@ require_once __DIR__ . '/vendor/autoload.php';
 Import the helpers you need:
 
 ```php
-use MTWP\ADMIN\V120\Assets;
-use MTWP\ADMIN\V120\UI;
+use MTWP\ADMIN\V130\Assets;
+use MTWP\ADMIN\V130\UI;
 ```
 
 ## Assets
@@ -243,7 +245,7 @@ Buttons support named/custom SVG icons with `icon` and `icon_position => 'before
 UI::app(
 	array(
 		'brand'         => __( 'Plugin Name', 'plugin' ),
-		'version'       => '1.2.0',
+		'version'       => '1.3.0',
 		'changelog_url' => 'https://example.com/changelog',
 		'navigation'    => array(
 			'groups' => array(
